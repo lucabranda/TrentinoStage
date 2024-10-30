@@ -2,7 +2,7 @@ import { match } from '@formatjs/intl-localematcher'
 import Negotiator from 'negotiator'
 import { NextResponse } from "next/server";
  
-let locales = ['it', 'de', 'en']
+let locales = ['it', 'de', 'en', 'xx']
 let whitelist = ['swagger']
  
 // Get the preferred locale
