@@ -1,0 +1,58 @@
+.layout {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-color: #f5f5f5;
+}
+
+.header {
+    display: flex;
+    justify-content: center;
+    padding: 15px;
+    background-color: transparent;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+}
+
+.content {
+    justify-content: center;
+    align-items: center;
+    flex-grow: 1;
+    padding: 30px 10px;
+    
+}
+
+.signupFormContainer {display: block;
+    margin: auto;
+    max-width: 400px;
+    width: 100%;
+    padding: 30px;
+    background: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.signupSubtitle {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #8c8c8c;
+}
+
+.signupFormForgot {
+    margin-top: 0;
+    margin-bottom: 10px;
+    color: #1890ff;
+}
+
+.ant-btn-primary {
+    width: 100%;
+    margin-top: 16px;
+}
+
+.ant-typography {
+    text-align: center;
+}
+

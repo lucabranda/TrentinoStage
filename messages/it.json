@@ -1,5 +1,45 @@
 {
     "landing-button-login": "Accedi",
-    "landing-paragraph-1": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum"
+    "landing-nav-1": "Home",
+    "landing-nav-2": "Servizi",
+    "landing-nav-3": "Unisciti",
+    "landing-paragraph-1": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum",
+    "landing-button-signup": "Registrati",
+    "landing-title-services": "Servizi",
+    "landing-paragraph-2": "Scopri tutti i nostri servizi",
+
+    "landing-service-1-title": "Funzionalità 1",
+    "landing-service-2-title": "Funzionalità 2",
+    "landing-service-3-title": "Funzionalità 3",
+    "landing-service-1-description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum",
+    "landing-service-2-description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum",
+    "landing-service-3-description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum",
+    "landing-title-signup": "Iscriviti",
+    "landing-signup-description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum", 
+    "landing-footer-title": "Siamo lieti di darti parte!",
+    "landing-footer-description":"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt",
+   
+    "login-title": "Accedi",
+    "login-subtitle": "Inserisci le tue credenziali",
+    "login-username-label": "Username",
+    "login-username-placeholder": "Inserisci il tuo username",
+    "login-password-label": "Password",
+    "login-password-placeholder": "Inserisci la tua password",
+    "login-forgot-password": "Password dimenticata?",
+    "login-remember-me": "Ricordami",
+    "login-button-login": "Accedi",
+    "login-button-signup": "Registrati",
+
+    "signup-title": "Registrati",
+    "signup-subtitle": "Inserisci i tuoi dati",
+    "signup-username-label": "Username",
+    "signup-username-placeholder": "Inserisci il tuo username",
+    "signup-password-label": "Password",
+    "signup-password-placeholder": "Inserisci la tua password",
+    "signup-confirm-message": "Conferma password",
+    "signup-confirm-label": "Conferma la tua password",
+    "signup-confirm-placeholder": "Conferma la tua password",
+    "signup-button-login": "Hai un account?",
+    "signup-button-signup": "Registrati"
 
 }

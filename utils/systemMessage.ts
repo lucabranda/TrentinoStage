@@ -1,4 +1,4 @@
-import 'server-only';
+// import 'server-only';
 import it from '@/messages/it.json';
 import de from '@/messages/de.json';
 import en from '@/messages/en.json';
