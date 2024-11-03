@@ -32,10 +32,6 @@ export default function Home({ params }: { params: { lang: string } }) {
   const [drawerVisible, setDrawerVisible] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  const heroRef = useRef<HTMLDivElement>(null);
-  const servicesRef = useRef<HTMLDivElement>(null);
-  const joinRef = useRef<HTMLDivElement>(null);
-
   useEffect(() => {
     const fetchMessages = async () => {
       const msgs = await getMessages(params.lang);
@@ -53,41 +49,7 @@ export default function Home({ params }: { params: { lang: string } }) {
     };
   }, [params.lang]);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      const heroTop = heroRef.current?.getBoundingClientRect().top;
-      const servicesTop = servicesRef.current?.getBoundingClientRect().top;
-      const joinTop = joinRef.current?.getBoundingClientRect().top;
-      const currentSection =
-        heroTop && heroTop < 200
-          ? "hero"
-          : servicesTop && servicesTop < 200
-          ? "services"
-          : joinTop && joinTop < 200
-          ? "join"
-          : undefined;
-
-      if (currentSection) {
-        const currentMenuKey = menuItems.find(
-          (item) => item.key === currentSection
-        )?.key;
-        if (currentMenuKey) {
-          setDrawerVisible(false);
-          window.history.replaceState(
-            {},
-            "",
-            `#${currentMenuKey}`
-          );
-        }
-      }
-    };
-    window.addEventListener("scroll", handleScroll);
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
-
+ ;
   const menuItems = [
     {
       key: "hero",
@@ -151,7 +113,7 @@ export default function Home({ params }: { params: { lang: string } }) {
         </Layout.Header>
 
         <Layout.Content className={styles.main}>
-          <section id="hero" className={styles.hero} ref={heroRef}>
+          <section id="hero" className={styles.hero}>
             <Typography.Title className={styles.heroTitle}>
               {siteConfig.name}
             </Typography.Title>
@@ -169,7 +131,7 @@ export default function Home({ params }: { params: { lang: string } }) {
           </section>
 
           <hr className={styles.hr}></hr>
-          <section id="services" className={styles.services} ref={servicesRef}>
+          <section id="services" className={styles.services} >
             <Typography.Title level={2}>
               {messages["landing-title-services"]}
             </Typography.Title>
@@ -207,7 +169,7 @@ export default function Home({ params }: { params: { lang: string } }) {
           </section>
           
           <hr className={styles.hr}></hr>
-          <section id="join" className={styles.cta} ref={joinRef}>
+          <section id="join" className={styles.cta} >
             <Typography.Title level={3}>
               {messages["landing-title-signup"]}
             </Typography.Title>
