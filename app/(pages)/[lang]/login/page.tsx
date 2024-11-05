@@ -10,14 +10,14 @@ import {
   Card,
   Skeleton,
 } from "antd";
-import {Header, Content} from "@/components/layout";
-import {Title, Paragraph} from "@/components/typography"
-import { DigitalIdentityButtons } from "@/components/id-buttons";
+import {Header, Content} from "@/components/Layout";
+import {Title, Paragraph} from "@/components/Typography"
+import { DigitalIdentityButtons } from "@/components/IdButtons";
 import { getMessages } from "@/utils/systemMessage";
 import Image from "next/image";
 import logo from "@/public/logo.svg"; 
 import styles from "./login.module.css";
-import LogInForm from "@/components/loginForm"
+import LogInForm from "@/components/LoginForm"
 
 export default async function LogIn(params : any) {
  

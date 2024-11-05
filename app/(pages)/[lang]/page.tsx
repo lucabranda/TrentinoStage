@@ -21,7 +21,7 @@ import {
   MenuOutlined,
 } from "@ant-design/icons";
 import logo from "@/public/logo.svg";
-import { Link } from "@/components/anchor";
+import { Link } from "@/components/Anchor";
 import { siteConfig } from "@/utils/config";
 import { getMessages } from "@/utils/systemMessage";
 import styles from "./page.module.css";
