@@ -91,7 +91,7 @@ const SignUpForm = ({ messages }: { messages: any }) => (
   </Form>
 );
 
-export default function SignUp({ params }: any) {
+export default function SignUp(params: any) {
   const [messages, setMessages] = useState<any>({});
 
   useEffect(() => {

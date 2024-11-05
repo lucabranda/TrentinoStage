@@ -26,7 +26,7 @@ import { siteConfig } from "@/utils/config";
 import { getMessages } from "@/utils/systemMessage";
 import styles from "./page.module.css";
 
-export default function Home({ params }: { params: { lang: string } }) {
+export default function Home(params : any) {
   const [messages, setMessages] = useState<Record<string, string>>({});
   const [isMobile, setIsMobile] = useState(false);
   const [drawerVisible, setDrawerVisible] = useState(false);

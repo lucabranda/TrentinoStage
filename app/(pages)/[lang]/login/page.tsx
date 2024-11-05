@@ -19,8 +19,8 @@ import logo from "@/public/logo.svg";
 import styles from "./login.module.css";
 import LogInForm from "@/components/loginForm"
 
-export default async function LogIn({ params }: { params: { lang: string } }) {
-
+export default async function LogIn(params : any) {
+ 
   const msgs = await getMessages((await params).lang);
 
   return (
