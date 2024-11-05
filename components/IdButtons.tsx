@@ -1,6 +1,6 @@
 import { Button } from 'antd';
 import { LoginOutlined } from '@ant-design/icons';
-import styles from './id.buttons.module.css';
+import styles from './idButtons.module.css';
 import { getMessages } from '@/utils/systemMessage';
 
 const SpidButton = async ({ lang }: { lang: string }) => (
