@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { DBClient } from "@/utils/db"
 
 // Removes the session token from the database
-export async function POST(req: NextRequest, res: NextResponse) {
+export async function POST(req: NextRequest) {
     
     let formData
     const contentType = req.headers.get("content-type") ?? ""

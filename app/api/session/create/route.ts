@@ -5,7 +5,7 @@ import crypto from "crypto"
 
 const db = new DBClient()
 
-export async function POST(req: NextRequest, res: NextResponse) {
+export async function POST(req: NextRequest) {
   let formData
   const contentType = req.headers.get("content-type") ?? ""
 
