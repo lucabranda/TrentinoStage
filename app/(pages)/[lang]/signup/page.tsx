@@ -8,11 +8,10 @@ import Image from "next/image";
 import logo from "@/public/logo.svg";
 import {Header, Content} from "@/components/Layout";
 import { Paragraph } from "@/components/Typography";
+import SignUpForm from "@/components/SignUpForm";
 
 // Server Component: Pagina di signup con la logica di caricamento dei dati
 export default async function SignUp(params : any) {
-
-  const SignUpForm = React.lazy(() => import('@/components/SignUpForm'));
 
   const messages = await getMessages((await params).lang);  // Carica i messaggi in modo sincrono
 
