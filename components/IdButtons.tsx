@@ -1,8 +1,9 @@
 import { Button } from 'antd';
 import { LoginOutlined } from '@ant-design/icons';
-import styles from './id.buttons.module.css';
+import styles from './idButtons.module.css';
+import { getMessages } from '@/utils/systemMessage';
 
-const SpidButton = () => (
+const SpidButton = async ({ lang }: { lang: string }) => (
   <Button
     type="default"
     icon={<LoginOutlined />}
@@ -12,10 +13,10 @@ const SpidButton = () => (
     target="_blank"
     rel="noopener noreferrer"
   >
-    Log in with SPID
+    {(await getMessages(lang || 'it'))["login-spid"]}
   </Button>
 );
-const CieButton = () => (
+const CieButton = async ({ lang }: { lang: string }) => (
   <Button
     type="default"
     icon={<LoginOutlined />}
@@ -25,7 +26,7 @@ const CieButton = () => (
     target="_blank"
     rel="noopener noreferrer"
   >
-    Log in with CIE
+    {(await getMessages(lang || 'it'))["login-cie"]}
   </Button>
 );
 
@@ -43,4 +44,14 @@ const EidasButton = () => (
   </Button>
 );
 
-export { SpidButton, CieButton, EidasButton };
+const DigitalIdentityButtons = ({ lang }: { lang: string }) => {
+  return (
+    <>
+      <SpidButton lang={lang}/>
+      <CieButton lang={lang}/>
+      <EidasButton/>
+    </>
+  )
+}
+
+export { SpidButton, CieButton, EidasButton, DigitalIdentityButtons };

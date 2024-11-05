@@ -1,5 +1,3 @@
-"use client";
-import React, { useEffect, useState, useRef, useCallback } from "react";
 import {
   Layout,
   Button,
@@ -21,35 +19,17 @@ import {
   MenuOutlined,
 } from "@ant-design/icons";
 import logo from "@/public/logo.svg";
-import { Link } from "@/components/anchor";
+import { Link } from "@/components/Anchor";
 import { siteConfig } from "@/utils/config";
 import { getMessages } from "@/utils/systemMessage";
 import styles from "./page.module.css";
+import {Header, Footer, Content} from "@/components/Layout"
+import {Title, Paragraph} from "@/components/Typography"
 
-export default function Home({ params }: { params: { lang: string } }) {
-  const [messages, setMessages] = useState<Record<string, string>>({});
-  const [isMobile, setIsMobile] = useState(false);
-  const [drawerVisible, setDrawerVisible] = useState(false);
-  const [loading, setLoading] = useState(true);
+export default async function Home(params : any) {
 
-  useEffect(() => {
-    const fetchMessages = async () => {
-      const msgs = await getMessages(params.lang);
-      setMessages(msgs);
-      setLoading(false);
-    };
-    fetchMessages();
+  const messages = await getMessages((await params).lang);
 
-    const handleResize = () => setIsMobile(window.innerWidth < 630);
-    handleResize();
-    window.addEventListener("resize", handleResize);
-
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, [params.lang]);
-
- ;
   const menuItems = [
     {
       key: "hero",
@@ -81,45 +61,21 @@ export default function Home({ params }: { params: { lang: string } }) {
   ];
 
   return (
-    <Skeleton active loading={loading} paragraph={{ rows: 4 }}>
       <Layout className={styles.page}>
-        <Layout.Header className={styles.header}>
+        <Header className={styles.header}>
           <img src={logo.src} alt="logo" className={styles.logo} />
-          {isMobile ? (
-            <>
-              <Button
-                icon={<MenuOutlined />}
-                onClick={() => setDrawerVisible(true)}
-              />
-              <Drawer
-                title="Menu"
-                placement="right"
-                onClose={() => setDrawerVisible(false)}
-                open={drawerVisible}
-              >
-                <Menu
-                  mode="vertical"
-                  items={menuItems}
-                  onClick={() => setDrawerVisible(false)}
-                />
-              </Drawer>
-            </>
-          ) : (
-            <>
-              <Menu  mode="horizontal" items={menuItems} className={styles.menu} />
-              <Button type="default" href="/login" className={styles.loginButton}>{messages["landing-button-login"]}</Button>
-            </>
-          )}
-        </Layout.Header>
+          <Menu  mode="horizontal" items={menuItems} className={styles.menu} />
+          <Button type="default" href="/login" className={styles.loginButton}>{messages["landing-button-login"]}</Button>
+        </Header>
 
-        <Layout.Content className={styles.main}>
+        <Content className={styles.main}>
           <section id="hero" className={styles.hero}>
-            <Typography.Title className={styles.heroTitle}>
+            <Title className={styles.heroTitle}>
               {siteConfig.name}
-            </Typography.Title>
-            <Typography.Paragraph className={styles.heroSubtitle}>
+            </Title>
+            <Paragraph className={styles.heroSubtitle}>
               {messages["landing-paragraph-1"]}
-            </Typography.Paragraph>
+            </Paragraph>
             <Button
               type="primary"
               size="large"
@@ -132,9 +88,9 @@ export default function Home({ params }: { params: { lang: string } }) {
 
           <hr className={styles.hr}></hr>
           <section id="services" className={styles.services} >
-            <Typography.Title level={2}>
+            <Title level={2}>
               {messages["landing-title-services"]}
-            </Typography.Title>
+            </Title>
             <Row gutter={24} justify="center">
               {[
                 {
@@ -161,7 +117,7 @@ export default function Home({ params }: { params: { lang: string } }) {
                     className={styles.card}
                   >
                     {service.icon}
-                    <Typography.Paragraph>{service.desc}</Typography.Paragraph>
+                    <Paragraph>{service.desc}</Paragraph>
                   </Card>
                 </Col>
               ))}
@@ -170,12 +126,12 @@ export default function Home({ params }: { params: { lang: string } }) {
           
           <hr className={styles.hr}></hr>
           <section id="join" className={styles.cta} >
-            <Typography.Title level={3}>
+            <Title level={3}>
               {messages["landing-title-signup"]}
-            </Typography.Title>
-            <Typography.Paragraph>
+            </Title>
+            <Paragraph>
               {messages["landing-signup-description"]}
-            </Typography.Paragraph>
+            </Paragraph>
             <Button
               type="primary"
               size="large"
@@ -185,15 +141,15 @@ export default function Home({ params }: { params: { lang: string } }) {
               {messages["landing-button-signup"]}
             </Button>
           </section>
-        </Layout.Content>
+        </Content>
 
-        <Layout.Footer className={styles.footer}>
-          <Typography.Title level={4}>
+        <Footer className={styles.footer}>
+          <Title level={4}>
             {messages["landing-footer-title"]}
-          </Typography.Title>
-          <Typography.Paragraph>
+          </Title>
+          <Paragraph>
             {messages["landing-footer-description"]}
-          </Typography.Paragraph>
+          </Paragraph>
           <div>
             <Link href="/about" title={undefined}>
               {messages["footer-link-about"]}
@@ -203,10 +159,7 @@ export default function Home({ params }: { params: { lang: string } }) {
               {messages["footer-link-contact"]}
             </Link>
           </div>
-        </Layout.Footer>
+        </Footer>
       </Layout>
-    </Skeleton>
   );
 }
-
-

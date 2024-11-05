@@ -29,6 +29,8 @@
     "login-remember-me": "Ricordami",
     "login-button-login": "Accedi",
     "login-button-signup": "Registrati",
+    "login-spid": "Entra con SPID",
+    "login-cie": "Entra con CIE",
 
     "signup-title": "Registrati",
     "signup-subtitle": "Inserisci i tuoi dati",
