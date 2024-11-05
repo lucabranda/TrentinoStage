@@ -1,6 +1,6 @@
 import { Button } from 'antd';
 import { LoginOutlined } from '@ant-design/icons';
-import styles from '@/app/(pages)/[lang]/login/login.module.css';
+import styles from './id.buttons.module.css';
 
 const SpidButton = () => (
   <Button
