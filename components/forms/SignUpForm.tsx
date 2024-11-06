@@ -9,6 +9,7 @@ import {
   Input,
   Space,
 } from "antd";
+import { DefaultButton, LinkButton, PrimaryButton } from "../buttons/Buttons";
 
 const SignUpForm = ({ messages }: { messages: any }) => (
   <Form name="signup" layout="vertical">
@@ -61,21 +62,23 @@ const SignUpForm = ({ messages }: { messages: any }) => (
       <Space
         style={{ display: "flex", justifyContent: "center", width: "100%" }}
       >
-        <Button
-          type="primary"
+        <PrimaryButton
           htmlType="submit"
           style={{ flexGrow: 1, marginRight: 8 }}
         >
           {messages["signup-button-signup"]}
-        </Button>
-        <Button
-          type="default"
+        </PrimaryButton>
+        <DefaultButton
           style={{ flexGrow: 1, textAlign: "center" }}
           href="/login"
         >
           {messages["signup-button-login"]}
-        </Button>
+        </DefaultButton>
       </Space>
+      
+      <LinkButton href="signup/company" style={{ marginTop: 16 , flexGrow: 1, textAlign: "center", width: "100%", display: "block", margin: "auto"}}>
+        {messages["signup-button-signup-company"]}
+      </LinkButton>
     </Form.Item>
   </Form>
 );

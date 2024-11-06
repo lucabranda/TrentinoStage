@@ -12,12 +12,12 @@ import {
 } from "antd";
 import {Header, Content} from "@/components/Layout";
 import {Title, Paragraph} from "@/components/Typography"
-import { DigitalIdentityButtons } from "@/components/IdButtons";
+import { DigitalIdentityButtons } from "@/components/buttons/IdButtons";
 import { getMessages } from "@/utils/systemMessage";
 import Image from "next/image";
 import logo from "@/public/logo.svg"; 
 import styles from "./login.module.css";
-import LogInForm from "@/components/LoginForm"
+import LogInForm from "@/components/forms/LoginForm"
 
 export default async function LogIn(params : any) {
  

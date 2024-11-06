@@ -1,0 +1,39 @@
+.languageSelector {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 120px;
+    border-radius: 15px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.languageOption {
+    
+    padding: 4px 8px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.languageOption:hover {
+    background-color: #e6e6e6;
+}
+
+
+@media (max-width: 768px) {
+  .languageSelector {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    overflow: hidden;
+    appearance: none;
+    padding: 0;
+    
+  }
+  
+  .languageOption {
+    padding: 0;
+    height: 40px;
+    line-height: 40px;
+    text-align: center;
+  }
+}

@@ -1,12 +1,12 @@
 .page {
+  
   --gray-rgb: 0, 0, 0;
   --gray-alpha-200: rgba(var(--gray-rgb), 0.08);
   --gray-alpha-100: rgba(var(--gray-rgb), 0.05);
-
+/* 
   --button-primary-hover: #383838;
-  --button-secondary-hover: #f2f2f2;
-
-  display: grid;
+  --button-secondary-hover: #f2f2f2; */
+   display: grid;
   grid-template-rows: auto 1fr auto;
   min-height: 100vh;
   align-items: center;
@@ -30,14 +30,14 @@
   justify-content: space-between;
   align-items: center;
   padding: 16px 24px;
-  background: #ffffff;
-  box-shadow: 0 4px 12px var(--gray-alpha-200);
-  border-bottom: #383838;
+  background: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   z-index: 10;
+
 }
 
 .header .logo {
@@ -45,17 +45,15 @@
 }
 
 .header .loginButton {
-  background: transparent;
-  border: 1px solid var(--button-primary-hover);
-  color: var(--button-primary-hover);
-  padding: 8px 16px;
+  align-self: flex-end;
 }
 
-.header .loginButton:hover {
-  background: var(--button-primary-hover);
-  color: #ffffff;
+.language{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 150px;
 }
-
 
 /* Menu */
 .menu {
@@ -89,12 +87,12 @@
   padding: 40px 0;
 }
 
-.hero .heroTitle {
-  font-size: 48px;
-  color: var(--button-primary-hover);
-  font-weight: bold;
-  line-height: 1.2;
+.hero .heroLogo {
+  height: 80px;
+  margin-bottom: 20px;
+  filter: invert(1);
 }
+
 
 .hero .heroSubtitle {
   font-size: 18px;
@@ -119,12 +117,6 @@
   box-shadow: 0 8px 20px var(--gray-alpha-200);
 }
 
-.hr{
-  width: 75%;
-  height: 1px;
-  background-color: var(--gray-alpha-100);
-  margin: auto;
-}
 
 /* CTA Section */
 .cta {
@@ -133,14 +125,9 @@
 }
 
 .cta .ctaButton {
-  background: var(--button-primary-hover);
-  color: #ffffff;
+  
   padding: 12px 32px;
   font-size: 18px;
-}
-
-.cta .ctaButton:hover {
-  background: var(--button-secondary-hover);
 }
 
 /* Footer */
@@ -207,6 +194,10 @@
     flex-wrap: wrap;
     gap: 12px;
   }
+  .loginButton{
+    display: none;
+  }
+  
 }
 
 @media (prefers-color-scheme: dark) {
@@ -214,4 +205,5 @@
     filter: invert(1);
   }
 }
+
 

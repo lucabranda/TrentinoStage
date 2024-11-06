@@ -8,7 +8,7 @@ import Image from "next/image";
 import logo from "@/public/logo.svg";
 import {Header, Content} from "@/components/Layout";
 import { Paragraph } from "@/components/Typography";
-import SignUpForm from "@/components/SignUpForm";
+import SignUpForm from "@/components/forms/SignUpForm";
 
 // Server Component: Pagina di signup con la logica di caricamento dei dati
 export default async function SignUp(params : any) {

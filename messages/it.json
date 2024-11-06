@@ -16,9 +16,11 @@
     "landing-service-3-description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum",
     "landing-title-signup": "Iscriviti",
     "landing-signup-description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum", 
+    "landing-button-signup-user": "Registrati come utente",
+    "landing-button-signup-company": "Registrati come impresa",
     "landing-footer-title": "Siamo lieti di darti parte!",
     "landing-footer-description":"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt",
-   
+ 
     "login-title": "Accedi",
     "login-subtitle": "Inserisci le tue credenziali",
     "login-username-label": "Username",
@@ -32,7 +34,8 @@
     "login-spid": "Entra con SPID",
     "login-cie": "Entra con CIE",
 
-    "signup-title": "Registrati",
+    "signup-title": "Registrati come utente",
+    "signup-title-company": "Registrati come impresa",
     "signup-subtitle": "Inserisci i tuoi dati",
     "signup-username-label": "Username",
     "signup-username-placeholder": "Inserisci il tuo username",
@@ -43,5 +46,4 @@
     "signup-confirm-placeholder": "Conferma la tua password",
     "signup-button-login": "Hai un account?",
     "signup-button-signup": "Registrati"
-
 }

@@ -1,0 +1,52 @@
+"use client";
+import React from "react";
+import { Button } from "antd";
+
+interface BaseButtonProps {
+  className?: string;
+  children?: React.ReactNode;
+  href?: string;
+  onClick?: (event: React.MouseEvent<HTMLElement>) => void;
+  style?: React.CSSProperties;
+  htmlType?: "submit" | "reset" | "button";
+  type?: "primary" | "default" | "link" | "dashed";
+}
+
+const BaseButton: React.FC<BaseButtonProps> = (props) => {
+  const { className, children, href, onClick,style, htmlType, type } = props;
+  const buttonStyle: React.CSSProperties = { ...style };
+
+  return (
+    <Button
+      type={type}
+      className={className}
+      style={buttonStyle}
+      href={href}
+      onClick={onClick}
+      htmlType={htmlType}
+    >
+      {children}
+    </Button>
+  );
+};
+
+const PrimaryButton: React.FC<BaseButtonProps> = (props) => (
+  <BaseButton {...props} type="primary" style={{ backgroundColor: "#1890ff", color: "#fff"}} />
+);
+
+const DefaultButton: React.FC<BaseButtonProps> = (props) => (
+  <BaseButton {...props} type="default" style={{ borderColor: "#d9d9d9", color: "#000" }} />
+);
+
+const DashedButton: React.FC<BaseButtonProps> = (props) => (
+  <BaseButton {...props} type="dashed" style={{ borderColor: "#d9d9d9", color: "#000" }} />
+);
+
+const LinkButton: React.FC<BaseButtonProps> = (props) => (
+  <BaseButton {...props} type="link" style={{ color: "#1890ff", border: "1px solid #1890ff" }} />
+);
+
+export { PrimaryButton, DefaultButton, DashedButton, LinkButton };
+
+
+
