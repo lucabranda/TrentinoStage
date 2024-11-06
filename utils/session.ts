@@ -1,5 +1,6 @@
 import { loadEnvConfig } from "@next/env"
-import { DBClient } from "./db";
+import { DBClient } from "./db"
+import crypto from "crypto"
 
 const projectDir = process.cwd()
 loadEnvConfig(projectDir)
@@ -34,4 +35,16 @@ export async function checkExpiredTokens(uid: string) {
     }
     
     await sessions.deleteMany({user_id: uid, generation_time: {$lt: new Date(new Date().getTime() + tokenDuration * 1000).toISOString()}})
+}
+
+export async function createSessionToken(uid: string) {
+    // Create a new session token for the user
+
+    checkExpiredTokens(uid)
+
+    const sessions = db.selectCollection("auth_tokens")
+    const token = crypto.randomBytes(64).toString("hex")
+    const date = new Date().toISOString()
+    await sessions.insertOne({user_id: uid, generation_time: date ,token: token})
+    return token
 }

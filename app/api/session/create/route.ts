@@ -1,5 +1,6 @@
 import { NextResponse, NextRequest } from "next/server"
 import { DBClient } from "@/utils/db"
+import { checkExpiredTokens, createSessionToken } from "@/utils/session"
 import bcrypt from "bcrypt"
 import crypto from "crypto"
 
@@ -19,32 +20,29 @@ export async function POST(req: NextRequest) {
       throw new Error("Unsupported content type")
     }
 
-    const username = formData.get("username") as string
+    const email = formData.get("email") as string
     const password = formData.get("password") as string
 
-    // Get the user id for the username
+    // Get the user id for the email
     
     const accounts = db.selectCollection("accounts")
-    const user = await accounts.findOne({username: username})
+    const user = await accounts.findOne({email: email})
 
+    
     // Check if the password is correct
     
     if (!user || !await bcrypt.compare(password, user.password)) {
-      // The username or password is incorrect
+      // The email or password is incorrect
       return new NextResponse("Unauthorized", { status: 401 })
     } 
     
-    // The username and password are correct
+    // The email and password are correct
     // Generate a session token
 
-    const token = crypto.randomBytes(64).toString("hex")
+    const token = createSessionToken(user._id.toHexString())
 
-    const sessions = db.selectCollection("auth_tokens")
-    const date = new Date().toISOString()
-    await sessions.insertOne({user_id: user._id, generation_time: date ,token: token})
+    return new NextResponse(JSON.stringify({token: await token}), { status: 200 })
 
-    return new NextResponse(JSON.stringify({token: token}), { status: 200 })
-      
   } catch (e) {
     console.error(e);
     return new NextResponse("Error", { status: 500 })
