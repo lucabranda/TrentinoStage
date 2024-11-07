@@ -1,19 +1,19 @@
 .spidButton {
-    background-color: #005a9c;
-    color: white;
+    background-color: #005a9c !important;
+    color: white !important;
     border: none;
     font-weight: 500;
 }
 
 .cieButton {
-    background-color: #0073e6;
-    color: white;
+    background-color: #0073e6 !important;
+    color: white !important;
     border: none;
     font-weight: 500;
 }
 .eidasButton {
-    background-color: #003399;
-    color: white;
+    background-color: #003399 !important;
+    color: white !important;
     border: none;
     font-weight: 500;
 }

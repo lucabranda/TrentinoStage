@@ -9,7 +9,7 @@
     display: flex;
     justify-content: center;
     padding: 15px;
-    background-color: transparent;
+    background-color: transparent !important;
 }
 
 .logo {
@@ -26,7 +26,8 @@
 }
 
 .signupFormContainer {display: block;
-    margin: auto;
+    display: block !important;
+    margin: auto !important;
     max-width: 400px;
     width: 100%;
     padding: 30px;
