@@ -45,5 +45,7 @@
     "signup-confirm-label": "Conferma la tua password",
     "signup-confirm-placeholder": "Conferma la tua password",
     "signup-button-login": "Hai un account?",
-    "signup-button-signup": "Registrati"
+    "signup-button-signup": "Registrati",
+    "signup-button-signup-company": "Registrati come impresa"
+
 }

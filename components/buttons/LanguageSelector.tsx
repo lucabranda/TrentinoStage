@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import "flag-icons/css/flag-icons.min.css";
 import styles from './languageSelector.module.css';
+import { CaretDownOutlined } from '@ant-design/icons';
 
 const LanguageSelector = () => {
   const pathname = usePathname();
@@ -41,8 +42,9 @@ const LanguageSelector = () => {
       value={defaultLanguage} 
       onChange={handleChange} 
       className={styles.languageSelector}
+      suffixIcon={isMobile ? null : <CaretDownOutlined />}
     >
-      <Select.Option value="it" className={styles.languageOption} showArrow={!isMobile}>
+      <Select.Option value="it" className={styles.languageOption} >
         <span className="fi fi-it"></span> {!isMobile ? "Italiano" : ""}
       </Select.Option>
       <Select.Option value="de" className={styles.languageOption}>

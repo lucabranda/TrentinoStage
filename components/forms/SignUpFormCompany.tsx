@@ -3,30 +3,24 @@
 
 import React from "react";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
-import {
-  Button,
-  Form,
-  Input,
-  Row,
-  Space,
-} from "antd";
+import { Form, Input, Space } from "antd";
 import { DefaultButton, LinkButton, PrimaryButton } from "../buttons/Buttons";
 
-const SignUpForm = ({ messages }: { messages: any }) => (
+const SignUpFormCompany = ({ messages }: { messages: any }) => (
   <Form name="signup" layout="vertical">
     <Form.Item
       name="username"
       rules={[
         {
           message:
-            messages["signup-username-message"] || "Please input your Username!",
+            messages["signup-company-message"] || "Please input your Username!",
         },
       ]}
-      label={<span>{messages["signup-username-label"]}</span>}
+      label={<span>{messages["signup-company-label"]}</span>}
     >
       <Input
         prefix={<UserOutlined />}
-        placeholder={messages["signup-username-placeholder"] || "Username"}
+        placeholder={messages["signup-company-placeholder"] || "Username"}
       />
     </Form.Item>
     <Form.Item
@@ -77,12 +71,20 @@ const SignUpForm = ({ messages }: { messages: any }) => (
         </DefaultButton>
       </Space>
 
-      <LinkButton href="signup/company" style={{display: "block", margin: "24px auto 0", textAlign: "center", width: "100%"}}>
-        {messages["signup-button-signup-company"]}
+      <LinkButton
+        href="/signup"
+        style={{
+          display: "block",
+          margin: "24px auto 0",
+          textAlign: "center",
+          width: "100%",
+        }}
+      >
+        {messages["signup-button-signup-user"]}
       </LinkButton>
-   
     </Form.Item>
   </Form>
 );
 
-export default SignUpForm;
+export default SignUpFormCompany;
+
