@@ -1,11 +1,59 @@
 import { NextResponse, NextRequest } from "next/server"
 import { DBClient } from "@/utils/db"
-import { checkExpiredTokens, createSessionToken } from "@/utils/session"
+import { createSessionToken } from "@/utils/session"
 import bcrypt from "bcrypt"
-import crypto from "crypto"
 
 const db = new DBClient()
 
+
+/**
+ * @swagger
+ * /api/session/create:
+ *   post:
+ *     summary: "Authenticate user and return session token"
+ *     description: "This endpoint allows a user to log in with a username and password, receiving a session token upon successful authentication."
+ *     tags: ["Session"]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               username:
+ *                 type: string
+ *                 description: "The user's username"
+ *                 example: "john_doe"
+ *               password:
+ *                 type: string
+ *                 description: "The user's password"
+ *                 format: password
+ *                 example: "securepassword123"
+ *     responses:
+ *       200:
+ *         description: "Session token generated successfully"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 token:
+ *                   type: string
+ *                   description: "The session token"
+ *                   example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+ *       401:
+ *         description: "Invalid username or password"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   description: "Error message explaining the reason for failure"
+ *                   example: "Invalid username or password"
+ * 
+ */
 export async function POST(req: NextRequest) {
   let formData
   const contentType = req.headers.get("content-type") ?? ""
@@ -17,7 +65,7 @@ export async function POST(req: NextRequest) {
       const jsonData = await req.json()
       formData = new Map(Object.entries(jsonData))
     } else {
-      throw new Error("Unsupported content type")
+      return NextResponse.json({error: "Method is not allowed"}, { status: 405 })
     }
 
     const email = formData.get("email") as string
@@ -33,7 +81,7 @@ export async function POST(req: NextRequest) {
     
     if (!user || !await bcrypt.compare(password, user.password)) {
       // The email or password is incorrect
-      return new NextResponse("Unauthorized", { status: 401 })
+      return NextResponse.json({error: "Invalid username or password"}, { status: 401 })
     } 
     
     // The email and password are correct
@@ -41,10 +89,10 @@ export async function POST(req: NextRequest) {
 
     const token = createSessionToken(user._id.toHexString())
 
-    return new NextResponse(JSON.stringify({token: await token}), { status: 200 })
+    return NextResponse.json({token: await token}, { status: 200 })
 
   } catch (e) {
     console.error(e);
-    return new NextResponse("Error", { status: 500 })
+    return NextResponse.json({error: "Error"}, { status: 500 })
   }
 }

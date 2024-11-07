@@ -2,6 +2,61 @@ import { NextRequest, NextResponse } from "next/server"
 import { DBClient } from "@/utils/db"
 
 // Removes the session token from the database
+
+/**
+ * @swagger
+ * /api/session/destroy:
+ *    post:
+ *      summary: "Destroy a session token"
+ *      description: "This endpoint allows a user to destroy a session token, logging out the user."
+ *      tags: ["Session"]
+ *      requestBody:
+ *          required: true
+ *          content: 
+ *             multipart/form-data:
+ *               schema:
+ *                  type: object
+ *                  properties:
+ *                      token:
+ *                         type: string
+ *                         description: "The session token to destroy"
+ *                         example: "eyJhbGciOi..."
+ *      responses:
+ *         200: 
+ *              description: "Session destroyed"
+ *              content:
+ *                 application/json:
+ *                    schema:
+ *                      type: object
+ *                      properties:
+ *                          result:
+ *                              type: string
+ *                              description: "Result of the operation"
+ *                              example: "Session destroyed"
+ *         401:
+ *             description: "Token is invalid"
+ *             content:
+ *                application/json:
+ *                   schema:
+ *                      type: object
+ *                      properties:
+ *                          error:
+ *                              type: string
+ *                              description: "Error message explaining the reason for failure"
+ *                              example: "Token is missing"
+ *         405:
+ *              description: "Unsupported content type"
+ *              content:
+ *                 application/json:
+ *                    schema:
+ *                       type: object
+ *                       properties:
+ *                          error:
+ *                              type: string
+ *                              description: "Error message explaining the reason for failure"
+ *                              example: "Unsupported content type" 
+ */
+
 export async function POST(req: NextRequest) {
     
     let formData
@@ -10,13 +65,13 @@ export async function POST(req: NextRequest) {
     if (contentType.includes("multipart/form-data")) {
         formData = await req.formData()
     } else {
-        return new NextResponse("Unsupported content type", { status: 400 })
+        return NextResponse.json({error: "Unsupported content type"}, { status: 405 })
     }
 
     const token = formData.get("token") as string
 
     if (!token) {
-        return new NextResponse("Token is missing", { status: 400 })
+        return NextResponse.json({error: "Token is missing"}, { status: 401 })
     }
 
     const db = new DBClient()
@@ -24,5 +79,5 @@ export async function POST(req: NextRequest) {
 
     await sessions.deleteOne({token: token})
 
-    return new NextResponse("Session destroyed", { status: 200 })
+    return NextResponse.json({result: "Session destroyed"}, { status: 200 })
 }
