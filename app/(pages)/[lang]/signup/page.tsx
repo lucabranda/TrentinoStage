@@ -11,7 +11,7 @@ import { Paragraph } from "@/components/Typography";
 import SignUpForm from "@/components/forms/SignUpForm";
 
 // Server Component: Pagina di signup con la logica di caricamento dei dati
-export default async function SignUp(params : any) {
+export default async function SignUp({params} : any) {
 
   const messages = await getMessages((await params).lang);  // Carica i messaggi in modo sincrono
 

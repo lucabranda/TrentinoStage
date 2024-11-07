@@ -19,7 +19,7 @@ import logo from "@/public/logo.svg";
 import styles from "./login.module.css";
 import LogInForm from "@/components/forms/LoginForm"
 
-export default async function LogIn(params : any) {
+export default async function LogIn({params} : any) {
  
   const msgs = await getMessages((await params).lang);
 
@@ -50,7 +50,7 @@ export default async function LogIn(params : any) {
             </Paragraph>
             <LogInForm messages={msgs} />
             <Space direction="vertical" style={{ width: "100%" }}>
-              <DigitalIdentityButtons lang={params.lang}/>
+              <DigitalIdentityButtons lang={(await params).lang}/>
             </Space>
           </Card>
         </Content>
