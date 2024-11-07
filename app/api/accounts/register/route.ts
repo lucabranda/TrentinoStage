@@ -16,17 +16,19 @@ import { createSessionToken } from "@/utils/session"
  *     tags: ["Accounts"]
  *     consumes:
  *       - multipart/form-data
+ *     requestBody:
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 description: The email address of the new account.
+ *               password:
+ *                 type: string
+ *                 description: The password for the new account.
  *     parameters:
- *       - in: formData
- *         name: email
- *         type: string
- *         required: true
- *         description: The email address of the new account.
- *       - in: formData
- *         name: password
- *         type: string
- *         required: true
- *         description: The password for the new account.
  *       - in: query
  *         name: token
  *         type: string
@@ -48,24 +50,23 @@ import { createSessionToken } from "@/utils/session"
  *         content:
  *           application/json:
  *             schema:
- *              type: object
- *              properties:
- *                  error:
- *                      type: string
- *                      description: "Error message explaining the reason for failure."
- *                      example: "Email is already in use"
- * 
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   description: "Error message explaining the reason for failure."
+ *                   example: "Email is already in use"
  *       405:
- *          description: "Unsupported content type."
- *          content:
- *             application/json:
- *                  schema:
- *                      type: object
- *                      properties:
- *                          error:
- *                              type: string
- *                              description: "Error message explaining the reason for failure."
- *                              example: "Unsupported content type"
+ *         description: "Unsupported content type."
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   description: "Error message explaining the reason for failure."
+ *                   example: "Unsupported content type"
  */
 
 
