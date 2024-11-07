@@ -9,7 +9,19 @@ const LanguageSelector = () => {
   const pathname = usePathname();
   const router = useRouter();
   const [defaultLanguage, setDefaultLanguage] = useState('en');
-
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth <= 768) {
+        setIsMobile(true);
+      } else {
+        setIsMobile(false);
+      }
+    };
+    window.addEventListener('resize', handleResize);
+    handleResize();
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
   useEffect(() => {
     const languageCode = pathname.split('/')[1];
     if (['it', 'de', 'en'].includes(languageCode)) {
@@ -30,14 +42,14 @@ const LanguageSelector = () => {
       onChange={handleChange} 
       className={styles.languageSelector}
     >
-      <Select.Option value="it" className={styles.languageOption}>
-        <span className="fi fi-it"></span> Italiano
+      <Select.Option value="it" className={styles.languageOption} showArrow={!isMobile}>
+        <span className="fi fi-it"></span> {!isMobile ? "Italiano" : ""}
       </Select.Option>
       <Select.Option value="de" className={styles.languageOption}>
-        <span className="fi fi-de"></span> Deutsch
+        <span className="fi fi-de"></span> {!isMobile ? "Deutsch" : ""}
       </Select.Option>
       <Select.Option value="en" className={styles.languageOption}>
-        <span className="fi fi-gb"></span> English
+        <span className="fi fi-gb"></span> {!isMobile ? "English" : ""}
       </Select.Option>
     </Select>
   );
