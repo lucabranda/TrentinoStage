@@ -1,5 +1,6 @@
 {
     "landing-button-login": "Accedi",
+    "landing-button-dashboard": "Vai alla Dashboard",
     "landing-nav-1": "Home",
     "landing-nav-2": "Servizi",
     "landing-nav-3": "Unisciti",
@@ -46,6 +47,8 @@
     "signup-confirm-placeholder": "Conferma la tua password",
     "signup-button-login": "Hai un account?",
     "signup-button-signup": "Registrati",
-    "signup-button-signup-company": "Registrati come impresa"
+    "signup-button-signup-company": "Registrati come impresa",
+
+    "signup-password-mismatch": "Le password non corrispondono"
 
 }

@@ -28,9 +28,8 @@ import {Header, Footer, Content} from "@/components/Layout"
 import {Title, Paragraph} from "@/components/Typography"
 import LanguageSelector from "@/components/buttons/LanguageSelector";
 
-export default async function Home({ params }: any) {
-  //const lang = params.lang as string;
-  const messages = await getMessages((await params).lang);
+export default function Home({ params }: any) {
+  const messages = getMessages(params.lang);
 
   const menuItems = [
     {
@@ -66,9 +65,8 @@ export default async function Home({ params }: any) {
     <Layout className={styles.page}>
       <Header className={styles.header}>
         <img src={logo.src} alt="logo" className={styles.logo} />
-        <Menu  mode="horizontal" items={menuItems} className={styles.menu} />
-      
-        <LanguageSelector /> 
+        <Menu mode="horizontal" items={menuItems} className={styles.menu} />
+        <LanguageSelector />
         <LinkButton href="/login" className={styles.loginButton}>
           {messages["landing-button-login"]}
         </LinkButton>
@@ -76,7 +74,7 @@ export default async function Home({ params }: any) {
 
       <Content className={styles.main}>
         <section id="hero" className={styles.hero}>
-          <img src={logo.src} alt="Trentino Stage" className={styles.heroLogo}/>
+          <img src={logo.src} alt="Trentino Stage" className={styles.heroLogo} />
           <Paragraph className={styles.heroSubtitle}>
             {messages["landing-paragraph-1"]}
           </Paragraph>
@@ -86,10 +84,8 @@ export default async function Home({ params }: any) {
         </section>
 
         <hr className={styles.hr}></hr>
-        <section id="services" className={styles.services} >
-          <Title level={2}>
-            {messages["landing-title-services"]}
-          </Title>
+        <section id="services" className={styles.services}>
+          <Title level={2}>{messages["landing-title-services"]}</Title>
           <Row gutter={24} justify="center">
             {[
               {
@@ -122,35 +118,25 @@ export default async function Home({ params }: any) {
             ))}
           </Row>
         </section>
-        
+
         <hr className={styles.hr}></hr>
-        <section id="join" className={styles.cta} >
-          <Title level={3}>
-            {messages["landing-title-signup"]}
-          </Title>
-          <Paragraph>
-            {messages["landing-signup-description"]}
-          </Paragraph>
-          <Space
-        style={{ display: "flex", justifyContent: "center", width: "100%" }}
-      >
-              <PrimaryButton href="/signup" className={styles.ctaButton}>
-                <UserAddOutlined />{messages["landing-button-signup-user"]}
-              </PrimaryButton>
-              <DefaultButton href="/signup/company" className={styles.ctaButton}>
-                <RocketOutlined />{messages["landing-button-signup-company"]}
-              </DefaultButton>
-            </Space>
+        <section id="join" className={styles.cta}>
+          <Title level={3}>{messages["landing-title-signup"]}</Title>
+          <Paragraph>{messages["landing-signup-description"]}</Paragraph>
+          <Space style={{ display: "flex", justifyContent: "center", width: "100%" }}>
+            <PrimaryButton href="/signup" className={styles.ctaButton}>
+              <UserAddOutlined />{messages["landing-button-signup-user"]}
+            </PrimaryButton>
+            <DefaultButton href="/signup/company" className={styles.ctaButton}>
+              <RocketOutlined />{messages["landing-button-signup-company"]}
+            </DefaultButton>
+          </Space>
         </section>
       </Content>
 
       <Footer className={styles.footer}>
-        <Title level={4}>
-          {messages["landing-footer-title"]}
-        </Title>
-        <Paragraph>
-          {messages["landing-footer-description"]}
-        </Paragraph>
+        <Title level={4}>{messages["landing-footer-title"]}</Title>
+        <Paragraph>{messages["landing-footer-description"]}</Paragraph>
         <div>
           <Link href="/about" title={undefined}>
             {messages["footer-link-about"]}
@@ -164,5 +150,3 @@ export default async function Home({ params }: any) {
     </Layout>
   );
 }
-
-
