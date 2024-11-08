@@ -8,10 +8,10 @@ import {Content } from '@/components/Layout'
 export default async function CompanyPage({params}: any) {
   const messages = await getMessages((await params).lang);
   return(
-    <DashboardLayout params={params}>
+    <DashboardLayout  messages={messages}>
       <Content>
-        <CompanyCard params={params}/>
-        <OffersSection params={params}/>
+        <CompanyCard  messages={messages}/>
+        <OffersSection  messages={messages}/>
       </Content>
     </DashboardLayout>
   );

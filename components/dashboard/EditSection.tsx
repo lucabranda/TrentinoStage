@@ -1,10 +1,8 @@
 "use client"
 import React from 'react';
 import { Card, Form, Input, Button } from 'antd';
-import { getMessages } from '@/utils/systemMessage';
 const {Item} = Form;
-export default async function EditSection({params}: any) {
-  const messages = await getMessages((await params).lang);  // Carica i messaggi in modo sincrono
+export default function EditSection({ messages }: { messages: any }) {
 
   return(
   <Card title="Edit Profile">

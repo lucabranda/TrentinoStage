@@ -49,6 +49,9 @@
     "signup-button-signup": "Registrati",
     "signup-button-signup-company": "Registrati come impresa",
 
-    "signup-password-mismatch": "Le password non corrispondono"
+    "signup-password-mismatch": "Le password non corrispondono",
+
+
+    "dashboard-search": "Cerca"
 
 }
