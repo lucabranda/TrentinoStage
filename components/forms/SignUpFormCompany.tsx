@@ -3,8 +3,8 @@
 
 import React from "react";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
-import { Form, Input, Space } from "antd";
-import { DefaultButton, LinkButton, PrimaryButton } from "../buttons/Buttons";
+import { Form, Input, Space, Typography } from "antd";
+import { DefaultButton, PrimaryButton } from "../buttons/Buttons";
 
 const SignUpFormCompany = ({ messages }: { messages: any }) => (
   <Form name="signup" layout="vertical">
@@ -28,7 +28,8 @@ const SignUpFormCompany = ({ messages }: { messages: any }) => (
       rules={[
         {
           message:
-            messages["signup-password-message"] || "Please input your Password!",
+            messages["signup-password-message"] ||
+            "Please input your Password!",
         },
       ]}
       label={<span>{messages["signup-password-label"]}</span>}
@@ -43,14 +44,17 @@ const SignUpFormCompany = ({ messages }: { messages: any }) => (
       rules={[
         {
           message:
-            messages["signup-confirm-message"] || "Please input your Password again!",
+            messages["signup-confirm-message"] ||
+            "Please input your Password again!",
         },
       ]}
       label={<span>{messages["signup-confirm-label"]}</span>}
     >
       <Input.Password
         prefix={<LockOutlined />}
-        placeholder={messages["signup-confirm-placeholder"] || "Confirm Password"}
+        placeholder={
+          messages["signup-confirm-placeholder"] || "Confirm Password"
+        }
       />
     </Form.Item>
     <Form.Item>
@@ -70,21 +74,13 @@ const SignUpFormCompany = ({ messages }: { messages: any }) => (
           {messages["signup-button-login"]}
         </DefaultButton>
       </Space>
-
-      <LinkButton
-        href="/signup"
-        style={{
-          display: "block",
-          margin: "24px auto 0",
-          textAlign: "center",
-          width: "100%",
-        }}
-      >
+    </Form.Item>
+    <Form.Item>
+      <Typography.Link href="/signup">
         {messages["signup-button-signup-user"]}
-      </LinkButton>
+      </Typography.Link>
     </Form.Item>
   </Form>
 );
 
 export default SignUpFormCompany;
-

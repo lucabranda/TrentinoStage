@@ -23,58 +23,31 @@ import { Link } from "@/components/Anchor";
 import { siteConfig } from "@/utils/config";
 import { getMessages } from "@/utils/systemMessage";
 import styles from "./page.module.css";
-import { PrimaryButton, DefaultButton, DashedButton, LinkButton } from "@/components/buttons/Buttons";
-import {Header, Footer, Content} from "@/components/Layout"
-import {Title, Paragraph} from "@/components/Typography"
+import {
+  PrimaryButton,
+  DefaultButton,
+  DashedButton,
+  LinkButton,
+} from "@/components/buttons/Buttons";
+import { Header, Footer, Content } from "@/components/Layout";
+import { Title, Paragraph } from "@/components/Typography";
 import LanguageSelector from "@/components/buttons/LanguageSelector";
+import HeaderHome from "@/components/HeaderHome";
 
-export default function Home({ params }: any) {
-  const messages = getMessages(params.lang);
-
-  const menuItems = [
-    {
-      key: "hero",
-      icon: <HomeOutlined />,
-      label: (
-        <Link href="#hero" title={undefined}>
-          {messages["landing-nav-1"]}
-        </Link>
-      ),
-    },
-    {
-      key: "services",
-      icon: <InboxOutlined />,
-      label: (
-        <Link href="#services" title={undefined}>
-          {messages["landing-nav-2"]}
-        </Link>
-      ),
-    },
-    {
-      key: "join",
-      icon: <UserAddOutlined />,
-      label: (
-        <Link href="#join" title={undefined}>
-          {messages["landing-nav-3"]}
-        </Link>
-      ),
-    },
-  ];
+export default async function Home({ params }: any) {
+  const messages = await getMessages((await params).lang);
 
   return (
     <Layout className={styles.page}>
-      <Header className={styles.header}>
-        <img src={logo.src} alt="logo" className={styles.logo} />
-        <Menu mode="horizontal" items={menuItems} className={styles.menu} />
-        <LanguageSelector />
-        <LinkButton href="/login" className={styles.loginButton}>
-          {messages["landing-button-login"]}
-        </LinkButton>
-      </Header>
+      <HeaderHome messages={messages} logo={logo} styles={styles} />
 
       <Content className={styles.main}>
         <section id="hero" className={styles.hero}>
-          <img src={logo.src} alt="Trentino Stage" className={styles.heroLogo} />
+          <img
+            src={logo.src}
+            alt="Trentino Stage"
+            className={styles.heroLogo}
+          />
           <Paragraph className={styles.heroSubtitle}>
             {messages["landing-paragraph-1"]}
           </Paragraph>
@@ -123,25 +96,29 @@ export default function Home({ params }: any) {
         <section id="join" className={styles.cta}>
           <Title level={3}>{messages["landing-title-signup"]}</Title>
           <Paragraph>{messages["landing-signup-description"]}</Paragraph>
-          <Space style={{ display: "flex", justifyContent: "center", width: "100%" }}>
+          <Space
+            style={{ display: "flex", justifyContent: "center", width: "100%" }}
+          >
             <PrimaryButton href="/signup" className={styles.ctaButton}>
-              <UserAddOutlined />{messages["landing-button-signup-user"]}
+              <UserAddOutlined />
+              {messages["landing-button-signup-user"]}
             </PrimaryButton>
             <DefaultButton href="/signup/company" className={styles.ctaButton}>
-              <RocketOutlined />{messages["landing-button-signup-company"]}
+              <RocketOutlined />
+              {messages["landing-button-signup-company"]}
             </DefaultButton>
           </Space>
         </section>
       </Content>
 
       <Footer className={styles.footer}>
-        <Title level={4}>{messages["landing-footer-title"]}</Title>
-        <Paragraph>{messages["landing-footer-description"]}</Paragraph>
-        <div>
+        <img src={logo.src} alt="Trentino Stage" className={styles.logo} />
+        <div className={styles.footerContent}>
+          <Title level={4}>{messages["landing-footer-title"]}</Title>
+          <Paragraph>{messages["landing-footer-description"]}</Paragraph>
           <Link href="/about" title={undefined}>
             {messages["footer-link-about"]}
-          </Link>{" "}
-          |{" "}
+          </Link>
           <Link href="/contact" title={undefined}>
             {messages["footer-link-contact"]}
           </Link>

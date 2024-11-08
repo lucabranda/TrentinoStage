@@ -2,13 +2,7 @@
 
 import React, { useState } from "react";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
-import {
-  Button,
-  Form,
-  Input,
-  Space,
-  message,
-} from "antd";
+import { Button, Form, Input, Space, message, Typography } from "antd";
 import { useRouter } from "next/navigation"; // For redirecting in Next.js
 import { setSessionToken } from "@/utils/cookie"; // Import session management utility
 import styles from "./signUpForm.module.css";
@@ -24,7 +18,9 @@ export default function SignUpForm({ messages }: { messages: any }) {
 
     // Verify password match
     if (password !== confirm) {
-      messageApi.error(messages["signup-password-mismatch"] || "Passwords do not match.");
+      messageApi.error(
+        messages["signup-password-mismatch"] || "Passwords do not match."
+      );
       return;
     }
 
@@ -44,7 +40,9 @@ export default function SignUpForm({ messages }: { messages: any }) {
 
       if (!response.ok) {
         const errorData = await response.json();
-        messageApi.error(errorData.error || messages["signup-error"] || "Registration error.");
+        messageApi.error(
+          errorData.error || messages["signup-error"] || "Registration error."
+        );
         return;
       }
 
@@ -56,16 +54,21 @@ export default function SignUpForm({ messages }: { messages: any }) {
         setSessionToken(data.token, false); // Default: session cookie (not "remember me")
 
         // Show success message
-        messageApi.success(messages["signup-success"] || "Registration successful!");
+        messageApi.success(
+          messages["signup-success"] || "Registration successful!"
+        );
 
         // Redirect to the dashboard
         router.push("/dashboard/user");
       } else {
-        messageApi.error(messages["signup-token-error"] || "Registration failed.");
+        messageApi.error(
+          messages["signup-token-error"] || "Registration failed."
+        );
       }
-
     } catch (error: any) {
-      messageApi.error(error.message || messages["signup-error"] || "Registration error.");
+      messageApi.error(
+        error.message || messages["signup-error"] || "Registration error."
+      );
     } finally {
       setLoading(false); // End loading state
     }
@@ -74,13 +77,20 @@ export default function SignUpForm({ messages }: { messages: any }) {
   return (
     <>
       {contextHolder} {/* Ant Design message holder */}
-      <Form name="signup" initialValues={{ remember: true }} layout="vertical" onFinish={handleSubmit}>
+      <Form
+        name="signup"
+        initialValues={{ remember: true }}
+        layout="vertical"
+        onFinish={handleSubmit}
+      >
         <Form.Item
           name="username"
           rules={[
             {
               required: true,
-              message: messages["signup-username-message"] || "Please input your Username!",
+              message:
+                messages["signup-username-message"] ||
+                "Please input your Username!",
             },
           ]}
           label={<span>{messages["signup-username-label"]}</span>}
@@ -95,7 +105,9 @@ export default function SignUpForm({ messages }: { messages: any }) {
           rules={[
             {
               required: true,
-              message: messages["signup-password-message"] || "Please input your Password!",
+              message:
+                messages["signup-password-message"] ||
+                "Please input your Password!",
             },
           ]}
           label={<span>{messages["signup-password-label"]}</span>}
@@ -110,14 +122,18 @@ export default function SignUpForm({ messages }: { messages: any }) {
           rules={[
             {
               required: true,
-              message: messages["signup-confirm-message"] || "Please confirm your Password!",
+              message:
+                messages["signup-confirm-message"] ||
+                "Please confirm your Password!",
             },
           ]}
           label={<span>{messages["signup-confirm-label"]}</span>}
         >
           <Input.Password
             prefix={<LockOutlined />}
-            placeholder={messages["signup-confirm-placeholder"] || "Confirm Password"}
+            placeholder={
+              messages["signup-confirm-placeholder"] || "Confirm Password"
+            }
           />
         </Form.Item>
 
@@ -141,6 +157,11 @@ export default function SignUpForm({ messages }: { messages: any }) {
               {messages["signup-button-login"]}
             </Button>
           </Space>
+        </Form.Item>
+        <Form.Item>
+          <Typography.Link href="/signup/company">
+            {messages["signup-button-signup-company"]}
+          </Typography.Link>
         </Form.Item>
       </Form>
     </>
