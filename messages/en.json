@@ -1,1 +1,22 @@
-{}
+{
+    "error-invalid-session": "Your session expired. Please login again.",
+    "error-profile-not-found": "Profile not found.",
+    "error-invalid-credentials": "The credentials you provided are invalid.",
+    "error-email-already-used": "The email you provided is already in use.",
+    "error-password-insufficient": "The password you provided is not strong enough.",
+    "error-invalid-invitation": "The invitation code you provided is invalid or expired.",
+    "error-profile-already-exists": "A profile for this account already exists.",
+    "error-name-not-provided": "Please provide a name.",
+    "error-surname-not-provided": "Please provide a surname.",
+    "error-email-not-provided": "Please provide an email.",
+    "error-email-invalid": "Please provide a valid email.",
+    "error-piva-required": "Please provide a VAT number.",
+    "error-cf-required": "Please provide a fiscal code.",
+    "error-sector-required": "Please provide a sector.",
+    "error-country-required": "Please provide a country.",
+    "error-region-required": "Please provide a region.",
+    "error-city-required": "Please provide a city.",
+    "error-postal-code-required": "Please provide a postal code.",
+    "error-street-required": "Please provide a street.",
+    "error-address-required": "Please provide an address."
+}

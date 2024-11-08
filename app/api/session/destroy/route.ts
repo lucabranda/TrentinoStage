@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { DBClient } from "@/utils/db"
+import { checkSessionToken } from "@/utils/session"
 
 // Removes the session token from the database
 
@@ -65,13 +66,13 @@ export async function POST(req: NextRequest) {
     if (contentType.includes("multipart/form-data")) {
         formData = await req.formData()
     } else {
-        return NextResponse.json({error: "Unsupported content type"}, { status: 405 })
+        return NextResponse.json({error: "Unsupported content type", code: "content-error"}, { status: 405 })
     }
 
     const token = formData.get("token") as string
 
-    if (!token) {
-        return NextResponse.json({error: "Token is missing"}, { status: 401 })
+    if (checkSessionToken(token) === null) {
+        return NextResponse.json({error: "Token is missing", code: "error-invalid-session"}, { status: 401 })
     }
 
     const db = new DBClient()

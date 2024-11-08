@@ -89,16 +89,16 @@ export async function POST(req: NextRequest) {
 
     // Check if the email is valid and not already in use
     if (!validatEmail(email)) {
-        return new NextResponse(JSON.stringify({error: "Email is invalid"}), { status: 401 })
+        return new NextResponse(JSON.stringify({error: "Email is invalid", code: "error-invalid-email"}), { status: 401 })
     }
     const existing = await accounts.findOne({email: email})
     if (existing !== null) {
-        return new NextResponse(JSON.stringify({error: "Email is already in use"}), { status: 401 })
+        return new NextResponse(JSON.stringify({error: "Email is already in use", code: "error-email-already-used"}), { status: 401 })
     }
 
     // Check if the password is valid
     if (!validatePassword(password)) {
-        return new NextResponse(JSON.stringify({error: "Password does not respect the minimum requirments"}), { status: 401 })
+        return new NextResponse(JSON.stringify({error: "Password does not respect the minimum requirments", code: "error-password-insufficent"}), { status: 401 })
     }
 
     // Create the account on the database
@@ -114,7 +114,7 @@ export async function POST(req: NextRequest) {
             const result = await accounts.insertOne({email: email, password: hash, profile_id: invite.profile_id, is_verified: false, last_modified_password: date})
             sessionToken = await createSessionToken(result.insertedId.toHexString())
         } else {
-            return new NextResponse(JSON.stringify({error: "Invalid invitation token"}), { status: 401 })
+            return new NextResponse(JSON.stringify({error: "Invalid invitation token", code: "error-invalid-invtation"}), { status: 401 })
         }
     } else {
         // register without an invitation token

@@ -52,6 +52,27 @@
     "signup-password-mismatch": "Le password non corrispondono",
 
 
-    "dashboard-search": "Cerca"
+    "dashboard-search": "Cerca",
+
+    "error-invalid-session": "La tua sessione è scaduta. Effettua nuovamente il login.",
+    "error-profile-not-found": "Profilo non trovato.",
+    "error-invalid-credentials": "Le credenziali fornite non sono valide.",
+    "error-email-already-used": "L'email fornita è già in uso.",
+    "error-password-insufficient": "La password fornita non è abbastanza sicura.",
+    "error-invalid-invitation": "Il codice di invito fornito non è valido o è scaduto.",
+    "error-profile-already-exists": "Un profilo per questo account esiste già.",
+    "error-name-not-provided": "Si prega di fornire un nome.",
+    "error-surname-not-provided": "Si prega di fornire un cognome.",
+    "error-email-not-provided": "Si prega di fornire un'email.",
+    "error-email-invalid": "Si prega di fornire un'email valida.",
+    "error-piva-required": "Si prega di fornire un numero di partita IVA.",
+    "error-cf-required": "Si prega di fornire un codice fiscale.",
+    "error-sector-required": "Si prega di fornire un settore.",
+    "error-country-required": "Si prega di fornire un paese.",
+    "error-region-required": "Si prega di fornire una regione.",
+    "error-city-required": "Si prega di fornire una città.",
+    "error-postal-code-required": "Si prega di fornire un codice postale.",
+    "error-street-required": "Si prega di fornire una via.",
+    "error-address-required": "Si prega di fornire un indirizzo."
 
 }

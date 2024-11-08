@@ -11,7 +11,7 @@ const db = new DBClient()
  * /api/session/create:
  *   post:
  *     summary: "Authenticate user and return session token"
- *     description: "This endpoint allows a user to log in with a username and password, receiving a session token upon successful authentication."
+ *     description: "This endpoint allows a user to log in with a email and password, receiving a session token upon successful authentication."
  *     tags: ["Session"]
  *     requestBody:
  *       required: true
@@ -20,9 +20,9 @@ const db = new DBClient()
  *           schema:
  *             type: object
  *             properties:
- *               username:
+ *               email:
  *                 type: string
- *                 description: "The user's username"
+ *                 description: "The user's email"
  *                 example: "john_doe"
  *               password:
  *                 type: string
@@ -65,7 +65,7 @@ export async function POST(req: NextRequest) {
       const jsonData = await req.json()
       formData = new Map(Object.entries(jsonData))
     } else {
-      return NextResponse.json({error: "Method is not allowed"}, { status: 405 })
+      return NextResponse.json({error: "Method is not allowed", code: "content-error"}, { status: 405 })
     }
 
     const email = formData.get("email") as string
@@ -76,12 +76,11 @@ export async function POST(req: NextRequest) {
     const accounts = db.selectCollection("accounts")
     const user = await accounts.findOne({email: email})
 
-    
     // Check if the password is correct
     
     if (!user || !await bcrypt.compare(password, user.password)) {
       // The email or password is incorrect
-      return NextResponse.json({error: "Invalid username or password"}, { status: 401 })
+      return NextResponse.json({error: "Invalid username or password", code: "error-invalid-credentials"}, { status: 401 })
     } 
     
     // The email and password are correct

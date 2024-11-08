@@ -55,7 +55,7 @@ export async function GET(req: NextRequest) {
     const accountId = await checkSessionToken(sessionToken)
 
     if (accountId === null) {
-        return NextResponse.json({error: "Invalid session token"}, { status: 401 })
+        return NextResponse.json({error: "Invalid session token", code: "error-invalid-session"}, { status: 401 })
     }
 
     const db = new DBClient()
@@ -73,7 +73,7 @@ export async function GET(req: NextRequest) {
     console.log(profileId)
 
     if (profileId === null) {
-        return NextResponse.json({error: "Profile not found"}, { status: 404 })
+        return NextResponse.json({error: "Profile not found", code: "error-profile-not-found"}, { status: 404 })
     }
 
     return NextResponse.json({profileId: profileId}, { status: 200 })

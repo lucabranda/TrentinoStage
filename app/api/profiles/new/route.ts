@@ -132,7 +132,7 @@ export async function POST(req: NextRequest) {
     if (contentType.includes("multipart/form-data")) {
         formData = await req.formData()
     } else {
-        return NextResponse.json({error: "Unsupported content type"}, { status: 405 })
+        return NextResponse.json({error: "Unsupported content type", code: "error-invalid-request"}, { status: 405 })
     }
 
     const sessionToken = formData.get("sessionToken") as string
@@ -155,53 +155,57 @@ export async function POST(req: NextRequest) {
 
     // Check if the session token is valid
     if (!profileId) {
-        return NextResponse.json({error: "Invalid session token"}, { status: 401 })
+        return NextResponse.json({error: "Invalid session token", code: "error-invalid-session"}, { status: 401 })
     }
     // Check if the user doesn't have a profile already
     const db = new DBClient()
     const accounts = db.selectCollection("accounts")
 
     const existingProfile = await accounts.findOne({_id: ObjectId.createFromHexString(profileId), profile_id: null})
-    if (existingProfile) {
-        return NextResponse.json({error: "User already has a profile"}, { status: 401 })
+    if (!existingProfile) {
+        return NextResponse.json({error: "User already has a profile", code: "error-profile-already-exists"}, { status: 401 })
     }
 
 
     // Check all the inputs 
     if (name === null) {
-        return NextResponse.json({error: "Name is required"}, { status: 401 })
+        return NextResponse.json({error: "Name is required", code: "error-name-not-provided"}, { status: 401 })
     }
     if (identifier === null) {
-        return NextResponse.json({error: "CF/P.iva is required"}, { status: 401 })
+        if (isCompany) {
+            return NextResponse.json({error: "P.iva is required", code: "error-piva-required"}, { status: 401 })
+        } else {
+            return NextResponse.json({error: "CF is required", code: "error-cf-required"}, { status: 401 })
+        }
     }
     if (sector === null) {
-        return NextResponse.json({error: "Sector is required"}, { status: 401 })
+        return NextResponse.json({error: "Sector is required", code: "error-sector-required"}, { status: 401 })
     }
 
     // If the user is a company check the presence of an address, sector and the correctness of the identifier
     if (isCompany) {
         if (country === null) {
-            return NextResponse.json({error: "Country is required"}, { status: 401 })
+            return NextResponse.json({error: "Country is required", code: "error-country-required"}, { status: 401 })
         }
         if (region === null) {
-            return NextResponse.json({error: "Region is required"}, { status: 401 })
+            return NextResponse.json({error: "Region is required", code: "error-region-required"}, { status: 401 })
         }
         if (city === null) {
-            return NextResponse.json({error: "City is required"}, { status: 401 })
+            return NextResponse.json({error: "City is required", code: "error-city-required"}, { status: 401 })
         }
         if (postalCode === null) {
-            return NextResponse.json({error: "Postal code is required"}, { status: 401 })
+            return NextResponse.json({error: "Postal code is required", code: "error-postal-code-required"}, { status: 401 })
         }
         if (street === null) {
-            return NextResponse.json({error: "Street is required"}, { status: 401 })
+            return NextResponse.json({error: "Street is required", code: "error-street-required"}, { status: 401 })
         }
         if (address === null) {
-            return NextResponse.json({error: "Address is required"}, { status: 401 })
+            return NextResponse.json({error: "Address is required", code: "error-address-required"}, { status: 401 })
         }
         // TODO: Check the correctness of the P.iva
     } else {
         if (surname === null) {
-            return NextResponse.json({error: "Surname is required"}, { status: 401 })
+            return NextResponse.json({error: "Surname is required", code: "error-surname-required"}, { status: 401 })
         }
         // TODO: Check the correctness of the fiscal code
     }
