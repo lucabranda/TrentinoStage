@@ -68,8 +68,6 @@ import { createSessionToken } from "@/utils/session"
  *                   description: "Error message explaining the reason for failure."
  *                   example: "Unsupported content type"
  */
-
-
 export async function POST(req: NextRequest) {
 
     let formData
