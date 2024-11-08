@@ -41,21 +41,23 @@
   justify-content: space-between;
   align-items: center;
   padding: 16px 24px;
-
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.1) !important;
   position: fixed;
   top: 0;
   right: 0;
   z-index: 10;
 }
 
-.logo {
-  height: 40px;
-  margin-right: 16px;
-}
 
 .search {
   flex: 1;
+  margin-right: 16px;
+  background: var(--gray-alpha-200);
+  padding: 8px 16px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  width: 50% !important;
 }
 
 .mainContent {

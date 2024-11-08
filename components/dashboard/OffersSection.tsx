@@ -2,11 +2,8 @@
 "use client"
 import React from 'react';
 import { Card, List } from 'antd';
-import { getMessages } from '@/utils/systemMessage';
 const {Item} = List;
-export default async function OffersSection({params}: any) {
-  const messages = await getMessages((await params).lang);  // Carica i messaggi in modo sincrono
-
+export default  function OffersSection({ messages }: { messages: any }) {
   return(
   <Card title="Company Offers">
     <List

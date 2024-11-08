@@ -10,10 +10,11 @@ interface BaseButtonProps {
   style?: React.CSSProperties;
   htmlType?: "submit" | "reset" | "button";
   type?: "primary" | "default" | "link" | "dashed";
+  loading?: boolean;
 }
 
 const BaseButton: React.FC<BaseButtonProps> = (props) => {
-  const { className, children, href, onClick,style, htmlType, type } = props;
+  const { className, children, href, onClick,style, htmlType, type, loading } = props;
   const buttonStyle: React.CSSProperties = { ...style };
 
   return (
@@ -24,6 +25,7 @@ const BaseButton: React.FC<BaseButtonProps> = (props) => {
       href={href}
       onClick={onClick}
       htmlType={htmlType}
+      loading={loading}
     >
       {children}
     </Button>

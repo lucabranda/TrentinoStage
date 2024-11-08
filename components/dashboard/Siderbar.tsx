@@ -1,9 +1,7 @@
 import React from 'react';
 import { Menu } from 'antd';
 import { TeamOutlined, UserOutlined } from '@ant-design/icons';
-import { getMessages } from '@/utils/systemMessage';
-export default async function Sidebar({params}: any) {
-  const messages = await getMessages((await params).lang);  
+export default function Sidebar({ messages }: { messages: any }) {
   const menuItems = [
     {
       key: "user",

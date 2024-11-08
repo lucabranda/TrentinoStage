@@ -10,10 +10,10 @@ import {Content} from '@/components/Layout';
 export default async function UserPage({params}: any) {
   const messages = await getMessages((await params).lang);
   return(
-    <DashboardLayout params={params}>
+    <DashboardLayout messages={messages}>
       <Content>
-        <UserCard params={params} />
-        <EditSection params={params}/>
+        <UserCard  messages={messages}/>
+        <EditSection messages={messages}/>
       </Content>
     </DashboardLayout>
   );
