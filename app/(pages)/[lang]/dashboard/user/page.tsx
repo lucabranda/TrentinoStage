@@ -4,17 +4,15 @@ import UserCard from '@/components/dashboard/UserCard';
 import EditSection from '@/components/dashboard/EditSection';
 import { getMessages } from '@/utils/systemMessage';
 import styles from './dashboard.module.css';
-import  DashboardLayout from  '../page';
+import  DashboardLayout from  '../layout';
 import {Content} from '@/components/Layout';
 
 export default async function UserPage({params}: any) {
   const messages = await getMessages((await params).lang);
   return(
-    <DashboardLayout messages={messages}>
       <Content>
         <UserCard  messages={messages}/>
         <EditSection messages={messages}/>
       </Content>
-    </DashboardLayout>
   );
 }
