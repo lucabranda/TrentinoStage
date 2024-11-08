@@ -47,8 +47,10 @@
     "signup-confirm-placeholder": "Conferma la tua password",
     "signup-button-login": "Hai un account?",
     "signup-button-signup": "Registrati",
+    "signup-company-label": "Nome impresa",
+    "signup-company-placeholder": "Inserisci il nome della tua impresa",
     "signup-button-signup-company": "Registrati come impresa",
-
+    "signup-button-signup-user": "Registrati come utente",
     "signup-password-mismatch": "Le password non corrispondono",
 
 

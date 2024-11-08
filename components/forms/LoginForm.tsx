@@ -9,10 +9,11 @@ import {
   Input,
   Space,
   message,
+  Typography,
 } from "antd";
-import { useRouter } from "next/navigation";  // For redirecting in Next.js
+import { useRouter } from "next/navigation"; // For redirecting in Next.js
 import styles from "./loginForm.module.css";
-import { setSessionToken } from "@/utils/cookie";  // Import utility
+import { setSessionToken } from "@/utils/cookie"; // Import utility
 
 export default function LogInForm({ messages }: { messages: any }) {
   const [loading, setLoading] = useState(false); // Loading state
@@ -39,7 +40,9 @@ export default function LogInForm({ messages }: { messages: any }) {
 
       if (!response.ok) {
         const errorData = await response.json();
-        messageApi.error(errorData.error || messages["login-error"] || "Login error.");
+        messageApi.error(
+          errorData.error || messages["login-error"] || "Login error."
+        );
         return;
       }
 
@@ -51,16 +54,19 @@ export default function LogInForm({ messages }: { messages: any }) {
         setSessionToken(data.token, remember);
 
         // Show success message
-        messageApi.success(data.message || messages["login-success"] || "Login successful!");
+        messageApi.success(
+          data.message || messages["login-success"] || "Login successful!"
+        );
 
         // Redirect to dashboard
         router.push("/dashboard/user");
       } else {
         messageApi.error(messages["login-token-error"] || "Login failed.");
       }
-
     } catch (error: any) {
-      messageApi.error(error.message || messages["login-error"] || "Login error.");
+      messageApi.error(
+        error.message || messages["login-error"] || "Login error."
+      );
     } finally {
       setLoading(false); // End loading state
     }
@@ -69,13 +75,20 @@ export default function LogInForm({ messages }: { messages: any }) {
   return (
     <>
       {contextHolder} {/* Ant Design message holder */}
-      <Form name="login" initialValues={{ remember: true }} layout="vertical" onFinish={handleSubmit}>
+      <Form
+        name="login"
+        initialValues={{ remember: true }}
+        layout="vertical"
+        onFinish={handleSubmit}
+      >
         <Form.Item
           name="username"
           rules={[
             {
               required: true,
-              message: messages["login-username-message"] || "Please input your Username!",
+              message:
+                messages["login-username-message"] ||
+                "Please input your Username!",
             },
           ]}
           label={<span>{messages["login-username-label"]}</span>}
@@ -90,7 +103,9 @@ export default function LogInForm({ messages }: { messages: any }) {
           rules={[
             {
               required: true,
-              message: messages["login-password-message"] || "Please input your Password!",
+              message:
+                messages["login-password-message"] ||
+                "Please input your Password!",
             },
           ]}
           label={<span>{messages["login-password-label"]}</span>}
@@ -100,9 +115,6 @@ export default function LogInForm({ messages }: { messages: any }) {
             placeholder={messages["login-password-placeholder"] || "Password"}
           />
         </Form.Item>
-        <a href="#" className={styles.loginFormForgot}>
-          {messages["login-forgot-password"]}
-        </a>
         <Form.Item>
           <Checkbox name="remember">{messages["login-remember-me"]}</Checkbox>
         </Form.Item>
@@ -127,6 +139,11 @@ export default function LogInForm({ messages }: { messages: any }) {
               {messages["login-button-signup"]}
             </Button>
           </Space>
+        </Form.Item>
+        <Form.Item>
+          <Typography.Link href="#" className={styles.loginFormForgot}>
+            {messages["login-forgot-password"]}
+          </Typography.Link>
         </Form.Item>
       </Form>
     </>

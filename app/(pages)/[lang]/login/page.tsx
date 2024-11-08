@@ -10,17 +10,16 @@ import {
   Card,
   Skeleton,
 } from "antd";
-import {Header, Content} from "@/components/Layout";
-import {Title, Paragraph} from "@/components/Typography"
+import { Header, Content } from "@/components/Layout";
+import { Title, Paragraph } from "@/components/Typography";
 import { DigitalIdentityButtons } from "@/components/buttons/IdButtons";
 import { getMessages } from "@/utils/systemMessage";
 import Image from "next/image";
-import logo from "@/public/logo.svg"; 
+import logo from "@/public/logo.svg";
 import styles from "./login.module.css";
-import LogInForm from "@/components/forms/LoginForm"
+import LogInForm from "@/components/forms/LoginForm";
 
-export default async function LogIn({params} : any) {
- 
+export default async function LogIn({ params }: any) {
   const msgs = await getMessages((await params).lang);
 
   return (
@@ -45,12 +44,9 @@ export default async function LogIn({params} : any) {
             title={msgs["login-title"]}
             bordered={false}
           >
-            <Paragraph className={styles.loginSubtitle} type="secondary">
-              {msgs["login-subtitle"]}
-            </Paragraph>
             <LogInForm messages={msgs} />
             <Space direction="vertical" style={{ width: "100%" }}>
-              <DigitalIdentityButtons lang={(await params).lang}/>
+              <DigitalIdentityButtons lang={(await params).lang} />
             </Space>
           </Card>
         </Content>

@@ -3,7 +3,11 @@ import styles from "./dashboard.module.css";
 import Sidebar from "@/components/dashboard/Siderbar";
 import { Header, Sider, Content, Footer } from "@/components/Layout";
 import Search from "antd/es/input/Search";
-export default function DashboardLayout({ children, messages }: { children: any, messages: any }) {
+import {getMessages} from "@/utils/systemMessage"
+export default async function DashboardLayout({ children, params }: { children: any, params: any}) {
+
+  const messages = await getMessages((await params).locale);
+
   return (
     <Layout className={styles.dashboard}>
       <Sider width="25%" className={styles.sidebar}>
