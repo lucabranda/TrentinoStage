@@ -29,9 +29,8 @@ import {
   DashedButton,
   LinkButton,
 } from "@/components/buttons/Buttons";
-import { Header, Footer, Content } from "@/components/Layout";
+import { Header, Footer, Content } from "@/components/Layout/Layout";
 import { Title, Paragraph } from "@/components/Typography";
-import LanguageSelector from "@/components/buttons/LanguageSelector";
 import HeaderHome from "@/components/HeaderHome";
 
 export default async function Home({ params }: any) {

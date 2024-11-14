@@ -33,20 +33,3 @@ export default function RootLayout({ children }: React.PropsWithChildren) {
     </html>
   );
 }
-
-// export default function RootLayout({
-//   children,
-// }: Readonly<{
-//   children: React.ReactNode;
-// }>) {
-//   return (
-//     <html lang="it">
-//       <head>
-//         <link rel="icon" href={favicon.src} sizes="" />
-//       </head>
-//       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-//         {children}
-//       </body>
-//     </html>
-//   );
-// }

@@ -10,7 +10,7 @@ import {
   Card,
   Skeleton,
 } from "antd";
-import { Header, Content } from "@/components/Layout";
+import { Header, Content } from "@/components/Layout/Layout";
 import { Title, Paragraph } from "@/components/Typography";
 import { DigitalIdentityButtons } from "@/components/buttons/IdButtons";
 import { getMessages } from "@/utils/systemMessage";

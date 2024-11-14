@@ -193,10 +193,7 @@
     padding: 10px 24px;
   }
 
-  .footer {
-    flex-wrap: wrap;
-    gap: 12px;
-  }
+ 
   .loginButton {
     display: none !important;
   }

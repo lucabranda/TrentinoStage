@@ -6,7 +6,7 @@ import { Skeleton, Layout, Card, Typography } from "antd";
 import styles from "../signup.module.css"; // Stili della pagina
 import Image from "next/image";
 import logo from "@/public/logo.svg";
-import { Header, Content } from "@/components/Layout";
+import { Header, Content } from "@/components/Layout/Layout";
 import { Paragraph } from "@/components/Typography";
 import SignUpFormCompany from "@/components/forms/SignUpFormCompany";
 

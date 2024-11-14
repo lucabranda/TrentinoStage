@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
-import { Layout, Menu } from "antd";
-import { Header } from "./Layout";
+import {  Menu } from "antd";
+import { Header } from "./Layout/Layout";
 import {
   HomeOutlined,
   InboxOutlined,
@@ -10,7 +10,6 @@ import {
 import Link from "next/link";
 import { LinkButton } from "./buttons/Buttons";
 import LanguageSelector from "./buttons/LanguageSelector";
-import { FaStaylinked } from "react-icons/fa";
 
 interface HeaderHomeProps {
   messages: {
