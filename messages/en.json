@@ -1,4 +1,70 @@
 {
+    
+    "landing-button-login": "Log in",
+    "landing-button-dashboard": "Dashboard",
+    "landing-nav-1": "Home",
+    "landing-nav-2": "Servicies",
+    "landing-nav-3": "Join us",
+    "landing-paragraph-1": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum",
+    "landing-button-signup": "Sign up",
+    "landing-title-services": "Services",
+    "landing-paragraph-2": "Discover our services",
+
+    "landing-service-1-title": "Funzionalità 1",
+    "landing-service-2-title": "Funzionalità 2",
+    "landing-service-3-title": "Funzionalità 3",
+    "landing-service-1-description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum",
+    "landing-service-2-description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum",
+    "landing-service-3-description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum",
+    "landing-title-signup": "Join us",
+    "landing-signup-description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum", 
+    "landing-button-signup-user": "Sign up as user",
+    "landing-button-signup-company": "Sign up as company",
+    "landing-footer-title": "We are glad to have you on board!",
+    "landing-footer-description":"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt",
+ 
+    "login-title": "Log in",
+    "login-subtitle": "Insert your credentials",
+    "login-username-label": "Username",
+    "login-username-placeholder": "Insert your username",
+    "login-password-label": "Password",
+    "login-password-placeholder": "Insert your password",
+    "login-forgot-password": "Forgotten password?",
+    "login-remember-me": "Remenber me",
+    "login-button-login": "Log in",
+    "login-button-signup": "Sign up",
+    "login-spid": "Entra con SPID",
+    "login-cie": "Entra con CIE",
+
+    "signup-title": "Sign up as user",
+    "signup-title-company": "Sign up as company",
+    "signup-subtitle": "Insert your data",
+    "signup-username-label": "Username",
+    "signup-username-placeholder": "Insert your username (email)" ,
+    "signup-password-label": "Password",
+    "signup-password-placeholder": "Insert your password",
+    "signup-confirm-message": "Confirm password",
+    "signup-confirm-label": "Confirm your password",
+    "signup-confirm-placeholder": "Confirm your password",
+    "signup-button-login": "Have you already an account?",
+    "signup-button-signup": "Sign up",
+    "signup-company-label": "Company name",
+    "signup-company-placeholder": "Insert your company name",
+    "signup-button-signup-company": "Sign up as company",
+    "signup-button-signup-user": "Sign up as user",
+    "signup-password-mismatch": "Passwords do not match",
+
+
+    "dashboard-search": "Search",
+    "dahsboard-title": "Dashboard",
+
+    
+    
+    
+    
+    
+    
+    
     "error-invalid-session": "Your session expired. Please login again.",
     "error-profile-not-found": "Profile not found.",
     "error-invalid-credentials": "The credentials you provided are invalid.",

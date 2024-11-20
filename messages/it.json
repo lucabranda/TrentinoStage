@@ -39,7 +39,7 @@
     "signup-title-company": "Registrati come impresa",
     "signup-subtitle": "Inserisci i tuoi dati",
     "signup-username-label": "Username",
-    "signup-username-placeholder": "Inserisci il tuo username",
+    "signup-username-placeholder": "Inserisci il tuo username (email)",
     "signup-password-label": "Password",
     "signup-password-placeholder": "Inserisci la tua password",
     "signup-confirm-message": "Conferma password",
@@ -55,6 +55,7 @@
 
 
     "dashboard-search": "Cerca",
+    "dahsboard-title": "Dashboard",
 
     "error-invalid-session": "La tua sessione è scaduta. Effettua nuovamente il login.",
     "error-profile-not-found": "Profilo non trovato.",

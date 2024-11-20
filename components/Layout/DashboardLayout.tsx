@@ -3,13 +3,14 @@ import { Header, Sider, Content, Footer } from "./Layout";
 import Search from "antd/es/input/Search";
 import { getMessages } from "@/utils/systemMessage";
 import { HomeOutlined } from "@ant-design/icons";
-import logo from '@/public/logo.svg';
 import styles from "./dashboard.module.css";
-import {Link} from "@/components/Typography";
+import { Link, Title } from "@/components/Typography";
+import LanguageSelector from "@/components/buttons/LanguageSelector";
+import logo from "@/public/logo.svg";
 export default async function DashboardLayout({
   children,
   params,
-  itemsSidebar,   // Receive itemsSidebar here
+  itemsSidebar, // Receive itemsSidebar here
 }: {
   children: React.ReactNode;
   params: any;
@@ -19,23 +20,28 @@ export default async function DashboardLayout({
 
   return (
     <Layout className={styles.dashboard}>
-      <Sider width="25%" className={styles.sidebar}>
-        <Menu mode="inline" items={itemsSidebar} style={{ height: '100%', borderRight: 0 }} />
-        <img src={logo.src} alt="Trentino Stage" className="logo" style={{ height: "50px", filter: "invert(1)" }} />
+      <Sider width="20%" className={styles.sidebar}>
+        <Menu mode="inline" items={itemsSidebar} className={styles.menu} />
+        <img src={logo.src} alt="Trentino Stage" className={styles.logo} />
       </Sider>
       <Layout>
         <Header className={styles.header}>
-          <Search className={styles.search} placeholder={messages["dashboard-search"]} />
+          <Search
+            className={styles.search}
+            placeholder={messages["dashboard-search"]}
+          />
+          <LanguageSelector />
           <Link href="/" className={styles.homeLink}>
             <HomeOutlined />
           </Link>
         </Header>
 
-        <Content className={styles.mainContent}>{children}</Content>
-
-        <Footer className={styles.footer}>
-          {messages["landing-footer-description"]}
-        </Footer>
+        <Content className={styles.mainContent}>
+          <div className={styles.dataContent}>{children}</div>
+          <Footer className={styles.footer}>
+            {messages["landing-footer-description"]}
+          </Footer>
+        </Content>
       </Layout>
     </Layout>
   );
