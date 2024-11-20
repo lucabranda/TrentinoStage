@@ -26,8 +26,16 @@
 }
 
 .sidebar {
-  min-height: 100vh !important;
-  background: #fff !important;
+  background:#fff;
+  padding: 16px 0;
+  height: 100%;
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 25%;
+  height: 100vh;
+  margin: 0;
+  
 }
 
 .header {

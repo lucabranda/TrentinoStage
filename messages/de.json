@@ -1,3 +1,88 @@
 {
-    "landing-button-login": "Anmelden"
+    
+    "landing-button-login": "Anmelden",
+    "landing-button-dashboard": "Dashboard",
+    "landing-nav-1": "Home",
+    "landing-nav-2": "Dienstleistungen",
+    "landing-nav-3": "Mitmachen",
+    "landing-paragraph-1": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum",
+    "landing-button-signup": "Anmelden",
+    "landing-title-services": "Dienstleistungen",
+    "landing-paragraph-2": "Entdecken Sie unsere Dienstleistungen",
+
+    "landing-service-1-title": "Funzionalità 1",
+    "landing-service-2-title": "Funzionalità 2",
+    "landing-service-3-title": "Funzionalità 3",
+    "landing-service-1-description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum",
+    "landing-service-2-description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum",
+    "landing-service-3-description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum",
+    "landing-title-signup": "Mitmachen",
+    "landing-signup-description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum", 
+    "landing-button-signup-user": "Anmelden als Benutzer",
+    "landing-button-signup-company": "Anmelden als Unternehmen",
+    "landing-footer-title": "Wir freuen uns, Sie an Bord zu haben!",
+    "landing-footer-description":"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt",
+ 
+    "login-title": "Anmelden",
+    "login-subtitle": "Geben Sie Ihre Anmeldedaten ein",
+    "login-username-label": "Benutzername",
+    "login-username-placeholder": "Geben Sie Ihren Benutzernamen ein",
+    "login-password-label": "Passwort",
+    "login-password-placeholder": "Geben Sie Ihr Passwort ein",
+    "login-forgot-password": "Passwort vergessen?",
+    "login-remember-me": "Erinnere mich",
+    "login-button-login": "Anmelden",
+    "login-button-signup": "Anmelden",
+    "login-spid": "Mit SPID anmelden",
+    "login-cie": "Mit CIE anmelden",
+
+    "signup-title": "Anmelden als Benutzer",
+    "signup-title-company": "Anmelden als Unternehmen",
+    "signup-subtitle": "Geben Sie Ihre Daten ein",
+    "signup-username-label": "Benutzername",
+    "signup-username-placeholder": "Geben Sie Ihren Benutzernamen ein",
+    "signup-password-label": "Passwort",
+    "signup-password-placeholder": "Geben Sie Ihr Passwort ein",
+    "signup-confirm-message": "Passwort bestaetigen",
+    "signup-confirm-label": "Bestaetigen Sie Ihr Passwort",
+    "signup-confirm-placeholder": "Bestaetigen Sie Ihr Passwort",
+    "signup-button-login": "Jetzt Anmelden?",
+    "signup-button-signup": "Anmelden",
+    "signup-company-label": "Unternehmensname",
+    "signup-company-placeholder": "Geben Sie Ihren Unternehmensnamen ein",
+    "signup-button-signup-company": "Anmelden als Unternehmen",
+    "signup-button-signup-user": "Anmelden als Benutzer",
+    "signup-password-mismatch": "Passwoerter stimmen nicht ueberein",
+
+
+    "dashboard-search": "Suchen",
+
+    
+    
+    
+    
+    
+    
+    
+    "error-invalid-session": "Ihre Sitzung ist abgelaufen. Bitte melden Sie sich erneut an.",
+    "error-profile-not-found": "Profil nicht gefunden.",
+    "error-invalid-credentials": "Die von Ihnen angegebenen Zugangsdaten sind ungltig.",
+    "error-email-already-used": "Die von Ihnen angegebene E-Mail-Adresse wird bereits verwendet.",
+    "error-password-insufficient": "Das von Ihnen angegebene Passwort ist nicht stark genug.",
+    "error-invalid-invitation": "Der von Ihnen angegebene Einladungscode ist ungltig oder abgelaufen.",
+    "error-profile-already-exists": "Ein Profil fr Ihr Konto existiert bereits.",
+    "error-name-not-provided": "Bitte geben Sie einen Namen an.",
+    "error-surname-not-provided": "Bitte geben Sie einen Nachnamen an.",
+    "error-email-not-provided": "Bitte geben Sie eine E-Mail-Adresse an.",
+    "error-email-invalid": "Bitte geben Sie eine gltige E-Mail-Adresse an.",
+    "error-piva-required": "Bitte geben Sie eine Umsatzsteuer-Identifikationsnummer an.",
+    "error-cf-required": "Bitte geben Sie eine Steueridentifikationsnummer an.",
+    "error-sector-required": "Bitte geben Sie einen Sektor an.",
+    "error-country-required": "Bitte geben Sie ein Land an.",
+    "error-region-required": "Bitte geben Sie eine Region an.",
+    "error-city-required": "Bitte geben Sie eine Stadt an.",
+    "error-postal-code-required": "Bitte geben Sie eine Postleitzahl an.",
+    "error-street-required": "Bitte geben Sie eine Strae an.",
+    "error-address-required": "Bitte geben Sie eine Adresse an."
 }
+
