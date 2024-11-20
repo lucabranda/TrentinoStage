@@ -40,7 +40,7 @@
     "signup-title-company": "Sign up as company",
     "signup-subtitle": "Insert your data",
     "signup-username-label": "Username",
-    "signup-username-placeholder": "Insert your username",
+    "signup-username-placeholder": "Insert your username (email)" ,
     "signup-password-label": "Password",
     "signup-password-placeholder": "Insert your password",
     "signup-confirm-message": "Confirm password",
@@ -56,6 +56,7 @@
 
 
     "dashboard-search": "Search",
+    "dahsboard-title": "Dashboard",
 
     
     

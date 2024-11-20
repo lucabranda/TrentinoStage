@@ -40,7 +40,7 @@
     "signup-title-company": "Anmelden als Unternehmen",
     "signup-subtitle": "Geben Sie Ihre Daten ein",
     "signup-username-label": "Benutzername",
-    "signup-username-placeholder": "Geben Sie Ihren Benutzernamen ein",
+    "signup-username-placeholder": "Geben Sie Ihren Benutzernamen ein (email)",
     "signup-password-label": "Passwort",
     "signup-password-placeholder": "Geben Sie Ihr Passwort ein",
     "signup-confirm-message": "Passwort bestaetigen",

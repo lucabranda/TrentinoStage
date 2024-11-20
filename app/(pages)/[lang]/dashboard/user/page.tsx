@@ -45,7 +45,7 @@ export default async function UserPage({params}: any) {
            {messages[""] || ""}
            </>
          ),
-       },
+       }
      ];
   return(
     <DashboardLayout params={params} itemsSidebar={items}>
