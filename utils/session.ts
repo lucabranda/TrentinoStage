@@ -1,44 +1,52 @@
 import { loadEnvConfig } from "@next/env"
-import { DBClient } from "./db"
 import crypto from "crypto"
 import { sessionConfig } from "./config"
+
+import connectDB from "./db"
+import auth_tokens from "./model/auth_tokens"
 
 const projectDir = process.cwd()
 loadEnvConfig(projectDir)
 
 const tokenDuration = sessionConfig.duration * 24 * 60 * 60
-const db = new DBClient()
+
 
 // Functions to manage the session
 
 export async function checkSessionToken(token: string) {
     // Check if the token is valid and return the user id
-    const sessions = db.selectCollection("auth_tokens")
+ 
+    await connectDB()
 
-    const session = await sessions.findOne({token: token, generation_time: {$lt: new Date(new Date().getTime() + tokenDuration).toISOString()}})
+    const sess = await auth_tokens.findOne({token: token, generation_time: {$lt: new Date(new Date().getTime() + tokenDuration).toISOString()}})
 
-    if (!session) {
+    if (!sess) {
         return null
-    } 
-    return session.user_id
+    }
+
+    return sess.user_id
 }
 
 export async function checkExpiredTokens(uid: string) {
     // Check if the user has any expired tokens and remove them
 
-    const sessions = db.selectCollection("auth_tokens")
+    await connectDB()
 
-    await sessions.deleteMany({user_id: uid, generation_time: {$lt: new Date(new Date().getTime() + tokenDuration).toISOString()}})
+    await auth_tokens.deleteMany({user_id: uid, generation_time: {$lt: new Date(new Date().getTime() - tokenDuration).toISOString()}})
 }
 
 export async function createSessionToken(uid: string) {
     // Create a new session token for the user
 
-    checkExpiredTokens(uid)
+    const promise = checkExpiredTokens(uid)
 
-    const sessions = db.selectCollection("auth_tokens")
-    const token = crypto.randomBytes(64).toString("hex")
+    await connectDB()
+
+    const token = crypto.randomBytes(32).toString("hex")
     const date = new Date().toISOString()
-    await sessions.insertOne({user_id: uid, generation_time: date ,token: token})
+    
+    const session = await auth_tokens.create({user_id: uid, generation_time: date ,token: token})
+    await session.save()
+    await promise
     return token
 }

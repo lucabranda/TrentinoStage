@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from "next/server"
-import { DBClient } from "@/utils/db"
 import { checkSessionToken } from "@/utils/session"
+
+import connectDB from "@/utils/db"
+import auth_tokens from "@/utils/model/auth_tokens"
+
 
 // Removes the session token from the database
 
@@ -75,10 +78,13 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({error: "Token is missing", code: "error-invalid-session"}, { status: 401 })
     }
 
-    const db = new DBClient()
-    const sessions = db.selectCollection("auth_tokens")
+    await connectDB()
 
-    await sessions.deleteOne({token: token})
+    const res = await auth_tokens.deleteOne({token: token})
+
+    if (res.deletedCount === 0) {
+        return NextResponse.json({error: "Session couldn't be destroyed", code: "error-invalid-session"}, { status: 401 })
+    }
 
     return NextResponse.json({result: "Session destroyed"}, { status: 200 })
 }

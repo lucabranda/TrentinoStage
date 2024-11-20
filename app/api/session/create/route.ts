@@ -1,9 +1,10 @@
 import { NextResponse, NextRequest } from "next/server"
-import { DBClient } from "@/utils/db"
 import { createSessionToken } from "@/utils/session"
 import bcrypt from "bcrypt"
 
-const db = new DBClient()
+import connectDB from "@/utils/db"
+import accounts from "@/utils/model/accounts"
+
 
 
 /**
@@ -58,40 +59,34 @@ export async function POST(req: NextRequest) {
   let formData
   const contentType = req.headers.get("content-type") ?? ""
 
-  try {
-    if (contentType.includes("multipart/form-data")) {
+
+  if (contentType.includes("multipart/form-data")) {
       formData = await req.formData()
-    } else if (contentType.includes("application/json")) {
+  } else if (contentType.includes("application/json")) {
       const jsonData = await req.json()
       formData = new Map(Object.entries(jsonData))
-    } else {
+  } else {
       return NextResponse.json({error: "Method is not allowed", code: "content-error"}, { status: 405 })
-    }
+  }
 
-    const email = formData.get("email") as string
-    const password = formData.get("password") as string
+  const email = formData.get("email") as String
+  const password = formData.get("password") as String
 
-    // Get the user id for the email
-    
-    const accounts = db.selectCollection("accounts")
-    const user = await accounts.findOne({email: email})
+  // Get the user id for the email
+  const db = await connectDB()
 
-    // Check if the password is correct
-    
-    if (!user || !await bcrypt.compare(password, user.password)) {
+  console.log(email)
+
+  const user = await accounts.findOne({email: email})
+
+  console.log(user)
+  // Check if the password is correct
+
+  if (!user || !await bcrypt.compare(password as string, user.password as string)) {
       // The email or password is incorrect
       return NextResponse.json({error: "Invalid username or password", code: "error-invalid-credentials"}, { status: 401 })
-    } 
-    
-    // The email and password are correct
-    // Generate a session token
-
-    const token = createSessionToken(user._id.toHexString())
-
-    return NextResponse.json({token: await token}, { status: 200 })
-
-  } catch (e) {
-    console.error(e);
-    return NextResponse.json({error: "Error"}, { status: 500 })
   }
+
+  return NextResponse.json({token: await createSessionToken(user._id.toHexString())}, { status: 200 })
+
 }

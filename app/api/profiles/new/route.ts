@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { DBClient } from '@/utils/db'
 import { checkSessionToken } from '@/utils/session'
 import { ObjectId } from 'mongodb'
+
+import connectDB from '@/utils/db'
+import accounts from '@/utils/model/accounts'
+import profiles from '@/utils/model/profiles'
 
 /**
  * @swagger
@@ -158,8 +161,6 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({error: "Invalid session token", code: "error-invalid-session"}, { status: 401 })
     }
     // Check if the user doesn't have a profile already
-    const db = new DBClient()
-    const accounts = db.selectCollection("accounts")
 
     const existingProfile = await accounts.findOne({_id: ObjectId.createFromHexString(profileId), profile_id: null})
     if (!existingProfile) {
@@ -212,9 +213,8 @@ export async function POST(req: NextRequest) {
 
 
     // Create the profile on the database
-    const profiles = db.selectCollection("profiles")
 
-    const result = await profiles.insertOne({
+    const result = await profiles.create({
         name: name,
         surname: surname,
         birthDate: new Date(Date.parse(birthDate)).toISOString(),
@@ -232,9 +232,12 @@ export async function POST(req: NextRequest) {
         website: website,
         isCompany: isCompany
     })
+    const promise = result.save()
 
     // Link the profile to the user
-    await accounts.updateOne({_id: ObjectId.createFromHexString(profileId)}, {$set: {profile_id: result.insertedId.toHexString()}})
+    const res = await accounts.updateOne({_id: ObjectId.createFromHexString(profileId)}, {$set: {profile_id: result._id.toHexString()}})
+
+    await promise
 
     return NextResponse.json({message: "Profile created"}, { status: 200 })
 }

@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from "next/server"
-import { DBClient } from "@/utils/db"
 import bycript from "bcrypt"
 import { createSessionToken } from "@/utils/session"
+
+import connectDB from "@/utils/db"
+import accounts from "@/utils/model/accounts"
+import invite_tokens from "@/utils/model/invite_tokens"
 
 // Creates the account but leaves the profile_id as null. It will have to be set later with the profiles/create/new-profile endpoint.
 // If the link contains an invitation token the account will be automatically connected to the profile
@@ -28,6 +31,10 @@ import { createSessionToken } from "@/utils/session"
  *               password:
  *                 type: string
  *                 description: The password for the new account.
+ *               role:
+ *                  token: string
+ *                  description: The role of the account. It's mandatory if no invitation token is provided. Possible values are "admin", "user", "company-manager", "company-employee".
+ * 
  *     parameters:
  *       - in: query
  *         name: token
@@ -79,13 +86,10 @@ export async function POST(req: NextRequest) {
         return new NextResponse(JSON.stringify({error: "Unsupported content type"}), { status: 405 })
     }
 
-    const db = new DBClient()
-    const accounts = db.selectCollection("accounts")
-    const inviteTokens = db.selectCollection("invite_tokens")
-
     const email = formData.get("email") as string ?? null
     const password = formData.get("password") as string ?? null
     const token = req.nextUrl.searchParams.get('token') ?? null
+    const role = formData.get("role") as string ?? null
 
     // Check if the email is valid and not already in use
     if (!validatEmail(email)) {
@@ -109,18 +113,26 @@ export async function POST(req: NextRequest) {
 
     if (token !== null) {
         // register with an invitation token
-        const invite = await inviteTokens.findOne({token: token, is_used: false, expires_at: {$gt: new Date().toISOString()}})
+        const invite = await invite_tokens.findOne({token: token, is_used: false, expires_at: {$gt: new Date().toISOString()}})
         if (invite !== null) {
-            const result = await accounts.insertOne({email: email, password: hash, profile_id: invite.profile_id, is_verified: false, last_modified_password: date})
+            const result = await accounts.create({email: email, password: hash, profile_id: invite.profile_id, is_verified: false, last_modified_password: date, role: invite.role})
+            await result.save()
             sessionToken = await createSessionToken(result.insertedId.toHexString())
         } else {
             return new NextResponse(JSON.stringify({error: "Invalid invitation token", code: "error-invalid-invtation"}), { status: 401 })
         }
     } else {
         // register without an invitation token
-        const result = await accounts.insertOne({email: email, password: hash, profile_id: null, is_verified: false, last_modified_password: date}) // The profile_id will be set later
+
+        // Check if the role is set
+        if (!role) {
+            return new NextResponse(JSON.stringify({error: "Role is required", code: "error-role-required"}), { status: 401 })
+        }
+
+        const result = await accounts.create({email: email, password: hash, profile_id: null, is_verified: false, last_modified_password: date, role: role}) // The profile_id will be set later
+        await result.save()
     
-        sessionToken = await createSessionToken(result.insertedId.toHexString())
+        sessionToken = await createSessionToken(result._id.toHexString())
     }
 
 
