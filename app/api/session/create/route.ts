@@ -75,8 +75,6 @@ export async function POST(req: NextRequest) {
   // Get the user id for the email
   const db = await connectDB()
 
-  console.log(email)
-
   const user = await accounts.findOne({email: email})
 
   console.log(user)

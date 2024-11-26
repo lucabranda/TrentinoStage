@@ -18,7 +18,7 @@ export async function checkSessionToken(token: string) {
  
     await connectDB()
 
-    const sess = await auth_tokens.findOne({token: token, generation_time: {$lt: new Date(new Date().getTime() + tokenDuration).toISOString()}})
+    const sess = await auth_tokens.findOne({token: token, generation_time: {$gt: new Date(new Date().getTime() - tokenDuration)}})
 
     if (!sess) {
         return null
@@ -32,7 +32,7 @@ export async function checkExpiredTokens(uid: string) {
 
     await connectDB()
 
-    await auth_tokens.deleteMany({user_id: uid, generation_time: {$lt: new Date(new Date().getTime() - tokenDuration).toISOString()}})
+    await auth_tokens.deleteMany({user_id: uid, generation_time: {$lt: new Date(new Date().getTime() - tokenDuration)}})
 }
 
 export async function createSessionToken(uid: string) {

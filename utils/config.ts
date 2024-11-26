@@ -9,5 +9,5 @@ export const siteConfig = {
 
 export const sessionConfig = {
 	cookie: "trentino-stage-session",
-	duration: 7 //days
+	duration: 2 //days
 }
