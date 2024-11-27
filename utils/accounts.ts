@@ -1,4 +1,5 @@
 import { ObjectId } from "mongodb"
+import { getProfileInfo } from "./profiles"
 
 import connectDB from "./db"
 import accounts from "./model/accounts"
@@ -12,4 +13,27 @@ export async function getAccountInfo(accountId: string) {
     const account = await accounts.findOne({ _id: ObjectId.createFromHexString(accountId) })
 
     return account
+}
+
+export async function getProfileId(accountId: string) {
+    // Get the profile ID associated with the account
+    const profileId = await accounts.findOne({ _id: ObjectId.createFromHexString(accountId) }).then(profileId => {
+        if (profileId === null) {
+            return null
+        }
+        return profileId._id.toHexString()
+    })
+
+    return profileId
+}
+
+export async function isCompany(accountId: string) {
+    // Check if the account is a company
+    const account = await getProfileInfo(await getProfileId(accountId))
+
+    if (!account || account.is_company === null || account.is_company === undefined) {
+        return false
+    }
+
+    return account.is_company
 }

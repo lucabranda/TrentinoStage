@@ -1,3 +1,4 @@
+import { ObjectId } from "mongodb"
 import { getAccountInfo } from "./accounts"
 
 import connectDB from "./db"
@@ -17,4 +18,13 @@ export async function isProfileOwner(profileId: string, accountId: string) {
     }
 
     return account.profile_id === profileId
+}
+
+export async function getProfileInfo(profileId: string) {
+    // Get the profile information
+    await connectDB()
+    console.log(profileId)
+    const profile = await profiles.findOne({ _id: ObjectId.createFromHexString(profileId) })
+
+    return profile
 }

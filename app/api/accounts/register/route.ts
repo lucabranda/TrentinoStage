@@ -125,7 +125,7 @@ export async function POST(req: NextRequest) {
         // register without an invitation token
 
         // Check if the role is set
-        if (!role) {
+        if (!checkRole(role)) {
             return new NextResponse(JSON.stringify({error: "Role is required", code: "error-role-required"}), { status: 401 })
         }
 
@@ -164,4 +164,9 @@ function validatePassword(password: string): boolean {
         return false
     }
     return true
+}
+
+function checkRole(role: string): boolean {
+    const roles = ["user", "company-manager", "company-employee"]
+    return roles.includes(role)
 }
