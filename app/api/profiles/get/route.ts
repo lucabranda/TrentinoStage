@@ -1,7 +1,7 @@
 
 import { NextRequest, NextResponse } from "next/server"
 import { checkSessionToken } from "@/utils/session"
-import { isProfileOwner } from "@/utils/profilesMgmt"
+import { isProfileOwner } from "@/utils/profiles"
 import { getAccountInfo } from "@/utils/accounts"
 
 import { ObjectId } from "mongodb"

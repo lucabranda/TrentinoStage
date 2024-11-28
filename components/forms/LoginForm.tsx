@@ -11,70 +11,72 @@ import {
   message,
   Typography,
 } from "antd";
-import { useRouter } from "next/navigation"; // For redirecting in Next.js
+import { useRouter } from "next/navigation";
 import styles from "./loginForm.module.css";
-import { setSessionToken } from "@/utils/cookie"; // Import utility
+import { setSessionToken } from "@/utils/cookie";
 
-export default function LogInForm({ messages }: { messages: any }) {
-  const [loading, setLoading] = useState(false); // Loading state
-  const router = useRouter(); // Next.js router for redirection
-  const [messageApi, contextHolder] = message.useMessage(); // Ant Design message API
+interface LogInFormProps {
+  messages: Record<string, string>;
+}
+
+interface FormValues {
+  email: string;
+  password: string;
+  remember: boolean;
+}
+
+export default function LogInForm({ messages }: LogInFormProps) {
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
+  const [messageApi, contextHolder] = message.useMessage();
 
   // Handle form submission
-  const handleSubmit = async (values: any) => {
-    const { username, password, remember } = values;
-
-    // Create FormData for the request
-    const formData = new FormData();
-    formData.append("email", username); // username is the user's email
-    formData.append("password", password);
+  const handleSubmit = async (values: FormValues) => {
+    const { email, password, remember } = values;
 
     try {
-      setLoading(true); // Start loading state
+      setLoading(true);
 
       // Send POST request to /api/session/create
       const response = await fetch("/api/session/create", {
         method: "POST",
-        body: formData,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        messageApi.error(
+        throw new Error(
           errorData.error || messages["login-error"] || "Login error."
         );
-        return;
       }
 
       // Handle success response
       const data = await response.json();
-
       if (data.token) {
-        // Save token using the utility function
         setSessionToken(data.token, remember);
 
-        // Show success message
         messageApi.success(
           data.message || messages["login-success"] || "Login successful!"
         );
 
-        // Redirect to dashboard
+        // Redirect to the dashboard
         router.push("/dashboard/user");
       } else {
-        messageApi.error(messages["login-token-error"] || "Login failed.");
+        throw new Error(messages["login-token-error"] || "Login failed.");
       }
     } catch (error: any) {
       messageApi.error(
         error.message || messages["login-error"] || "Login error."
       );
     } finally {
-      setLoading(false); // End loading state
+      setLoading(false);
     }
   };
 
   return (
     <>
-      {contextHolder} {/* Ant Design message holder */}
+      {contextHolder}
       <Form
         name="login"
         initialValues={{ remember: true }}
@@ -82,41 +84,42 @@ export default function LogInForm({ messages }: { messages: any }) {
         onFinish={handleSubmit}
       >
         <Form.Item
-          name="username"
+          name="email"
           rules={[
             {
               required: true,
+              type: "email",
               message:
-                messages["login-username-message"] ||
-                "Please input your Username!",
+                messages["login-email-message"] || "Please input a valid Email!",
             },
           ]}
-          label={<span>{messages["login-username-label"]}</span>}
+          label={messages["login-email-label"] || "Email"}
         >
           <Input
             prefix={<UserOutlined />}
-            placeholder={messages["login-username-placeholder"] || "Username"}
+            placeholder={messages["login-email-placeholder"] || "Email"}
           />
         </Form.Item>
+
         <Form.Item
           name="password"
           rules={[
             {
               required: true,
               message:
-                messages["login-password-message"] ||
-                "Please input your Password!",
+                messages["login-password-message"] || "Please input your Password!",
             },
           ]}
-          label={<span>{messages["login-password-label"]}</span>}
+          label={messages["login-password-label"] || "Password"}
         >
           <Input.Password
             prefix={<LockOutlined />}
             placeholder={messages["login-password-placeholder"] || "Password"}
           />
         </Form.Item>
-        <Form.Item>
-          <Checkbox name="remember">{messages["login-remember-me"]}</Checkbox>
+
+        <Form.Item name="remember" valuePropName="checked">
+          <Checkbox>{messages["login-remember-me"] || "Remember me"}</Checkbox>
         </Form.Item>
 
         <Form.Item>
@@ -127,22 +130,23 @@ export default function LogInForm({ messages }: { messages: any }) {
               type="primary"
               htmlType="submit"
               style={{ flexGrow: 1, marginRight: 8 }}
-              loading={loading} // Show loading spinner while submitting
+              loading={loading}
             >
-              {messages["login-button-login"]}
+              {messages["login-button-login"] || "Log In"}
             </Button>
             <Button
               type="default"
-              style={{ flexGrow: 1, textAlign: "center" }}
+              style={{ flexGrow: 1 }}
               href="/signup"
             >
-              {messages["login-button-signup"]}
+              {messages["login-button-signup"] || "Sign Up"}
             </Button>
           </Space>
         </Form.Item>
+
         <Form.Item>
           <Typography.Link href="#" className={styles.loginFormForgot}>
-            {messages["login-forgot-password"]}
+            {messages["login-forgot-password"] || "Forgot password?"}
           </Typography.Link>
         </Form.Item>
       </Form>

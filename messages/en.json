@@ -1,7 +1,8 @@
 {
     
     "landing-button-login": "Log in",
-    "landing-button-dashboard": "Dashboard",
+    "landing-button-dashboard-user": "User Dashboard",
+    "landing-button-dashboard-company": "Company Dashboard",
     "landing-nav-1": "Home",
     "landing-nav-2": "Servicies",
     "landing-nav-3": "Join us",
@@ -22,11 +23,11 @@
     "landing-button-signup-company": "Sign up as company",
     "landing-footer-title": "We are glad to have you on board!",
     "landing-footer-description":"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt",
- 
+    
     "login-title": "Log in",
     "login-subtitle": "Insert your credentials",
-    "login-username-label": "Username",
-    "login-username-placeholder": "Insert your username",
+    "login-email-label": "Email",
+    "login-email-placeholder": "Insert your email",
     "login-password-label": "Password",
     "login-password-placeholder": "Insert your password",
     "login-forgot-password": "Forgotten password?",
@@ -39,8 +40,8 @@
     "signup-title": "Sign up as user",
     "signup-title-company": "Sign up as company",
     "signup-subtitle": "Insert your data",
-    "signup-username-label": "Username",
-    "signup-username-placeholder": "Insert your username (email)" ,
+    "signup-email-label": "Email",
+    "signup-email-placeholder": "Insert your email" ,
     "signup-password-label": "Password",
     "signup-password-placeholder": "Insert your password",
     "signup-confirm-message": "Confirm password",
@@ -55,11 +56,33 @@
     "signup-password-mismatch": "Passwords do not match",
 
 
-    "dashboard-search": "Search",
-    "dahsboard-title": "Dashboard",
+    "dashboard-search": "Search",    
+    "dashboard-logout": "Logout",
+    "dashboard-user-profile": "User profile",
+    "dashboard-company-profile": "Company profile",
+    "dashboard-user-offers": "Offers",
+    "dashboard-company-offers": "Offers",
+    "dashboard-user-applications": "Applications",
+    "dashboard-company-applications": "Applications",
 
     
     
+
+    "company-card-name-label": "Company name",
+    "company-card-address-label": "Address",
+    "company-card-partita-iva-label": "VAT number",
+    "company-card-profile-picture-label": "Profile picture",
+    "company-card-bio-label": "Biography",
+    "company-card-website-label": "Website",
+    "company-card-sector-label": "Sector",
+    "user-card-name-label": "Name",
+    "user-card-surname-label": "Surname",
+    "user-card-bio-label": "Biography",
+    "user-card-address-label": "Address",
+    "user-card-profile-picture-label": "Profile picture",
+    "user-card-birthday-label": "Date of birth",
+    "user-card-sector-label": "Sector",
+    "user-card-cv-label": "Curriculum Vitae",
     
     
     

@@ -14,7 +14,7 @@ export default function SignUpForm({ messages }: { messages: any }) {
 
   // Handle form submission
   const handleSubmit = async (values: any) => {
-    const { username, password, confirm } = values;
+    const { email, password, confirm } = values;
 
     // Verify password match
     if (password !== confirm) {
@@ -24,18 +24,18 @@ export default function SignUpForm({ messages }: { messages: any }) {
       return;
     }
 
-    // Create FormData for the request
-    const formData = new FormData();
-    formData.append("email", username); // username is the user's email
-    formData.append("password", password);
-
     try {
       setLoading(true); // Start loading state
 
+      // Create FormData for the request
+      const formData = new FormData();
+      formData.append("email", email); // Map email to expected server field
+      formData.append("password", password);
+      formData.append("role", "user");
       // Send POST request to /api/accounts/register
       const response = await fetch("/api/accounts/register", {
         method: "POST",
-        body: formData,
+        body: formData, // Use FormData
       });
 
       if (!response.ok) {
@@ -84,20 +84,21 @@ export default function SignUpForm({ messages }: { messages: any }) {
         onFinish={handleSubmit}
       >
         <Form.Item
-          name="username"
+          name="email"
           rules={[
             {
               required: true,
               message:
-                messages["signup-username-message"] ||
-                "Please input your Username!",
+                messages["signup-email-message"] ||
+                "Please input your Email!",
             },
           ]}
-          label={<span>{messages["signup-username-label"]}</span>}
+          label={<span>{messages["signup-email-label"]}</span>}
         >
           <Input
             prefix={<UserOutlined />}
-            placeholder={messages["signup-username-placeholder"] || "Username"}
+            placeholder={messages["signup-email-placeholder"] || "Email"}
+            type="email"
           />
         </Form.Item>
         <Form.Item

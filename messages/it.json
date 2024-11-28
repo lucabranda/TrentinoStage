@@ -1,6 +1,7 @@
 {
     "landing-button-login": "Accedi",
-    "landing-button-dashboard": "Vai alla Dashboard",
+    "landing-button-dashboard-user": "Vai alla Dashboard Utente",
+    "landing-button-dashboard-company": "Vai alla Dashboard Azienda",
     "landing-nav-1": "Home",
     "landing-nav-2": "Servizi",
     "landing-nav-3": "Unisciti",
@@ -24,8 +25,8 @@
  
     "login-title": "Accedi",
     "login-subtitle": "Inserisci le tue credenziali",
-    "login-username-label": "Username",
-    "login-username-placeholder": "Inserisci il tuo username",
+    "login-email-label": "Email",
+    "login-email-placeholder": "Inserisci il tuo email",
     "login-password-label": "Password",
     "login-password-placeholder": "Inserisci la tua password",
     "login-forgot-password": "Password dimenticata?",
@@ -38,8 +39,8 @@
     "signup-title": "Registrati come utente",
     "signup-title-company": "Registrati come impresa",
     "signup-subtitle": "Inserisci i tuoi dati",
-    "signup-username-label": "Username",
-    "signup-username-placeholder": "Inserisci il tuo username (email)",
+    "signup-email-label": "Email",
+    "signup-email-placeholder": "Inserisci il tuo email",
     "signup-password-label": "Password",
     "signup-password-placeholder": "Inserisci la tua password",
     "signup-confirm-message": "Conferma password",
@@ -55,7 +56,33 @@
 
 
     "dashboard-search": "Cerca",
-    "dahsboard-title": "Dashboard",
+    "dashboard-logout": "Logout",
+    "dashboard-user-profile": "Profilo utente",
+    "dashboard-company-profile": "Profilo impresa",
+    "dashboard-user-offers": "Offerte",
+    "dashboard-company-offers": "Offerte",
+    "dashboard-user-applications": "Applicazioni",
+    "dashboard-company-applications": "Applicazioni",
+    
+
+
+    "company-card-name-label": "Nome azienda",
+    "company-card-address-label": "Indirizzo",
+    "company-card-partita-iva-label": "Partita IVA",
+    "company-card-profile-picture-label": "Immagine profilo",
+    "company-card-bio-label": "Biografia",
+    "company-card-website-label": "Sito web",
+    "company-card-sector-label": "Settore",
+    "user-card-name-label": "Nome",
+    "user-card-surname-label": "Cognome",
+    "user-card-bio-label": "Biografia",
+    "user-card-address-label": "Indirizzo",
+    "user-card-profile-picture-label": "Immagine profilo",
+    "user-card-birthday-label": "Data di nascita",
+    "user-card-sector-label": "Settore",
+    "user-card-cv-label": "Curriculum Vitae",
+
+
 
     "error-invalid-session": "La tua sessione è scaduta. Effettua nuovamente il login.",
     "error-profile-not-found": "Profilo non trovato.",
@@ -77,5 +104,6 @@
     "error-postal-code-required": "Si prega di fornire un codice postale.",
     "error-street-required": "Si prega di fornire una via.",
     "error-address-required": "Si prega di fornire un indirizzo."
+  
 
 }

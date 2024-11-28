@@ -1,7 +1,7 @@
 import React from 'react';
 import { Layout } from 'antd';
-import UserCard from '@/components/dashboard/user/UserCard';
-import EditSection from '@/components/dashboard/user/EditSection';
+import UserCard from '@/components/dashboard/UserCard';
+import EditSection from '@/components/dashboard/EditSection';
 import { getMessages } from '@/utils/systemMessage';
 import  DashboardLayout from  '@/components/Layout/DashboardLayout';
 import {Content} from '@/components/Layout/Layout';
@@ -13,38 +13,22 @@ export default async function UserPage({params}: any) {
        {
          key: "user",
          icon: <UserOutlined />,
-         label: (
-           <>
-           {messages["user-profile"] || "User Profile"}
-           </>
-         ),
+         label: <>{messages["dashboard-user-profile"] || "User Profile"}</>
        },
        {
          key: "offers",
          icon: <RocketOutlined />,
-         label: (
-           <>
-             {messages["user-offers"] || "Offers"}
-           </>
-         ),
+         label: <>{messages["dashboard-user-offers"] || "Offers"}</>
        },
        {
          key: "applications",
          icon: <InboxOutlined />,
-         label: (
-           <>
-             {messages["user-applications"] || "Applications"}
-           </>
-         ),
+         label: <>{messages["dashboard-user-applications"] || "Applications"}</>
        },
        {
          key: "logout",
          icon: <LogoutOutlined />,
-         label: (
-           <>
-           {messages[""] || ""}
-           </>
-         ),
+         label: <>{messages["dashboard-logout"] || "Log out"}</>
        }
      ];
   return(
@@ -54,8 +38,7 @@ export default async function UserPage({params}: any) {
         {/* <UserCard  messages={messages} onEdit={function (): void {
           throw new Error('Function not implemented.');
         } }/> */}
-        <UserCard  messages={messages} />
-        <EditSection messages={messages}/>
+        <UserCard  messages={messages} session={params.session} id={params.id}/>
       </Content>
     </DashboardLayout>
   );

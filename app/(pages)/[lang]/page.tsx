@@ -17,6 +17,7 @@ import {
   InboxOutlined,
   UserAddOutlined,
   MenuOutlined,
+  UserOutlined,
 } from "@ant-design/icons";
 import logo from "@/public/logo.svg";
 import { Link } from "@/components/Anchor";
@@ -50,9 +51,15 @@ export default async function Home({ params }: any) {
           <Paragraph className={styles.heroSubtitle}>
             {messages["landing-paragraph-1"]}
           </Paragraph>
-          <PrimaryButton href="/login" className={styles.ctaButton}>
-            {messages["landing-button-login"]}
+          <PrimaryButton href="/dashboard/user" className={styles.ctaButton}>
+            <UserOutlined />
+            {messages["landing-button-dashboard-user"]}
           </PrimaryButton>
+          <DefaultButton href="/dashboard/company" className={styles.ctaButton}>
+              <RocketOutlined />
+              {messages["landing-button-dashboard-company"]}
+           </DefaultButton>
+         
         </section>
 
         <hr className={styles.hr}></hr>

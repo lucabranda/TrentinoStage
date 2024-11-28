@@ -1,8 +1,9 @@
 // OffersSection.tsx
 "use client"
 import React, { useState } from 'react';
-import { Card, List, Button, Input } from 'antd';
+import { Card, List, Button, Input, Space, Typography } from 'antd';
 const {Item} = List;
+const { Text } = Typography;
 
 export default  function OffersSection({ messages }: { messages: any }) {
   const [newOffer, setNewOffer] = useState('');
@@ -31,11 +32,20 @@ export default  function OffersSection({ messages }: { messages: any }) {
       dataSource={offers}
       renderItem={(item) => (
         <Item>
-          <List.Item.Meta title={item.title} description={item.description} />
+          <List.Item.Meta
+            title={<Text strong>{item.title}</Text>}
+            description={
+              <Space direction="vertical">
+                <Text type="secondary">{item.description}</Text>
+                <Text type="danger">Delete</Text>
+              </Space>
+            }
+          />
         </Item>
       )}
     />
   </Card>
 );
 }
+
 

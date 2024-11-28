@@ -1,7 +1,8 @@
 {
     
     "landing-button-login": "Anmelden",
-    "landing-button-dashboard": "Dashboard",
+    "landing-button-dashboard-user": "Benutzer-Dashboard",
+    "landing-button-dashboard-company": "Unternehmens-Dashboard",
     "landing-nav-1": "Home",
     "landing-nav-2": "Dienstleistungen",
     "landing-nav-3": "Mitmachen",
@@ -25,8 +26,8 @@
  
     "login-title": "Anmelden",
     "login-subtitle": "Geben Sie Ihre Anmeldedaten ein",
-    "login-username-label": "Benutzername",
-    "login-username-placeholder": "Geben Sie Ihren Benutzernamen ein",
+    "login-email-label": "E-Mail",
+    "login-email-placeholder": "Geben Sie Ihren E-Mail ein",
     "login-password-label": "Passwort",
     "login-password-placeholder": "Geben Sie Ihr Passwort ein",
     "login-forgot-password": "Passwort vergessen?",
@@ -39,8 +40,8 @@
     "signup-title": "Anmelden als Benutzer",
     "signup-title-company": "Anmelden als Unternehmen",
     "signup-subtitle": "Geben Sie Ihre Daten ein",
-    "signup-username-label": "Benutzername",
-    "signup-username-placeholder": "Geben Sie Ihren Benutzernamen ein (email)",
+    "signup-email-label": "E-Mail",
+    "signup-email-placeholder": "Geben Sie Ihren E-Mail ein ",
     "signup-password-label": "Passwort",
     "signup-password-placeholder": "Geben Sie Ihr Passwort ein",
     "signup-confirm-message": "Passwort bestaetigen",
@@ -59,6 +60,22 @@
 
     
     
+
+    "company-card-name-label": "Firmenname",
+    "company-card-address-label": "Adresse",
+    "company-card-partita-iva-label": "Umsatzsteuer-ID",
+    "company-card-profile-picture-label": "Profilbild",
+    "company-card-bio-label": "Biografie",
+    "company-card-website-label": "Webseite",
+    "company-card-sector-label": "Branche",
+    "user-card-name-label": "Vorname",
+    "user-card-surname-label": "Nachname",
+    "user-card-bio-label": "Biografie",
+    "user-card-address-label": "Adresse",
+    "user-card-profile-picture-label": "Profilbild",
+    "user-card-birthday-label": "Geburtsdatum",
+    "user-card-sector-label": "Branche",
+    "user-card-cv-label": "Lebenslauf",
     
     
     
