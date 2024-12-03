@@ -5,8 +5,15 @@ import OffersSection from '@/components/dashboard/OffersSection';
 import { TeamOutlined, RocketOutlined, InboxOutlined, LogoutOutlined } from '@ant-design/icons';
 import { Content } from '@/components/Layout/Layout';
 import DashboardLayout from '@/components/Layout/DashboardLayout';  // Assuming layout is here
+import { isLoggedIn } from '@/utils/session';
+import { redirect } from 'next/navigation'
+
 export default async function CompanyPage({ params }: any) {
   const messages = await getMessages((await params).lang);
+
+  if(!(await isLoggedIn()))
+    redirect(`/login`);
+
   const itemsSidebar = [
     {
       key: "company",

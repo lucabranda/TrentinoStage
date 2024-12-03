@@ -6,9 +6,15 @@ import { getMessages } from '@/utils/systemMessage';
 import  DashboardLayout from  '@/components/Layout/DashboardLayout';
 import {Content} from '@/components/Layout/Layout';
 import { InboxOutlined, LogoutOutlined, RocketOutlined, UserOutlined } from '@ant-design/icons';
+import {isLoggedIn} from '@/utils/session'
+import { redirect } from 'next/navigation'
 
 export default async function UserPage({params}: any) {
   const messages = await getMessages((await params).lang);
+
+  if(!(await isLoggedIn()))
+    redirect(`/login`);
+
   const items=[
        {
          key: "user",

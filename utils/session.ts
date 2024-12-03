@@ -5,6 +5,8 @@ import { sessionConfig } from "./config"
 import connectDB from "./db"
 import auth_tokens from "./model/auth_tokens"
 
+import { cookies } from 'next/headers'
+
 const projectDir = process.cwd()
 loadEnvConfig(projectDir)
 
@@ -49,4 +51,11 @@ export async function createSessionToken(uid: string) {
     await session.save()
     await promise
     return token
+}
+
+export async function isLoggedIn(){
+    const cookieStore = await cookies();
+    const token = await cookieStore.get('trentino-stage-session')?.value || "";
+    const isLoggedIn = await checkSessionToken(token);
+    return isLoggedIn ? true : false;
 }

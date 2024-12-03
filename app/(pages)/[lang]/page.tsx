@@ -33,9 +33,7 @@ import {
 import { Header, Footer, Content } from "@/components/Layout/Layout";
 import { Title, Paragraph } from "@/components/Typography";
 import HeaderHome from "@/components/HeaderHome";
-import ShowLoggedIn from "@/components/ShowLoggedIn";
-import ShowLoggedOut from "@/components/ShowLoggedOut";
-
+import { isLoggedIn } from "@/utils/session";
 export default async function Home({ params }: any) {
   const messages = await getMessages((await params).lang);
 
@@ -53,26 +51,29 @@ export default async function Home({ params }: any) {
           <Paragraph className={styles.heroSubtitle}>
             {messages["landing-paragraph-1"]}
           </Paragraph>
-          <ShowLoggedIn>
-              <PrimaryButton href="/dashboard/user" className={styles.ctaButton}>
+          { await isLoggedIn() ? (
+              <>
+                <PrimaryButton href="/dashboard/user" className={styles.ctaButton}>
+                  <UserOutlined />
+                  {messages["landing-button-dashboard-user"]}
+                </PrimaryButton>
+                <DefaultButton href="/dashboard/company" className={styles.ctaButton}>
+                    <RocketOutlined />
+                    {messages["landing-button-dashboard-company"]}
+                </DefaultButton>
+            </>
+          ) : (
+            <>
+              <PrimaryButton href="/login" className={styles.ctaButton}>
                 <UserOutlined />
-                {messages["landing-button-dashboard-user"]}
+                {messages["landing-button-login-user"]}
               </PrimaryButton>
-              <DefaultButton href="/dashboard/company" className={styles.ctaButton}>
+              <DefaultButton href="/login/company" className={styles.ctaButton}>
                   <RocketOutlined />
-                  {messages["landing-button-dashboard-company"]}
+                  {messages["landing-button-login-company"]}
               </DefaultButton>
-          </ShowLoggedIn>
-          <ShowLoggedOut>
-            <PrimaryButton href="/login" className={styles.ctaButton}>
-              <UserOutlined />
-              {messages["landing-button-login-user"]}
-            </PrimaryButton>
-            <DefaultButton href="/login/company" className={styles.ctaButton}>
-                <RocketOutlined />
-                {messages["landing-button-login-company"]}
-            </DefaultButton>
-          </ShowLoggedOut>
+            </>
+          )}
         </section>
 
         <hr className={styles.hr}></hr>
