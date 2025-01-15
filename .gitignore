@@ -41,3 +41,13 @@ next-env.d.ts
 
 # idea
 .idea
+
+wwwroot/*.js
+node_modules
+typings
+dist
+git_push.sh
+trace
+app-build.manifest.json
+build-manifest.jsonfallback-build.manifest.json
+react-loadable-manifest.json
