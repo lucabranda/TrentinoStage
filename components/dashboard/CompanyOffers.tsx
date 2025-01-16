@@ -5,7 +5,7 @@ import { Card, List, Button, Input, Space, Typography } from 'antd';
 const {Item} = List;
 const { Text } = Typography;
 
-export default  function OffersSection({ messages }: { messages: any }) {
+export default  function CompanyOffers({ messages }: { messages: any }) {
   const [newOffer, setNewOffer] = useState('');
   const [offers, setOffers] = useState([
     { title: 'Offer 1', description: 'Description for offer 1' },

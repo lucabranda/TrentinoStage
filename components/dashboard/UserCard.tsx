@@ -3,7 +3,6 @@ import React, {useState, useEffect} from 'react';
 import { Card, Avatar, Space, Row, Col, Typography, Button, Badge, Spin } from 'antd';
 import {Title, Text, Paragraph} from '@/components/Typography';
 import { EditOutlined } from '@ant-design/icons';
-import EditSection from './EditSection';
 
 interface UserCardProps {
   session: string;
@@ -31,7 +30,7 @@ interface ProfileData {
 
 }
 
-export default function UserCard({ session, id, messages }: UserCardProps) {
+export default function UserCard({ session, id, messages }: any) {
   const [data, setData] = useState<ProfileData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -133,7 +132,6 @@ export default function UserCard({ session, id, messages }: UserCardProps) {
           </Space>
         </Col>
       </Row>
-      <EditSection fields={userFields} messages={messages}/>
     </Card>
   );
 }

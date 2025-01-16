@@ -4,8 +4,6 @@ import React, { useState } from "react";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import { Button, Form, Input, Space, message, Typography } from "antd";
 import { useRouter } from "next/navigation"; // For redirecting in Next.js
-import { setSessionToken } from "@/utils/cookie"; // Import session management utility
-import styles from "./signUpForm.module.css";
 
 export default function SignUpForm({ messages }: { messages: any }) {
   const [loading, setLoading] = useState(false); // Loading state
@@ -46,25 +44,8 @@ export default function SignUpForm({ messages }: { messages: any }) {
         return;
       }
 
-      // Handle success response
-      const data = await response.json();
-
-      if (data.token) {
-        // Save token using the utility function
-        setSessionToken(data.token, false); // Default: session cookie (not "remember me")
-
-        // Show success message
-        messageApi.success(
-          messages["signup-success"] || "Registration successful!"
-        );
-
-        // Redirect to the dashboard
-        router.push("/dashboard/user");
-      } else {
-        messageApi.error(
-          messages["signup-token-error"] || "Registration failed."
-        );
-      }
+    router.push("/create-profile");
+      
     } catch (error: any) {
       messageApi.error(
         error.message || messages["signup-error"] || "Registration error."

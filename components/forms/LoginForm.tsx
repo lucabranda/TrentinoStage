@@ -11,7 +11,7 @@ import {
   message,
   Typography,
 } from "antd";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import styles from "./loginForm.module.css";
 import { setSessionToken } from "@/utils/cookie";
 
@@ -61,7 +61,7 @@ export default function LogInForm({ messages }: LogInFormProps) {
         );
 
         // Redirect to the dashboard
-        router.push("/dashboard/user");
+        router.push(`/dashboard`);
       } else {
         throw new Error(messages["login-token-error"] || "Login failed.");
       }

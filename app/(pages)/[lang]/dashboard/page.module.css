@@ -1,0 +1,16 @@
+.layout{
+    display: flex;
+    flex-direction: row;
+    height: 100vh;
+}
+.sider{
+    background-color: #fff !important;   
+    height: 100vh !important;
+}
+.menu{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
