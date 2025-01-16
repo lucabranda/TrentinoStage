@@ -36,10 +36,10 @@ import HeaderHome from "@/components/HeaderHome";
 import { isLoggedIn } from "@/utils/session";
 export default async function Home({ params }: any) {
   const messages = await getMessages((await params).lang);
-
+  const isLogged = await isLoggedIn();
   return (
     <Layout className={styles.page}>
-      <HeaderHome messages={messages} logo={logo} styles={styles} />
+      <HeaderHome messages={messages} logo={logo} styles={styles} isLogged={isLogged}/>
 
       <Content className={styles.main}>
         <section id="hero" className={styles.hero}>
