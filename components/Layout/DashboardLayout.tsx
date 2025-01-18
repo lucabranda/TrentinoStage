@@ -1,14 +1,18 @@
 "use client";
 import { useState } from 'react';
-
+import Image from 'next/image';
+import logo from "@/public/logo.svg";
 import { Button, Layout, Menu } from "antd";
 import { Header, Content, Footer, Sider } from "@/components/Layout/Layout";
 import { HomeOutlined, MenuOutlined, LogoutOutlined, BuildOutlined, PaperClipOutlined, SearchOutlined, UserOutlined, SettingOutlined, RightOutlined} from "@ant-design/icons";
 import { Link } from "@/components/Typography";
 import LanguageSelector from "@/components/buttons/LanguageSelector";
-import UserCard from "@/components/dashboard/UserCard";
-import OffersSection from "@/components/dashboard/CompanyOffers";
-import CompanyCard from "@/components/dashboard/CompanyCard";
+import { PrimaryButton } from '../buttons/Buttons';
+import CompanyCard from "../dashboard/CompanyCard";
+import UserCard from "../dashboard/UserCard";
+import { OfferSectionCompany, OfferSectionUser } from "../dashboard/OfferSection";
+import { ApplicationSectionCompany, ApplicationSectionUser } from "../dashboard/ApplicationSection";
+import NewProfileForm from '../forms/NewProfileForm';
 
 
 export default function DashboardLayout({ params, messages, profileData, isACompany, profileId, styles }: any) {
@@ -45,8 +49,7 @@ export default function DashboardLayout({ params, messages, profileData, isAComp
     {
       key: "5",
       icon: <LogoutOutlined/>,
-      label: "Logout",
-      url: `/${( params).lang}/logout`,
+      label: <PrimaryButton href={`/${( params).lang}/logout`}>{messages["dashboard-logout"]}</PrimaryButton>, 
     }
   ];
 
@@ -58,17 +61,28 @@ export default function DashboardLayout({ params, messages, profileData, isAComp
       <p className={styles.description}>
         {messages["dashboard-description"]}
       </p>
+     
       {isACompany ? 
         <CompanyCard session={profileData?.token} id={profileId} messages={messages} /> : 
         <UserCard session={profileData?.token} id={profileId} messages={messages} />
       }
+       <NewProfileForm messages={messages} styles={styles} isCompany={isACompany}/>
     </section>,
     activeKey === "2" && <section key="offers">
-      <OffersSection messages={messages} />
+      {isACompany ? 
+        <OfferSectionCompany session={profileData?.token} id={profileId} messages={messages} /> : 
+        <OfferSectionUser session={profileData?.token} id={profileId} messages={messages} />
+      }
       
     </section>,
-    activeKey === "3" && <section key="applications"></section>,
+    activeKey === "3" && <section key="applications">
+      {isACompany ? 
+        <ApplicationSectionCompany session={profileData?.token} id={profileId} messages={messages} /> : 
+        <ApplicationSectionUser session={profileData?.token} id={profileId} messages={messages} />
+      }
+    </section>,
     activeKey === "4" && <section key="settings"></section>,
+    
   ];
 
 
@@ -80,10 +94,10 @@ export default function DashboardLayout({ params, messages, profileData, isAComp
     <>
       <Layout className={styles.layout}>
       <Sider
-            width="25%"
+            width="15%"
             className={styles.sider}
             collapsible
-            trigger={null}
+            trigger={null} 
             collapsed={collapsed}
             onCollapse={(collapsed: boolean | ((prevState: boolean) => boolean)) => setCollapsed(collapsed)}
             activeKey={activeKey}
@@ -102,14 +116,22 @@ export default function DashboardLayout({ params, messages, profileData, isAComp
         <Layout>
           <Header className={styles.header}>
             <Link href="/"> <HomeOutlined /> </Link>
+            <Image
+              src={logo}
+              alt="logo"
+              width={120}
+              height={50}
+              style={{ filter: "invert(1)" }}
+            />
             <LanguageSelector />
+
           </Header>
           <Content className={styles.content}>
             <main className={styles.main}>
               {mainComponents}
             </main>
           </Content>
-          <Footer className={styles.footer}></Footer>
+          
         </Layout>
       </Layout>
     </>

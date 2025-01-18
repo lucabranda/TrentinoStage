@@ -8,6 +8,12 @@ import {isLoggedIn, checkSessionToken } from '@/utils/session';
 import { cookies } from 'next/headers';
 
 import { redirect } from 'next/navigation';
+import { removeSessionToken } from "@/utils/cookie";
+
+const logout = () => {
+  removeSessionToken();
+  redirect("/");
+}
 
 export default async function Home({ params }: any) {
   const messages = await getMessages((await params).lang);
@@ -26,20 +32,19 @@ export default async function Home({ params }: any) {
   const data = await getAccountInfo(accountId);
 
   if(!isProfileOwner(profileId, accountId))
-    console.log("You are not the owner of this profile");
+    redirect(`/${(await params).lang}/create-profile`);
   
   const profileData = await getProfileInfo(profileId);
 
-
   return(
     <DashboardLayout
-      params={params}
+      params={(await params)}
       styles={styles}
       messages={messages}
       profileData={profileData}
       isACompany={isACompany}
       profileId={profileId}
+      
     />
   )
 }
-  

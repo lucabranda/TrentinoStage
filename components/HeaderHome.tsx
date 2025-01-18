@@ -17,7 +17,7 @@ interface HeaderHomeProps {
   };
   logo: {
     src: string;
-  };
+  }; 
   styles: {
     [key: string]: string;
   };
@@ -57,6 +57,9 @@ export default function HeaderHome({
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  
+
 
   const menuItems = [
     {
