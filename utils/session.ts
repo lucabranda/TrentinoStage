@@ -10,7 +10,7 @@ import { cookies } from 'next/headers'
 const projectDir = process.cwd()
 loadEnvConfig(projectDir)
 
-const tokenDuration = sessionConfig.duration * 24 * 60 * 60
+const tokenDuration = sessionConfig.duration * 24 * 60 * 60 * 1000
 
 
 // Functions to manage the session
