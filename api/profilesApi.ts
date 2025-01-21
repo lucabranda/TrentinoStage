@@ -339,6 +339,120 @@ export class ProfilesApi {
         });
     }
     /**
+     * Endpoint to modify user profile details.
+     * @summary Modify user profile
+     * @param sessionToken Session token for authentication.
+     * @param name User\\\&#39;s first name.
+     * @param surname User\\\&#39;s surname.
+     * @param country User\\\&#39;s country.
+     * @param region User\\\&#39;s region.
+     * @param city User\\\&#39;s city.
+     * @param postalCode User\\\&#39;s postal code.
+     * @param street User\\\&#39;s street.
+     * @param address User\\\&#39;s address.
+     * @param bio User\\\&#39;s bio.
+     * @param sector User\\\&#39;s sector. Multiple sectors can be separated by commas.
+     * @param website User\\\&#39;s website.
+     */
+    public async apiProfilesModifyPost (sessionToken?: string, name?: string, surname?: string, country?: string, region?: string, city?: string, postalCode?: string, street?: string, address?: string, bio?: string, sector?: string, website?: string, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: http.IncomingMessage; body?: any;  }> {
+        const localVarPath = this.basePath + '/api/profiles/modify';
+        let localVarQueryParameters: any = {};
+        let localVarHeaderParams: any = (<any>Object).assign({}, this._defaultHeaders);
+        let localVarFormParams: any = {};
+
+        (<any>Object).assign(localVarHeaderParams, options.headers);
+
+        let localVarUseFormData = false;
+
+        if (sessionToken !== undefined) {
+            localVarFormParams['sessionToken'] = ObjectSerializer.serialize(sessionToken, "string");
+        }
+
+        if (name !== undefined) {
+            localVarFormParams['name'] = ObjectSerializer.serialize(name, "string");
+        }
+
+        if (surname !== undefined) {
+            localVarFormParams['surname'] = ObjectSerializer.serialize(surname, "string");
+        }
+
+        if (country !== undefined) {
+            localVarFormParams['country'] = ObjectSerializer.serialize(country, "string");
+        }
+
+        if (region !== undefined) {
+            localVarFormParams['region'] = ObjectSerializer.serialize(region, "string");
+        }
+
+        if (city !== undefined) {
+            localVarFormParams['city'] = ObjectSerializer.serialize(city, "string");
+        }
+
+        if (postalCode !== undefined) {
+            localVarFormParams['postalCode'] = ObjectSerializer.serialize(postalCode, "string");
+        }
+
+        if (street !== undefined) {
+            localVarFormParams['street'] = ObjectSerializer.serialize(street, "string");
+        }
+
+        if (address !== undefined) {
+            localVarFormParams['address'] = ObjectSerializer.serialize(address, "string");
+        }
+
+        if (bio !== undefined) {
+            localVarFormParams['bio'] = ObjectSerializer.serialize(bio, "string");
+        }
+
+        if (sector !== undefined) {
+            localVarFormParams['sector'] = ObjectSerializer.serialize(sector, "string");
+        }
+
+        if (website !== undefined) {
+            localVarFormParams['website'] = ObjectSerializer.serialize(website, "string");
+        }
+
+        let localVarRequestOptions: localVarRequest.Options = {
+            method: 'POST',
+            qs: localVarQueryParameters,
+            headers: localVarHeaderParams,
+            uri: localVarPath,
+            useQuerystring: this._useQuerystring,
+            json: true,
+        };
+
+        let authenticationPromise = Promise.resolve();
+        authenticationPromise = authenticationPromise.then(() => this.authentications.default.applyToRequest(localVarRequestOptions));
+
+        let interceptorPromise = authenticationPromise;
+        for (const interceptor of this.interceptors) {
+            interceptorPromise = interceptorPromise.then(() => interceptor(localVarRequestOptions));
+        }
+
+        return interceptorPromise.then(() => {
+            if (Object.keys(localVarFormParams).length) {
+                if (localVarUseFormData) {
+                    (<any>localVarRequestOptions).formData = localVarFormParams;
+                } else {
+                    localVarRequestOptions.form = localVarFormParams;
+                }
+            }
+            return new Promise<{ response: http.IncomingMessage; body?: any;  }>((resolve, reject) => {
+                localVarRequest(localVarRequestOptions, (error, response, body) => {
+                    if (error) {
+                        reject(error);
+                    } else {
+                        if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
+                            resolve({ response: response, body: body });
+                        } else {
+                            reject(new HttpError(response, body, response.statusCode));
+                        }
+                    }
+                });
+            });
+        });
+    }
+    /**
      * Create a new profile and link it to the user. The profile can be a company or a person
      * @summary Create a new profile and link it to the user
      * @param sessionToken The authentication token
@@ -379,7 +493,7 @@ export class ProfilesApi {
         }
 
         if (isCompany !== undefined) {
-            localVarFormParams['isCompany'] = ObjectSerializer.serialize(isCompany, "boolean");
+            localVarFormParams['is_company'] = ObjectSerializer.serialize(isCompany, "boolean");
         }
 
         if (name !== undefined) {

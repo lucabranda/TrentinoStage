@@ -101,6 +101,90 @@
         }
       }
     },
+    "/api/applications/create": {
+      "post": {
+        "summary": "Create a new application",
+        "description": "Endpoint to create a new application with the provided details.",
+        "tags": [
+          "Applications"
+        ],
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "token": {
+                    "type": "string",
+                    "description": "Session token for authentication",
+                    "example": "your-session-token"
+                  },
+                  "title": {
+                    "type": "string",
+                    "description": "Title of the application",
+                    "example": "Application Title"
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "Description of the application",
+                    "example": "Application Description"
+                  },
+                  "sector": {
+                    "type": "string",
+                    "description": "Sector of the application",
+                    "example": "Technology"
+                  },
+                  "country": {
+                    "type": "string",
+                    "description": "Country of the application",
+                    "example": "USA"
+                  },
+                  "region": {
+                    "type": "string",
+                    "description": "Region of the application",
+                    "example": "California"
+                  },
+                  "city": {
+                    "type": "string",
+                    "description": "City of the application",
+                    "example": "San Francisco"
+                  },
+                  "weekly_hours": {
+                    "type": "integer",
+                    "description": "Weekly hours for the application",
+                    "example": 40
+                  }
+                },
+                "required": [
+                  "token",
+                  "title",
+                  "description",
+                  "sector",
+                  "country",
+                  "region",
+                  "city",
+                  "weekly_hours"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Application created successfully"
+          },
+          "403": {
+            "description": "Invalid token"
+          },
+          "405": {
+            "description": "Invalid request or unsupported content type"
+          }
+        }
+      }
+    },
     "/api/profiles/get": {
       "get": {
         "summary": "Retrieve profile information",
@@ -403,6 +487,100 @@
         }
       }
     },
+    "/api/profiles/modify": {
+      "post": {
+        "summary": "Modify user profile",
+        "description": "Endpoint to modify user profile details.",
+        "tags": [
+          "Profiles"
+        ],
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "sessionToken": {
+                    "type": "string",
+                    "description": "Session token for authentication.",
+                    "example": "your-session-token"
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "User's first name.",
+                    "example": "John"
+                  },
+                  "surname": {
+                    "type": "string",
+                    "description": "User's surname.",
+                    "example": "Doe"
+                  },
+                  "country": {
+                    "type": "string",
+                    "description": "User's country.",
+                    "example": "USA"
+                  },
+                  "region": {
+                    "type": "string",
+                    "description": "User's region.",
+                    "example": "California"
+                  },
+                  "city": {
+                    "type": "string",
+                    "description": "User's city.",
+                    "example": "Los Angeles"
+                  },
+                  "postalCode": {
+                    "type": "string",
+                    "description": "User's postal code.",
+                    "example": "90001"
+                  },
+                  "street": {
+                    "type": "string",
+                    "description": "User's street.",
+                    "example": "123 Main St"
+                  },
+                  "address": {
+                    "type": "string",
+                    "description": "User's address.",
+                    "example": "123 Main St, Apt 4B"
+                  },
+                  "bio": {
+                    "type": "string",
+                    "description": "User's bio.",
+                    "example": "Software Developer"
+                  },
+                  "sector": {
+                    "type": "string",
+                    "description": "User's sector. Multiple sectors can be separated by commas.",
+                    "example": "Technology, Software"
+                  },
+                  "website": {
+                    "type": "string",
+                    "description": "User's website.",
+                    "example": "https://example.com"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Profile modified successfully."
+          },
+          "401": {
+            "description": "Invalid session token."
+          },
+          "405": {
+            "description": "Unsupported content type."
+          }
+        }
+      }
+    },
     "/api/profiles/new": {
       "produces": [
         "application/json"
@@ -426,7 +604,7 @@
                     "type": "string",
                     "description": "The authentication token"
                   },
-                  "isCompany": {
+                  "is_company": {
                     "type": "boolean",
                     "description": "True if the profile is a company, false if it's a person"
                   },

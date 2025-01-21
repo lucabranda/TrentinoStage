@@ -1,5 +1,7 @@
 export * from './accountsApi';
 import { AccountsApi } from './accountsApi';
+export * from './applicationsApi';
+import { ApplicationsApi } from './applicationsApi';
 export * from './profilesApi';
 import { ProfilesApi } from './profilesApi';
 export * from './sessionApi';
@@ -15,4 +17,4 @@ export class HttpError extends Error {
 
 export { type RequestFile } from '../model/models';
 
-export const APIS = [AccountsApi, ProfilesApi, SessionApi];
+export const APIS = [AccountsApi, ApplicationsApi, ProfilesApi, SessionApi];
