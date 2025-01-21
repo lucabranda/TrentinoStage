@@ -27,6 +27,7 @@
     "next-swagger-doc": "^0.4.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "string-sanitizer": "^2.0.2",
     "request": "^2.88.2",
     "swagger-ui-react": "^5.17.14",
     "uuid": "^11.0.2"

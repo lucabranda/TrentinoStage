@@ -18,22 +18,22 @@ export async function getAccountInfo(accountId: string) {
 export async function getProfileId(accountId: string) {
     // Get the profile ID associated with the account
     const profileId = await accounts.findOne({ _id: ObjectId.createFromHexString(accountId) }).then(profileId => {
-        if (profileId === null) {
+        if (profileId.profile_id === null) {
             return null
         }
-        return profileId._id.toHexString()
+        return profileId.profile_id
     })
 
     return profileId
 }
 
 export async function isCompany(accountId: string) {
-    // Check if the account is a company
+    // Check if the account is linked to a company profile
     const account = await getProfileInfo(await getProfileId(accountId))
 
-    if (!account || account.is_company === null || account.is_company === undefined) {
+    if (!account || account.is_company === null || account.is_company === undefined || account.is_company === false) {
         return false
     }
 
-    return account.is_company
+    return true
 }
