@@ -4,7 +4,7 @@ import 'swagger-ui-react/swagger-ui.css';
 import {siteConfig} from '@/utils/config';
 import { NextRequest, NextResponse } from 'next/server';
 
-const SwaggerUI = dynamic(() => import('swagger-ui-react'), { ssr: true });
+const SwaggerUI = dynamic(() => import('swagger-ui-react'), { ssr: false });
 
 async function swaggerSpec() {
   return createSwaggerSpec({
