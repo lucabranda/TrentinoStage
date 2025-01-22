@@ -22,15 +22,27 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 18 # Specify your Node.js version
-          cache: 'npm'
 
-      # 3. Install dependencies
+      # 3. Cache dependencies
+      - name: Cache npm dependencies
+        uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      # 4. Install dependencies using npm ci (faster and more reliable in CI environments)
       - name: Install Dependencies
-        run: npm install
+        run: npm ci
 
-      # 4. Run the build command
+      # 5. Run the build command
       - name: Build Project
         run: npm run build
+
+      # Optional: Run linting checks (if you use ESLint or other linters)
+      #- name: Run Linting
+      #  run: npm run lint
 
       # Optional: Run tests
       - name: Run Tests
