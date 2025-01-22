@@ -91,7 +91,7 @@ export class AccountsApi {
     /**
      * Creates a new account. If an invitation token is provided, the account will be connected to the profile associated with the token. Returns a session token upon successful registration.
      * @summary Register a new account
-     * @param UNKNOWN_PARAMETER_NAME Invitation token to connect the account to a profile.
+     * @param token Invitation token to connect the account to a profile.
      * @param email The email address of the new account.
      * @param password The password for the new account.
      * @param role The role of the account. It\\\&#39;s mandatory if no invitation token is provided. Possible values are \\\&quot;admin\\\&quot;, \\\&quot;user\\\&quot;, \\\&quot;company-manager\\\&quot;, \\\&quot;company-employee\\\&quot;.
