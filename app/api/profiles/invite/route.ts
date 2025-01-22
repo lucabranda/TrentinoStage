@@ -5,8 +5,6 @@ import { getProfileId, getAccountInfo } from '@/utils/accounts'
 import connectDB from '@/utils/db'
 import invite_tokens from '@/utils/model/invite_tokens'
 import { randomBytes } from 'crypto'
-import { get } from 'http'
-
 
 // Creates an nvitation token to the relative profile
 /**

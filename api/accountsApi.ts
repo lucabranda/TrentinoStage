@@ -96,7 +96,7 @@ export class AccountsApi {
      * @param password The password for the new account.
      * @param role The role of the account. It\\\&#39;s mandatory if no invitation token is provided. Possible values are \\\&quot;admin\\\&quot;, \\\&quot;user\\\&quot;, \\\&quot;company-manager\\\&quot;, \\\&quot;company-employee\\\&quot;.
      */
-    public async apiAccountsRegisterPost (UNKNOWN_PARAMETER_NAME?: , email?: string, password?: string, role?: any, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: http.IncomingMessage; body: ApiAccountsRegisterPost200Response;  }> {
+    public async apiAccountsRegisterPost (token?: string, email?: string, password?: string, role?: any, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: http.IncomingMessage; body: ApiAccountsRegisterPost200Response;  }> {
         const localVarPath = this.basePath + '/api/accounts/register';
         let localVarQueryParameters: any = {};
         let localVarHeaderParams: any = (<any>Object).assign({}, this._defaultHeaders);
@@ -109,8 +109,8 @@ export class AccountsApi {
         }
         let localVarFormParams: any = {};
 
-        if (UNKNOWN_PARAMETER_NAME !== undefined) {
-            localVarQueryParameters['token'] = ObjectSerializer.serialize(UNKNOWN_PARAMETER_NAME, "");
+        if (token !== undefined) {
+            localVarQueryParameters['token'] = ObjectSerializer.serialize(token, "");
         }
 
         (<any>Object).assign(localVarHeaderParams, options.headers);
