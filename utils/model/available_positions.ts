@@ -25,4 +25,4 @@ const available_positions = new mongoose.Schema({
     }]
 })
 
-export default mongoose.models.available_positions ?? mongoose.model("profiles", available_positions)
+export default mongoose.models.available_positions ?? mongoose.model("available_positions", available_positions)
