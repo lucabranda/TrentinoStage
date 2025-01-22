@@ -26,7 +26,7 @@ import profiles from '@/utils/model/profiles'
  *               sessionToken:
  *                  type: string
  *                  description: The authentication token
- *               isCompany:
+ *               is_company:
  *                  type: boolean
  *                  description: True if the profile is a company, false if it's a person
  *               name:
@@ -140,21 +140,23 @@ export async function POST(req: NextRequest) {
 
     const sessionToken = formData.get("sessionToken") as string
     const profileId = await checkSessionToken(sessionToken)
-    const isCompany = stringToBool(formData.get("isCompany") as string)
+    const is_company = stringToBool(formData.get("is_company") as string)
     const name = formData.get("name") as string
     const surname = formData.get("surname") as string
-    const country = formData.get("address") as string
+    const country = formData.get("country") as string
     const region = formData.get("region") as string
     const city = formData.get("city") as string
     const postalCode = formData.get("postalCode") as string
     const street = formData.get("street") as string
     const address = formData.get("address") as string
-    const birthDate = formData.get("birthDate") as string
+    let birthDate = formData.get("birthDate") as string
 
     const bio = formData.get("bio") as string ?? null
     const identifier = formData.get("identifier") as string
     const sector = formData.get("sector") as string
     const website = formData.get("website") as string ?? null
+
+    console.log(is_company)
 
     // Check if the session token is valid
     if (!profileId) {
@@ -173,7 +175,7 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({error: "Name is required", code: "error-name-not-provided"}, { status: 401 })
     }
     if (identifier === null) {
-        if (isCompany) {
+        if (is_company) {
             return NextResponse.json({error: "P.iva is required", code: "error-piva-required"}, { status: 401 })
         } else {
             return NextResponse.json({error: "CF is required", code: "error-cf-required"}, { status: 401 })
@@ -184,7 +186,7 @@ export async function POST(req: NextRequest) {
     }
 
     // If the user is a company check the presence of an address, sector and the correctness of the identifier
-    if (isCompany) {
+    if (is_company) {
         if (country === null) {
             return NextResponse.json({error: "Country is required", code: "error-country-required"}, { status: 401 })
         }
@@ -203,6 +205,7 @@ export async function POST(req: NextRequest) {
         if (address === null) {
             return NextResponse.json({error: "Address is required", code: "error-address-required"}, { status: 401 })
         }
+        birthDate = new Date().toUTCString()
         // TODO: Check the correctness of the P.iva
     } else {
         if (surname === null) {
@@ -211,33 +214,37 @@ export async function POST(req: NextRequest) {
         // TODO: Check the correctness of the fiscal code
     }
 
-
+    await connectDB()
     // Create the profile on the database
 
-    const result = await profiles.create({
-        name: name,
-        surname: surname,
-        birthDate: new Date(Date.parse(birthDate)).toISOString(),
-        address: {
-            country: country,
-            region: region,
-            city: city,
-            postalCode: postalCode,
-            street: street,
-            address: address,
-        },
-        bio: bio,
-        identifier: identifier,
-        sector: [sector],
-        website: website,
-        isCompany: isCompany
-    })
-    const promise = result.save()
+    try {
+        const result = await profiles.create({
+            name: name,
+            surname: surname,
+            birthDate: new Date(Date.parse(birthDate)).toISOString(),
+            address: {
+                country: country,
+                region: region,
+                city: city,
+                postalCode: postalCode,
+                street: street,
+                address: address,
+            },
+            bio: bio,
+            identifier: identifier,
+            sector: [sector],
+            website: website,
+            is_company: is_company
+        })
+        const promise = result.save()
 
-    // Link the profile to the user
-    const res = await accounts.updateOne({_id: ObjectId.createFromHexString(profileId)}, {$set: {profile_id: result._id.toHexString()}})
+        // Link the profile to the user
+        const res = await accounts.updateOne({_id: ObjectId.createFromHexString(profileId)}, {$set: {profile_id: result._id.toHexString()}})
 
-    await promise
+        await promise
+    } catch (e) {
+        return NextResponse.json({error: "Internal server error", code: "error-internal-server"}, { status: 500 })
+    }
 
     return NextResponse.json({message: "Profile created"}, { status: 200 })
 }
