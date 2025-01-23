@@ -1,24 +1,20 @@
+"use server"
+
 import { match } from '@formatjs/intl-localematcher'
 import Negotiator from 'negotiator'
 import { NextResponse } from "next/server"
-import { cookies } from 'next/headers'
 
 let locales = ['it', 'de', 'en', 'xx']
 let whitelist = ['api']
 
 // Get the preferred locale from the Accept-Language header or cookie
 async function getLocale(request) {
-    const cookieStore = await cookies()
 
-    // If the cookie doesn't exist, determine the user's preferred locale
-    if (!cookieStore.get("trentinostage-locale")) {
-        let headers = { 'accept-language': 'it-IT;it;q=0.5' }
-        let languages = new Negotiator({ headers }).languages()
-        let defaultLocale = 'it'
-        // Set the locale cookie based on the header information
-        cookieStore.set("trentinostage-locale", match(languages, locales, defaultLocale), { path: '/' })
-    }
-    return cookieStore.get("trentinostage-locale").value
+    let headers = { 'accept-language': 'it-IT;it;q=0.5' }
+    let languages = new Negotiator({ headers }).languages()
+    let defaultLocale = 'it'
+
+    return match(languages, locales, defaultLocale)
 }
 
 export async function middleware(request) {
@@ -30,11 +26,6 @@ export async function middleware(request) {
     )
 
     if (currentLocale) {
-        // If the pathname already contains a locale, set the locale cookie
-        const cookieStore = await cookies()
-        cookieStore.set('trentinostage-locale', currentLocale, { path: '/' })
-
-        // Allow the request to continue
         return NextResponse.next()
     }
 

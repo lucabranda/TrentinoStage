@@ -107,8 +107,7 @@ export default function DashboardLayout({ params, messages, profileData, isAComp
             trigger={null} 
             collapsed={collapsed}
             onCollapse={(collapsed: boolean | ((prevState: boolean) => boolean)) => setCollapsed(collapsed)}
-            activeKey={activeKey}
-        >
+                >
             <div className={styles.closeButton} style={{alignContent: collapsed ? "right" : "left"}}>
                 <Button onClick={() => setCollapsed(!collapsed)}>{collapsed ?  <MenuOutlined /> : <CloseOutlined />}</Button>
             </div>
@@ -117,7 +116,7 @@ export default function DashboardLayout({ params, messages, profileData, isAComp
               items={itemsSidebar}
               className={styles.menu}
               selectedKeys={[activeKey]}
-              onSelect={(e) => setActiveKey(e.key)}
+              onSelect={(e : any) => setActiveKey(e.key)}
             />
         </Sider>
         <Layout>
