@@ -11,7 +11,6 @@ import {
   Skeleton,
 } from "antd";
 import { Header, Content } from "@/components/Layout/Layout";
-import { Title, Paragraph } from "@/components/Typography";
 import { DigitalIdentityButtons } from "@/components/buttons/IdButtons";
 import { getMessages } from "@/utils/systemMessage";
 import Image from "next/image";
@@ -21,6 +20,7 @@ import LogInForm from "@/components/forms/LoginForm";
 
 export default async function LogIn({ params }: any) {
   const msgs = await getMessages((await params).lang);
+  // when user is logged in create a session token
 
   return (
     <Layout className={styles.layout}>

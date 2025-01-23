@@ -55,8 +55,14 @@
     "signup-button-signup-user": "Anmelden als Benutzer",
     "signup-password-mismatch": "Passwoerter stimmen nicht ueberein",
 
-
-    "dashboard-search": "Suchen",
+  "dashboard-search": "Suche",
+    "dashboard-logout": "Abmelden",
+    "dashboard-user-profile": "Benutzerprofil",
+    "dashboard-company-profile": "Unternehmensprofil",
+    "dashboard-offers": "Angebote",
+    "dashboard-applications": "Bewerbungen",
+    "dashboard-settings": "Einstellungen",
+    
 
     
     
@@ -68,6 +74,7 @@
     "company-card-bio-label": "Biografie",
     "company-card-website-label": "Webseite",
     "company-card-sector-label": "Branche",
+
     "user-card-name-label": "Vorname",
     "user-card-surname-label": "Nachname",
     "user-card-bio-label": "Biografie",

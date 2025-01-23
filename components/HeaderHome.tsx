@@ -17,10 +17,11 @@ interface HeaderHomeProps {
   };
   logo: {
     src: string;
-  };
+  }; 
   styles: {
     [key: string]: string;
   };
+  isLogged: boolean;
 }
 
 const SECTION_IDS = ["hero", "services", "join"];
@@ -43,6 +44,7 @@ export default function HeaderHome({
   messages,
   logo,
   styles,
+  isLogged
 }: HeaderHomeProps) {
   const [activeSection, setActiveSection] = useState("hero");
 
@@ -55,6 +57,9 @@ export default function HeaderHome({
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  
+
 
   const menuItems = [
     {
@@ -74,6 +79,8 @@ export default function HeaderHome({
     },
   ];
 
+  
+
   return (
     <Header className={styles.header}>
       <img src={logo.src} alt="logo" className={styles.logo} />
@@ -85,9 +92,16 @@ export default function HeaderHome({
       />
       <div className={styles.headerElementsContainer}>
         <LanguageSelector />
-        <LinkButton href="/login" className={styles.loginButton}>
-          {messages["landing-button-login"]}
-        </LinkButton>
+        {!isLogged ? (
+          <LinkButton href="/login" className={styles.loginButton}>
+            {messages["landing-button-login"]}
+          </LinkButton>
+        ) : (
+          <LinkButton href="/logout" className={styles.loginButton}>
+            {messages["landing-button-logout"] || "Logout"}
+          </LinkButton>
+        )}
+
       </div>
     </Header>
   );

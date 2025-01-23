@@ -36,10 +36,10 @@ import HeaderHome from "@/components/HeaderHome";
 import { isLoggedIn } from "@/utils/session";
 export default async function Home({ params }: any) {
   const messages = await getMessages((await params).lang);
-
+  const isLogged = await isLoggedIn();
   return (
     <Layout className={styles.page}>
-      <HeaderHome messages={messages} logo={logo} styles={styles} />
+      <HeaderHome messages={messages} logo={logo} styles={styles} isLogged={isLogged}/>
 
       <Content className={styles.main}>
         <section id="hero" className={styles.hero}>
@@ -53,14 +53,10 @@ export default async function Home({ params }: any) {
           </Paragraph>
           { await isLoggedIn() ? (
               <>
-                <PrimaryButton href="/dashboard/user" className={styles.ctaButton}>
-                  <UserOutlined />
-                  {messages["landing-button-dashboard-user"]}
+                <PrimaryButton href="/dashboard" className={styles.ctaButton}>
+                  <UserOutlined /> 
+                  {messages["landing-button-dashboard"] || "Personal Area"}
                 </PrimaryButton>
-                <DefaultButton href="/dashboard/company" className={styles.ctaButton}>
-                    <RocketOutlined />
-                    {messages["landing-button-dashboard-company"]}
-                </DefaultButton>
             </>
           ) : (
             <>

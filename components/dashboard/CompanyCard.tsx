@@ -1,13 +1,8 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { Card, Carousel, Spin } from "antd";
-import EditSection from "./EditSection";
+import { Card, Spin } from "antd";
 
-interface CompanyCardProps {
-  session: string;
-  id: string | number;
-  messages: Record<string, string>;
-}
+
 
 interface ProfileData {
   name?: string;
@@ -19,7 +14,7 @@ interface ProfileData {
   sector?: string;
 }
 
-export default function CompanyCard({ session, id, messages }: CompanyCardProps) {
+export default function CompanyCard({ session, id, messages }: any) {
   const [data, setData] = useState<ProfileData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -95,19 +90,14 @@ export default function CompanyCard({ session, id, messages }: CompanyCardProps)
 
   return (
     <>
-      <Card title={messages["company-card-title-team"]}>
-        <Carousel autoplay>
-          {["Employee 1", "Employee 2", "Employee 3"].map((employee, index) => (
-            <div key={index}>
-              <p>{employee}</p>
-            </div>
-          ))}
-        </Carousel>
+      <Card title={messages["company-card-title"] || "Company Card"}>
+        {companyFields.map((field, index) => (
+          <div key={index}>
+            <label>{field.label}</label>
+            <p>{field.value}</p>
+          </div>
+        ))}
       </Card>
-      <Card>
-        <EditSection fields={companyFields} messages={messages} />
-      </Card>
-      
     </>
   );
 }
