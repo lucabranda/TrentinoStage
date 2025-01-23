@@ -16,6 +16,8 @@ export async function getAccountInfo(accountId: string) {
 }
 
 export async function getProfileId(accountId: string) {
+    await connectDB()
+
     // Get the profile ID associated with the account
     const profileId = await accounts.findOne({ _id: ObjectId.createFromHexString(accountId) }).then(profileId => {
         if (profileId.profile_id === null) {
@@ -28,6 +30,8 @@ export async function getProfileId(accountId: string) {
 }
 
 export async function isCompany(accountId: string) {
+    await connectDB()
+
     // Check if the account is linked to a company profile
     const account = await getProfileInfo(await getProfileId(accountId))
 
