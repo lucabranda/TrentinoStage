@@ -1,5 +1,7 @@
 import localVarRequest from 'request';
 
+export * from './apiAccountsGetProfileIdGet200Response';
+export * from './apiAccountsGetProfileIdGet401Response';
 export * from './apiAccountsRegisterPost200Response';
 export * from './apiAccountsRegisterPost401Response';
 export * from './apiAccountsRegisterPost405Response';
@@ -30,6 +32,8 @@ export interface RequestDetailedFile {
 export type RequestFile = string | Buffer | fs.ReadStream | RequestDetailedFile;
 
 
+import { ApiAccountsGetProfileIdGet200Response } from './apiAccountsGetProfileIdGet200Response';
+import { ApiAccountsGetProfileIdGet401Response } from './apiAccountsGetProfileIdGet401Response';
 import { ApiAccountsRegisterPost200Response } from './apiAccountsRegisterPost200Response';
 import { ApiAccountsRegisterPost401Response } from './apiAccountsRegisterPost401Response';
 import { ApiAccountsRegisterPost405Response } from './apiAccountsRegisterPost405Response';
@@ -63,6 +67,8 @@ let enumsMap: {[index: string]: any} = {
 }
 
 let typeMap: {[index: string]: any} = {
+    "ApiAccountsGetProfileIdGet200Response": ApiAccountsGetProfileIdGet200Response,
+    "ApiAccountsGetProfileIdGet401Response": ApiAccountsGetProfileIdGet401Response,
     "ApiAccountsRegisterPost200Response": ApiAccountsRegisterPost200Response,
     "ApiAccountsRegisterPost401Response": ApiAccountsRegisterPost401Response,
     "ApiAccountsRegisterPost405Response": ApiAccountsRegisterPost405Response,

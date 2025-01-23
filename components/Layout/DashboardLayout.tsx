@@ -15,7 +15,7 @@ import { ApplicationSectionCompany, ApplicationSectionUser } from "../dashboard/
 import NewProfileForm from '../forms/NewProfileForm';
 
 
-export default function DashboardLayout({ params, messages, profileData, isACompany, profileId, styles, isOwner }: any) {
+export default function DashboardLayout({ params, messages, profileData, isACompany, profileId, styles }: any) {
 
   const [collapsed, setCollapsed] = useState(false);
   const [activeKey, setActiveKey] = useState("1");
@@ -54,70 +54,29 @@ export default function DashboardLayout({ params, messages, profileData, isAComp
     }
   ];
 
-  
-  // Section of the dashboard
-  const mainComponents = [
-    activeKey === "1" && <section key="profile">
-      {!isOwner ? 
-       <NewProfileForm messages={messages} styles={styles} isCompany={isACompany}/> :
-       (<>
-       <h1 className={styles.title}>{messages["dashboard-hi"]} {profileData?.name}</h1>
-       <p className={styles.description}>
-         {messages["dashboard-description"]}
-       </p>
-      
-       {isACompany ? 
-         <CompanyCard session={profileData?.token} id={profileId} messages={messages} /> : 
-         <UserCard session={profileData?.token} id={profileId} messages={messages} />
-       }
-       
-       </>)
-      }
-     
-    </section>,
-    activeKey === "2" && <section key="offers">
-      {isACompany ? 
-        <OfferSectionCompany session={profileData?.token} id={profileId} messages={messages} /> : 
-        <OfferSectionUser session={profileData?.token} id={profileId} messages={messages} />
-      }
-      
-    </section>,
-    activeKey === "3" && <section key="applications">
-      {isACompany ? 
-        <ApplicationSectionCompany session={profileData?.token} id={profileId} messages={messages} /> : 
-        <ApplicationSectionUser session={profileData?.token} id={profileId} messages={messages} />
-      }
-    </section>,
-    activeKey === "4" && <section key="settings"></section>,
-    
-  ];
-
-
-  // TODO: If user has not a profile, redirect to create a profile  
-
-
-
   return (
     <>
       <Layout className={styles.layout}>
-      <Sider
-            width="15%"
-            className={styles.sider}
-            collapsible
-            trigger={null} 
-            collapsed={collapsed}
-            onCollapse={(collapsed: boolean | ((prevState: boolean) => boolean)) => setCollapsed(collapsed)}
-                >
-            <div className={styles.closeButton} style={{alignContent: collapsed ? "right" : "left"}}>
-                <Button onClick={() => setCollapsed(!collapsed)}>{collapsed ?  <MenuOutlined /> : <CloseOutlined />}</Button>
-            </div>
-            <Menu
-              mode="vertical"
-              items={itemsSidebar}
-              className={styles.menu}
-              selectedKeys={[activeKey]}
-              onSelect={(e : any) => setActiveKey(e.key)}
-            />
+        <Sider
+          width="15%"
+          className={styles.sider}
+          collapsible
+          trigger={null}
+          collapsed={collapsed}
+          onCollapse={() => setCollapsed(!collapsed)}
+        >
+          <div className={styles.closeButton} style={{ alignContent: collapsed ? "right" : "left" }}>
+            <Button onClick={() => setCollapsed(!collapsed)}>
+              {collapsed ? <MenuOutlined /> : <CloseOutlined />}
+            </Button>
+          </div>
+          <Menu
+            mode="vertical"
+            items={itemsSidebar}
+            className={styles.menu}
+            selectedKeys={[activeKey]}
+            onSelect={(e: any) => setActiveKey(e.key)}
+          />
         </Sider>
         <Layout>
           <Header className={styles.header}>
@@ -130,16 +89,47 @@ export default function DashboardLayout({ params, messages, profileData, isAComp
               style={{ filter: "invert(1)" }}
             />
             <LanguageSelector />
-
           </Header>
           <Content className={styles.content}>
             <main className={styles.main}>
-              {mainComponents}
+              {activeKey === "1" && (
+                <section key="profile">
+                    <h1 className={styles.title}>{messages["dashboard-hi"]} {profileData?.name}</h1>
+                    <p className={styles.description}>
+                      {messages["dashboard-description"]}
+                    </p>
+                    {isACompany ? (
+                      <CompanyCard session={profileData?.token} id={profileId} messages={messages} />
+                    ) : (
+                      <UserCard session={profileData?.token} id={profileId} messages={messages} />
+                    )}
+                </section>
+              )}
+              {activeKey === "2" && (
+                <section key="offers">
+                  {isACompany ? (
+                    <OfferSectionCompany session={profileData?.token} id={profileId} messages={messages} />
+                  ) : (
+                    <OfferSectionUser session={profileData?.token} id={profileId} messages={messages} />
+                  )}
+                </section>
+              )}
+              {activeKey === "3" && (
+                <section key="applications">
+                  {isACompany ? (
+                    <ApplicationSectionCompany session={profileData?.token} id={profileId} messages={messages} />
+                  ) : (
+                    <ApplicationSectionUser session={profileData?.token} id={profileId} messages={messages} />
+                  )}
+                </section>
+              )}
+              {activeKey === "4" && (
+                <section key="settings"></section>
+              )}
             </main>
           </Content>
-          
         </Layout>
       </Layout>
     </>
-  );  
+  );
 }

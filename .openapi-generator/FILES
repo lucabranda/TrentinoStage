@@ -6,6 +6,8 @@ api/applicationsApi.ts
 api/profilesApi.ts
 api/sessionApi.ts
 git_push.sh
+model/apiAccountsGetProfileIdGet200Response.ts
+model/apiAccountsGetProfileIdGet401Response.ts
 model/apiAccountsRegisterPost200Response.ts
 model/apiAccountsRegisterPost401Response.ts
 model/apiAccountsRegisterPost405Response.ts

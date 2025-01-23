@@ -33,7 +33,11 @@ export async function isCompany(accountId: string) {
     await connectDB()
 
     // Check if the account is linked to a company profile
-    const account = await getProfileInfo(await getProfileId(accountId))
+    const profileId = await getProfileId(accountId)
+
+    if (!profileId) return false;
+
+    const account = await getProfileInfo(profileId)
 
     if (!account || account.is_company === null || account.is_company === undefined || account.is_company === false) {
         return false
