@@ -4,7 +4,7 @@ import Image from 'next/image';
 import logo from "@/public/logo.svg";
 import { Button, Layout, Menu } from "antd";
 import { Header, Content, Footer, Sider } from "@/components/Layout/Layout";
-import { HomeOutlined, MenuOutlined, LogoutOutlined, BuildOutlined, PaperClipOutlined, SearchOutlined, UserOutlined, SettingOutlined, RightOutlined} from "@ant-design/icons";
+import { HomeOutlined, MenuOutlined, LogoutOutlined, BuildOutlined, PaperClipOutlined, SearchOutlined, UserOutlined, SettingOutlined, CloseOutlined} from "@ant-design/icons";
 import { Link } from "@/components/Typography";
 import LanguageSelector from "@/components/buttons/LanguageSelector";
 import { PrimaryButton } from '../buttons/Buttons';
@@ -15,10 +15,11 @@ import { ApplicationSectionCompany, ApplicationSectionUser } from "../dashboard/
 import NewProfileForm from '../forms/NewProfileForm';
 
 
-export default function DashboardLayout({ params, messages, profileData, isACompany, profileId, styles }: any) {
+export default function DashboardLayout({ params, messages, profileData, isACompany, profileId, styles, isOwner }: any) {
 
   const [collapsed, setCollapsed] = useState(false);
   const [activeKey, setActiveKey] = useState("1");
+  
 
   // Sidebar links
   const itemsSidebar = [
@@ -48,7 +49,7 @@ export default function DashboardLayout({ params, messages, profileData, isAComp
     },
     {
       key: "5",
-      icon: <LogoutOutlined/>,
+      icon: <a href={`/${( params).lang}/logout`}><LogoutOutlined/></a>,
       label: <PrimaryButton href={`/${( params).lang}/logout`}>{messages["dashboard-logout"]}</PrimaryButton>, 
     }
   ];
@@ -57,16 +58,22 @@ export default function DashboardLayout({ params, messages, profileData, isAComp
   // Section of the dashboard
   const mainComponents = [
     activeKey === "1" && <section key="profile">
-      <h1 className={styles.title}>{messages["dashboard-hi"]} {profileData?.name}</h1>
-      <p className={styles.description}>
-        {messages["dashboard-description"]}
-      </p>
-     
-      {isACompany ? 
-        <CompanyCard session={profileData?.token} id={profileId} messages={messages} /> : 
-        <UserCard session={profileData?.token} id={profileId} messages={messages} />
+      {!isOwner ? 
+       <NewProfileForm messages={messages} styles={styles} isCompany={isACompany}/> :
+       (<>
+       <h1 className={styles.title}>{messages["dashboard-hi"]} {profileData?.name}</h1>
+       <p className={styles.description}>
+         {messages["dashboard-description"]}
+       </p>
+      
+       {isACompany ? 
+         <CompanyCard session={profileData?.token} id={profileId} messages={messages} /> : 
+         <UserCard session={profileData?.token} id={profileId} messages={messages} />
+       }
+       
+       </>)
       }
-       <NewProfileForm messages={messages} styles={styles} isCompany={isACompany}/>
+     
     </section>,
     activeKey === "2" && <section key="offers">
       {isACompany ? 
@@ -102,8 +109,8 @@ export default function DashboardLayout({ params, messages, profileData, isAComp
             onCollapse={(collapsed: boolean | ((prevState: boolean) => boolean)) => setCollapsed(collapsed)}
             activeKey={activeKey}
         >
-            <div className={styles.closeButton}>
-                <Button onClick={() => setCollapsed(!collapsed)}>{collapsed ? <RightOutlined /> : <MenuOutlined />}</Button>
+            <div className={styles.closeButton} style={{alignContent: collapsed ? "right" : "left"}}>
+                <Button onClick={() => setCollapsed(!collapsed)}>{collapsed ?  <MenuOutlined /> : <CloseOutlined />}</Button>
             </div>
             <Menu
               mode="vertical"

@@ -1,9 +1,11 @@
 {
     "landing-button-login": "Accedi",
     "landing-button-dashboard-user": "Vai alla Dashboard Utente",
+    "landing-button-dashboar": "Dashboard",
     "landing-button-dashboard-company": "Vai alla Dashboard Azienda",
     "landing-button-login-user": "Accedi",
     "landing-button-login-company": "Accesso imprese",
+    
     "landing-nav-1": "Home",
     "landing-nav-2": "Servizi",
     "landing-nav-3": "Unisciti",
@@ -61,10 +63,9 @@
     "dashboard-logout": "Logout",
     "dashboard-user-profile": "Profilo utente",
     "dashboard-company-profile": "Profilo impresa",
-    "dashboard-user-offers": "Offerte",
-    "dashboard-company-offers": "Offerte",
-    "dashboard-user-applications": "Applicazioni",
-    "dashboard-company-applications": "Applicazioni",
+    "dashboard-offers": "Offerte",
+    "dashboard-applications": "Applicazioni",
+    "dashboard-settings": "Impostazioni",
     
 
 
@@ -75,6 +76,7 @@
     "company-card-bio-label": "Biografia",
     "company-card-website-label": "Sito web",
     "company-card-sector-label": "Settore",
+
     "user-card-name-label": "Nome",
     "user-card-surname-label": "Cognome",
     "user-card-bio-label": "Biografia",

@@ -97,8 +97,8 @@ export default function HeaderHome({
             {messages["landing-button-login"]}
           </LinkButton>
         ) : (
-          <LinkButton href="/dashboard" className={styles.loginButton}>
-            {messages["landing-button-dashboard"]}
+          <LinkButton href="/logout" className={styles.loginButton}>
+            {messages["landing-button-logout"] || "Logout"}
           </LinkButton>
         )}
 

@@ -53,14 +53,10 @@ export default async function Home({ params }: any) {
           </Paragraph>
           { await isLoggedIn() ? (
               <>
-                <PrimaryButton href="/dashboard/user" className={styles.ctaButton}>
-                  <UserOutlined />
-                  {messages["landing-button-dashboard-user"]}
+                <PrimaryButton href="/dashboard" className={styles.ctaButton}>
+                  <UserOutlined /> 
+                  {messages["landing-button-dashboard"] || "Personal Area"}
                 </PrimaryButton>
-                <DefaultButton href="/dashboard/company" className={styles.ctaButton}>
-                    <RocketOutlined />
-                    {messages["landing-button-dashboard-company"]}
-                </DefaultButton>
             </>
           ) : (
             <>

@@ -30,10 +30,13 @@ export default async function Home({ params }: any) {
   const profileId = await getProfileId(accountId);
   const isACompany = await isCompany(accountId);
   const data = await getAccountInfo(accountId);
-
-  if(!isProfileOwner(profileId, accountId))
-    redirect(`/${(await params).lang}/create-profile`);
   
+  let isOwner;
+  if(data === null) 
+    isOwner = false;
+  else
+    isOwner = await isProfileOwner(profileId, accountId);
+
   const profileData = await getProfileInfo(profileId);
 
   return(
@@ -44,7 +47,7 @@ export default async function Home({ params }: any) {
       profileData={profileData}
       isACompany={isACompany}
       profileId={profileId}
-      
+      isOwner={isOwner}
     />
   )
 }
