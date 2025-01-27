@@ -39,7 +39,8 @@ const ApplicationCard = ({ title, description, messages, isCompany }: Applicatio
 }
 
 const ApplicationSectionCompany: React.FC<ApplicationSectionProps> = ({ session, id, messages }) =>{
-   const applications = [
+   
+  const applications = [
       { title: 'Application 1', description: 'Description for application 1' },
       { title: 'Application 2', description: 'Description for application 2' },
     ];

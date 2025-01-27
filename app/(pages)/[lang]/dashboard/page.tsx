@@ -2,9 +2,7 @@ import DashboardLayout from "@/components/Layout/DashboardLayout";
 import styles from "./page.module.css";
 import { getMessages } from "@/utils/systemMessage";
 
-import { getProfileInfo, isProfileOwner } from '@/utils/profiles';
-import { getProfileId, isCompany, getAccountInfo } from '@/utils/accounts';
-import {isLoggedIn, checkSessionToken } from '@/utils/session';
+import {isLoggedIn } from '@/utils/session';
 import { cookies } from 'next/headers';
 
 import {SessionApi} from '@/api/sessionApi';
@@ -14,11 +12,6 @@ import { AccountsApi } from "@/api/accountsApi";
 import { redirect } from 'next/navigation';
 import { removeSessionToken } from "@/utils/cookie";
 import NewProfileForm from "@/components/forms/NewProfileForm";
-
-const logout = () => {
-  removeSessionToken();
-  redirect("/");
-}
 
 export default async function Home({ params }: any) {
   const messages = await getMessages((await params).lang);
@@ -44,28 +37,29 @@ export default async function Home({ params }: any) {
   var _isACompany = await profilesApi.apiProfilesIsCompanyGet(sessionToken, accountId);
   const isACompany = _isACompany.body.isCompany || false;
 
-  var profileData;
-
-  if(profileId){
-    var _profileData = await profilesApi.apiProfilesGetGet(sessionToken, profileId);
-    profileData = _profileData.body;
-  } 
+  
+  if(!profileId) 
+    return (<NewProfileForm token={sessionToken}messages={messages} styles={styles} isCompany={isACompany} />);
+ 
+ 
+  var _profileData = await profilesApi.apiProfilesGetGet(sessionToken, profileId);
+  var profileData = _profileData.body;
 
   return(
-    <>
-    { 
-      !profileId ?
-        <NewProfileForm messages={messages} styles={styles} isCompany={isACompany} />
-        :
-        <DashboardLayout
-          params={(await params)}
-          styles={styles}
-          messages={messages}
-          profileData={profileData}
-          isACompany={isACompany}
-          profileId={profileId}
-        />
-    }
-    </>
+   <DashboardLayout
+      params={(await params)}
+      styles={styles}
+      messages={messages}
+      token={sessionToken}
+      isACompany={isACompany}
+      profileId={profileId}
+      name={profileData!.name!}
+      surname={profileData!.surname!}
+      address={profileData!.address!}
+      birthDate={profileData!.birthDate!}
+      bio={profileData!.bio!}
+      sector={profileData!.sector!}
+      website={profileData!.website!}
+    />
   )
 }

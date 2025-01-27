@@ -1,8 +1,7 @@
 {
     
     "landing-button-login": "Anmelden",
-    "landing-button-dashboard-user": "Benutzer-Dashboard",
-    "landing-button-dashboard-company": "Unternehmens-Dashboard",
+    "landing-button-dashboard": "Dashboard",
     "landing-nav-1": "Home",
     "landing-nav-2": "Dienstleistungen",
     "landing-nav-3": "Mitmachen",

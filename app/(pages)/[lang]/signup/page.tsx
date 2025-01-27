@@ -7,7 +7,6 @@ import styles from "./signup.module.css"; // Stili della pagina
 import Image from "next/image";
 import logo from "@/public/logo.svg";
 import { Header, Content } from "@/components/Layout/Layout";
-import { Paragraph } from "@/components/Typography";
 import SignUpForm from "@/components/forms/SignUpForm";
 
 // Server Component: Pagina di signup con la logica di caricamento dei dati

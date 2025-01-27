@@ -4,24 +4,40 @@ import Image from 'next/image';
 import logo from "@/public/logo.svg";
 import { Button, Layout, Menu } from "antd";
 import { Header, Content, Footer, Sider } from "@/components/Layout/Layout";
-import { HomeOutlined, MenuOutlined, LogoutOutlined, BuildOutlined, PaperClipOutlined, SearchOutlined, UserOutlined, SettingOutlined, CloseOutlined} from "@ant-design/icons";
+import { HomeOutlined, MenuOutlined, LogoutOutlined, BuildOutlined, PaperClipOutlined, SearchOutlined, UserOutlined, SettingOutlined, CloseOutlined, TeamOutlined} from "@ant-design/icons";
 import { Link } from "@/components/Typography";
 import LanguageSelector from "@/components/buttons/LanguageSelector";
-import { PrimaryButton } from '../buttons/Buttons';
 import CompanyCard from "../dashboard/CompanyCard";
 import UserCard from "../dashboard/UserCard";
+import SearchPeople from "../dashboard/SearchPeople";
 import { OfferSectionCompany, OfferSectionUser } from "../dashboard/OfferSection";
 import { ApplicationSectionCompany, ApplicationSectionUser } from "../dashboard/ApplicationSection";
-import NewProfileForm from '../forms/NewProfileForm';
 
 
-export default function DashboardLayout({ params, messages, profileData, isACompany, profileId, styles }: any) {
+interface DashboardLayoutProps {
+  params: any;
+  messages: any;
+  token: string;
+  isACompany: boolean;
+  profileId: string;
+  styles: any;
+  name: string;
+  surname: string;
+  address: string;
+  birthDate: string;
+  bio: string;
+  sector: string;
+  website: string; 
+}
+
+
+export default function DashboardLayout({ params, messages, token, isACompany, profileId, styles, name, surname, address, birthDate, bio, sector, website }: DashboardLayoutProps) {
 
   const [collapsed, setCollapsed] = useState(false);
   const [activeKey, setActiveKey] = useState("1");
-  
 
-  // Sidebar links
+  
+     // Sidebar links
   const itemsSidebar = [
     {
       key: "1",
@@ -43,14 +59,14 @@ export default function DashboardLayout({ params, messages, profileData, isAComp
     },
     {
       key: "4",
-      icon: <SettingOutlined />,
-      label: messages["dashboard-settings"],
-      url: `/${( params).lang}/dashboard#settings`,
+      icon: <TeamOutlined />,
+      label: messages["dashboard-search-people"],
+      url: `/${( params).lang}/dashboard#searchpeople`,
     },
     {
       key: "5",
-      icon: <a href={`/${( params).lang}/logout`}><LogoutOutlined/></a>,
-      label: <PrimaryButton href={`/${( params).lang}/logout`}>{messages["dashboard-logout"]}</PrimaryButton>, 
+      icon: <a href={`/${( params).lang}/login`}><LogoutOutlined/></a>,
+      label: <Link href={`/${( params).lang}/login`}>{messages["dashboard-logout"]}</Link>, 
     }
   ];
 
@@ -78,6 +94,7 @@ export default function DashboardLayout({ params, messages, profileData, isAComp
             onSelect={(e: any) => setActiveKey(e.key)}
           />
         </Sider>
+        
         <Layout>
           <Header className={styles.header}>
             <Link href="/"> <HomeOutlined /> </Link>
@@ -94,40 +111,52 @@ export default function DashboardLayout({ params, messages, profileData, isAComp
             <main className={styles.main}>
               {activeKey === "1" && (
                 <section key="profile">
-                    <h1 className={styles.title}>{messages["dashboard-hi"]} {profileData?.name}</h1>
+                    <h1 className={styles.title}>{messages["dashboard-hi"]} {name}</h1>
                     <p className={styles.description}>
                       {messages["dashboard-description"]}
                     </p>
                     {isACompany ? (
-                      <CompanyCard session={profileData?.token} id={profileId} messages={messages} />
+                      <CompanyCard session={token} id={profileId} messages={messages} profileData={{name, address, sector, website}}/*profileData={profile}*//>
                     ) : (
-                      <UserCard session={profileData?.token} id={profileId} messages={messages} />
+                      <UserCard session={token} id={profileId} messages={messages} profileData={{name, surname, address, birthDate, bio, sector}}/*profileData={profile}*//>
                     )}
                 </section>
               )}
               {activeKey === "2" && (
                 <section key="offers">
                   {isACompany ? (
-                    <OfferSectionCompany session={profileData?.token} id={profileId} messages={messages} />
+                    <OfferSectionCompany session={token} id={profileId} messages={messages} />
                   ) : (
-                    <OfferSectionUser session={profileData?.token} id={profileId} messages={messages} />
+                    <OfferSectionUser session={token} id={profileId} messages={messages} />
                   )}
                 </section>
               )}
               {activeKey === "3" && (
                 <section key="applications">
                   {isACompany ? (
-                    <ApplicationSectionCompany session={profileData?.token} id={profileId} messages={messages} />
+                    <ApplicationSectionCompany session={token} id={profileId} messages={messages} />
                   ) : (
-                    <ApplicationSectionUser session={profileData?.token} id={profileId} messages={messages} />
+                    <ApplicationSectionUser session={token} id={profileId} messages={messages} />
                   )}
                 </section>
               )}
               {activeKey === "4" && (
-                <section key="settings"></section>
+                <section key="searchpeople">
+                  <SearchPeople session={token} id={profileId} messages={messages} styles={styles} />
+                </section>
               )}
             </main>
           </Content>
+          <div className={styles.mobileMenu}>
+            
+            <Menu
+              mode="horizontal"
+              items={itemsSidebar.map((item) => ({ ...item, label: "" }))}
+              className={styles.menu}
+              selectedKeys={[activeKey]}
+              onSelect={(e: any) => setActiveKey(e.key)}
+            />
+          </div>
         </Layout>
       </Layout>
     </>

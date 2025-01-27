@@ -1,47 +1,62 @@
 "use client";
-import React, { useState } from 'react';
-import { isLoggedIn, checkSessionToken } from "@/utils/session";
+import React from 'react'
 import {getMessages} from "@/utils/systemMessage";
-import {Button, Form, Input, Space, message, Typography, Card, Upload} from 'antd';
-import { isCompany } from "@/utils/accounts";
-import { PaperClipOutlined, SendOutlined, UploadOutlined } from "@ant-design/icons";
+import {Layout} from "antd";
+import {Button, Form, Input, Typography, Card, Upload} from 'antd';
+//import {ProfilesApi} from "@/api/profilesApi";
+import { SendOutlined, UploadOutlined } from "@ant-design/icons";
 
-export default async function NewProfileForm({messages, styles, isCompany}: {messages: any, styles: any, isCompany: boolean}) {
+export interface NewProfileFormProps{
+    token: string,
+    messages: any,
+    styles: any,
+    isCompany: boolean
+} 
+
+
+export default async function NewProfileForm({token,messages, styles, isCompany}: NewProfileFormProps) {
     const msgs = await getMessages(messages.lang);
-
-
-    const onFinish = async (values: any) => {
-     /*   const res = await fetch("/api/profiles/new", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                name: values.name,
-                address: values.address,
-                vat: values.vat,
-                bio: values.bio,
-                profilePicture: values.profilePicture,
-                isCompany: true
-            })
-        });
-        const data = await res.json();
-        if (res.status === 200) {
-            message.success(msgs["profile-created-successfully"]);
-        } else {
-            message.error(msgs["error-creating-profile"] + " " + data.error);
-        }
-*/
-
     
 
-      
+    /*const onFinish = async (values: any) => {
+        try {
+             const profilesApi = new ProfilesApi();
+            const res = await profilesApi.apiProfilesNewPost(
+                token,
+                isCompany,
+                values.name,
+                values.surname,
+                values.address.country,
+                values.address.region,
+                values.address.city,
+                values.address.postal_code,
+                values.address.street,
+                values.address.address,
+                values.birth_date,
+                values.bio,
+                values.identifier,
+                values.sector,
+                values.website
+            );
+    
+            // Handle successful response
+            if (res.response.statusCode! >= 200 && res.response.statusCode! < 300) {
+                // Optionally, you can update the state or show a success message
+                console.log("Profile created successfully:", res.body);
+                // Redirect or show success message
+            } else {
+                // Handle unexpected status codes
+                console.error("Unexpected response:", res);
+            }
+        } catch (error) {
+            // Handle error case
+            console.error("Error creating profile:", error);
+            // Optionally show an error message to the user
+        }
+    };*/
 
-        
-    };
 
-
-    const fields = isCompany ? [
+  const fields = isCompany ? [
         {
             label: <span className={styles.formLabel}>{msgs["company-card-name-label"]}</span>,
             name: "name",
@@ -54,28 +69,28 @@ export default async function NewProfileForm({messages, styles, isCompany}: {mes
         },
         {
             label: <span className={styles.formLabel}>{msgs["company-card-partita-iva-label"]}</span>,
-            name: "vat",
-            rules: [{ required: true, message: msgs["error-vat-not-provided"] }]
+            name: "partitaIva",
+            rules: [{ required: true, message: msgs["error-partita-iva-not-provided"] }]
         },
         {
             label: <span className={styles.formLabel}>{msgs["company-card-profile-picture-label"]}</span>,
             name: "profilePicture",
-            rules: [{ required: true, message: msgs["error-profile-picture-not-provided"] }]
+            rules: [{ required: false, message: msgs["error-profile-picture-not-provided"] }]
         },
         {
             label: <span className={styles.formLabel}>{msgs["company-card-bio-label"]}</span>,
             name: "bio",
-            rules: [{ required: true, message: msgs["error-bio-not-provided"] }]
+            rules: [{ required: false, message: msgs["error-bio-not-provided"] }]
         },
         {
             label: <span className={styles.formLabel}>{msgs["company-card-website-label"]}</span>,
             name: "website",
-            rules: [{ required: true, message: msgs["error-website-not-provided"] }]
+            rules: [{ required: false, message: msgs["error-website-not-provided"] }]
         },
         {
             label: <span className={styles.formLabel}>{msgs["company-card-sector-label"]}</span>,
             name: "sector",
-            rules: [{ required: true, message: msgs["error-sector-not-provided"] }]
+            rules: [{ required: false, message: msgs["error-sector-not-provided"] }]
         },
     ] : [
         {
@@ -91,36 +106,42 @@ export default async function NewProfileForm({messages, styles, isCompany}: {mes
         {
             label: <span className={styles.formLabel}>{msgs["user-card-bio-label"]}</span>,
             name: "bio",
-            rules: [{ required: true, message: msgs["error-bio-not-provided"] }]
+            rules: [{ required: false, message: msgs["error-bio-not-provided"] }]
         },
         {
             label: <span className={styles.formLabel}>{msgs["user-card-address-label"]}</span>,
             name: "address",
-            rules: [{ required: true, message: msgs["error-address-not-provided"] }]
+            rules: [{ required: false, message: msgs["error-address-not-provided"] }]
         },
         {
             label: <span className={styles.formLabel}>{msgs["user-card-profile-picture-label"]}</span>,
             name: "profilePicture",
-            rules: [{ required: true, message: msgs["error-profile-picture-not-provided"] }]
+            rules: [{ required: false, message: msgs["error-profile-picture-not-provided"] }]
         },
         {
             label: <span className={styles.formLabel}>{msgs["user-card-birthday-label"]}</span>,
             name: "birthDate",
-            rules: [{ required: true, message: msgs["error-birthdate-not-provided"] }]
+            rules: [{ required: false, message: msgs["error-birthdate-not-provided"] }]
         },
         {
             label: <span className={styles.formLabel}>{msgs["user-card-cv-label"]}</span>,
             name: "cv",
-            rules: [{ required: true, message: msgs["error-cv-not-provided"] }]
+            rules: [{ required: false, message: msgs["error-cv-not-provided"] }]
         },
         {
             label: <span className={styles.formLabel}>{msgs["user-card-sector-label"]}</span>,
             name: "sector",
-            rules: [{ required: true, message: msgs["error-sector-not-provided"] }]
+            rules: [{ required: false, message: msgs["error-sector-not-provided"] }]
         },
     ];
 
+
+
+
+
     return (
+        <Layout style={{display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100vh"}}>
+            
         <Card className={styles.formNewProfile}>
             <Form
                 name="create-profile"
@@ -130,7 +151,7 @@ export default async function NewProfileForm({messages, styles, isCompany}: {mes
                 initialValues={{ remember: true }}
                 autoComplete="off"
                 className={styles.form}
-                onFinish={onFinish}
+                //onFinish={onFinish}
                 title={msgs["new-profile-title"] || "Create Profile"}
             >
                 <Form.Item>
@@ -174,5 +195,6 @@ export default async function NewProfileForm({messages, styles, isCompany}: {mes
                 </Form.Item>
             </Form>
         </Card>
+        </Layout>
     );
 }

@@ -1,139 +1,132 @@
 "use client";
-import React, {useState, useEffect} from 'react';
-import { Card, Avatar, Space, Row, Col, Typography, Button, Badge, Spin } from 'antd';
-import {Title, Text, Paragraph} from '@/components/Typography';
-import { EditOutlined } from '@ant-design/icons';
+import React, { useState } from "react";
+import {
+  Card,
+  Avatar,
+  Input,
+  Button,
+  Typography,
+  Space,
+  Row,
+  Col,
+  message,
+} from "antd";
+import {
+  EditOutlined,
+  UserOutlined,
+} from "@ant-design/icons";
+import { ProfilesApi } from "@/api/profilesApi";
+
+const { Title, Text } = Typography;
+
+interface ProfileUserData {
+  name: string;
+  surname: string;
+  address: string;
+  birthDate: string;
+  bio: string;
+  sector: string;
+}
 
 interface UserCardProps {
   session: string;
   id: string | number;
   messages: Record<string, string>;
+  profileData: ProfileUserData;
 }
 
-interface ProfileData {
-  name?: string;
-  surname?: string;
-  birthDate?: Date;
-  address?: {
-    country?: string;
-    region?: string;
-    city?: string;
-    postalCode?: string;
-    street?: string;
-    address?: string;
+export default function UserCard({ session, id, messages, profileData }: UserCardProps) {
+  const [isEditing, setIsEditing] = useState<Record<keyof ProfileUserData, boolean>>(
+    {} as Record<keyof ProfileUserData, boolean>
+  ); // Tracks which fields are being edited 
+  const [formData, setFormData] = useState<ProfileUserData>(profileData); // Local state for form data
+  const [loading, setLoading] = useState(false);
+
+  const handleEditClick = (field: keyof ProfileUserData) => {
+    setIsEditing((prev) => ({ ...prev, [field]: true }));
   };
-  bio?: string;
-  identifier?: string;
-  sector?: string[];
-  cv?: string;
-  profilePicture?: string;
 
-}
+  const handleSaveClick = async () => {
+    setLoading(true);
+    try {
+      const profilesApi = new ProfilesApi();
+      await profilesApi.apiProfilesModifyPost(
+        session,
+        formData.name,
+        formData.surname,
+        formData.address,
+        formData.bio,
+        formData.sector
+      );
+      message.success(messages.success || "Profile updated successfully");
+      setIsEditing(
+        {} as Record<keyof ProfileUserData, boolean>
+      );
+    } catch (error) {
+      message.error(messages.error || "Error updating profile");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-export default function UserCard({ session, id, messages }: any) {
-  const [data, setData] = useState<ProfileData | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+  const handleChange = (field: keyof ProfileUserData, value: string | string[]) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
 
-  useEffect(() => {
-    const getData = async () => {
-      try {
-        const res = await fetch(`/api/profiles/get?session=${session}&id=${id}`);
-        if (!res.ok) {
-          throw new Error("Failed to fetch profile data.");
-        }
-        const data = await res.json();
-        setData(data);
-      } catch (error) {
-        console.error("Error fetching profile data:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    getData();
-  }, [session, id]);
-
-  const userFields = [
-    {
-      value:data?.name,
-      label: messages["user-card-name-label"],
-      type: "text",
-      maxLength: 50,
-    },
-    {
-      value:data?.surname,
-      label: messages["user-card-surname-label"],
-      type: "text",
-      maxLength: 50,
-    },
-    {
-      value:data?.bio, 
-      label: messages["user-card-bio-label"],
-      type: "text",
-      maxLength: 200,
-    },
-    {
-      value:data?.address,
-      label: messages["user-card-address-label"],
-      type: "text",
-      maxLength: 200,
-    },
-    {
-      value:data?.profilePicture,
-      label: messages["user-card-profile-picture-label"],
-      type: "file",
-    },
-    {
-      value:data?.birthDate,
-      label: messages["user-card-birthday-label"],
-      type: "date",
-    },
-    {
-      value:data?.sector,
-      label: messages["user-card-sector-label"],
-      type: "text",
-      maxLength: 50,
-    },
-    {
-      value:data?.cv,
-      label: messages["user-card-cv-label"],
-      type: "file",
-    },
-  ];
-  if (loading) {
-    return (
-      <div style={{ textAlign: "center", padding: "20px" }}>
-        <Spin tip={messages["loading-text"] || "Loading..."} />
-      </div>
-    );
-  }
+  const renderField = (label: string, field: keyof ProfileUserData , icon: React.ReactNode) => (
+    <Row align="middle" style={{ marginBottom: 16 }}>
+      <Col span={6} style={{ fontWeight: "bold" }}>
+        {label}:
+      </Col>
+      <Col span={20} >
+        {isEditing[field] ? (
+          <Input
+            value={formData[field] as string | undefined}
+            onChange={(e) => handleChange(field, e.target.value)}
+          />
+        ) : (
+          <Text>
+            {field === "sector"
+              ? (formData[field] as unknown as string[])?.join(", ")
+              : field === "birthDate"
+              ? (formData[field] as unknown as Date)?.toLocaleDateString()
+              : formData[field]?.toString() || ""}
+          </Text>
+        )}
+      </Col>
+      <Col span={4}>
+        <Button
+          icon={icon}
+          type="link"
+          onClick={() => handleEditClick(field)}
+        />
+      </Col>
+    </Row>
+  );
 
   return (
-    <Card className="user-card" extra={<Button type="text" icon={<EditOutlined />} />}>
-      <Row align="middle" justify="space-between">
-        <Col>
-          <Avatar size={64}  />
-        </Col>
-        <Col>
-          <Title level={4}></Title>
-          <Paragraph type="secondary" ellipsis={{ rows: 2 }}></Paragraph>
-        </Col>
-      </Row>
-      <Row align="middle" justify="space-between" className="user-card-extra">
-        <Col>
-          <Space direction="vertical">
-            <Text><Badge status="success" text={messages["user-card-connected"]} /></Text>
-            <Text>{messages["user-card-last-login"]}</Text>
-          </Space>
-        </Col>
-        <Col>
-          <Space direction="vertical">
-            <Text><Badge status="warning" text={messages["user-card-companies"]} /></Text>
-            <Text>{messages["user-card-last-visit"]}</Text>
-          </Space>
-        </Col>
-      </Row>
+    <Card
+      title={<Title level={4}>{profileData.name || "User Profile"}</Title>}
+      extra={
+        <Button type="primary" loading={loading} onClick={handleSaveClick}>
+          Save Changes
+        </Button>
+      }
+      style={{ maxWidth: 600, margin: "auto" }}
+    >
+      <Space direction="vertical" size="large">
+        <Avatar
+          size={64}
+           icon={<UserOutlined />}
+          style={{ marginBottom: 16 }}
+        />
+
+        {renderField("Name", "name",  <EditOutlined />)}
+        {renderField("Surname", "surname",  <EditOutlined />)}
+        {renderField("Bio", "bio",  <EditOutlined />)}
+        {renderField("Sector", "sector",  <EditOutlined />)}
+      
+      </Space>
     </Card>
   );
 }
-
-

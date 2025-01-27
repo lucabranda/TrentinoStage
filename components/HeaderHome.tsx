@@ -5,6 +5,7 @@ import { Header } from "./Layout/Layout";
 import {
   HomeOutlined,
   InboxOutlined,
+  MenuOutlined,
   UserAddOutlined,
 } from "@ant-design/icons";
 import Link from "next/link";
@@ -58,9 +59,6 @@ export default function HeaderHome({
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  
-
-
   const menuItems = [
     {
       key: "hero",
@@ -79,8 +77,6 @@ export default function HeaderHome({
     },
   ];
 
-  
-
   return (
     <Header className={styles.header}>
       <img src={logo.src} alt="logo" className={styles.logo} />
@@ -89,6 +85,7 @@ export default function HeaderHome({
         selectedKeys={[activeSection]}
         items={menuItems}
         className={styles.menu}
+        overflowedIndicator={<MenuOutlined />}
       />
       <div className={styles.headerElementsContainer}>
         <LanguageSelector />
@@ -97,11 +94,10 @@ export default function HeaderHome({
             {messages["landing-button-login"]}
           </LinkButton>
         ) : (
-          <LinkButton href="/logout" className={styles.loginButton}>
+          <LinkButton href="/login" className={styles.loginButton}>
             {messages["landing-button-logout"] || "Logout"}
           </LinkButton>
         )}
-
       </div>
     </Header>
   );

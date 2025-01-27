@@ -3,34 +3,24 @@ import {
   Card,
   Row,
   Col,
-  Menu,
-  Drawer,
-  Typography,
-  Skeleton,
   Space,
 } from "antd";
 import {
   DesktopOutlined,
   RocketOutlined,
   CheckCircleOutlined,
-  HomeOutlined,
-  InboxOutlined,
   UserAddOutlined,
-  MenuOutlined,
   UserOutlined,
 } from "@ant-design/icons";
 import logo from "@/public/logo.svg";
 import { Link } from "@/components/Anchor";
-import { siteConfig } from "@/utils/config";
 import { getMessages } from "@/utils/systemMessage";
 import styles from "./page.module.css";
 import {
   PrimaryButton,
   DefaultButton,
-  DashedButton,
-  LinkButton,
 } from "@/components/buttons/Buttons";
-import { Header, Footer, Content } from "@/components/Layout/Layout";
+import { Footer, Content } from "@/components/Layout/Layout";
 import { Title, Paragraph } from "@/components/Typography";
 import HeaderHome from "@/components/HeaderHome";
 import { isLoggedIn } from "@/utils/session";
@@ -55,7 +45,7 @@ export default async function Home({ params }: any) {
               <>
                 <PrimaryButton href="/dashboard" className={styles.ctaButton}>
                   <UserOutlined /> 
-                  {messages["landing-button-dashboard"] || "Personal Area"}
+                  {messages["landing-button-dashboard"] }
                 </PrimaryButton>
             </>
           ) : (
