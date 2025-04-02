@@ -11,6 +11,7 @@ import {
 import Link from "next/link";
 import { LinkButton } from "./buttons/Buttons";
 import LanguageSelector from "./buttons/LanguageSelector";
+import {removeSessionToken} from "@/utils/cookie";
 
 interface HeaderHomeProps {
   messages: {
@@ -18,7 +19,7 @@ interface HeaderHomeProps {
   };
   logo: {
     src: string;
-  }; 
+  };
   styles: {
     [key: string]: string;
   };
@@ -77,6 +78,11 @@ export default function HeaderHome({
     },
   ];
 
+  function logout() {
+    removeSessionToken();
+    window.location.reload();
+  }
+
   return (
     <Header className={styles.header}>
       <img src={logo.src} alt="logo" className={styles.logo} />
@@ -94,7 +100,7 @@ export default function HeaderHome({
             {messages["landing-button-login"]}
           </LinkButton>
         ) : (
-          <LinkButton href="/login" className={styles.loginButton}>
+          <LinkButton onClick={() => logout()} className={styles.loginButton}>
             {messages["landing-button-logout"] || "Logout"}
           </LinkButton>
         )}
