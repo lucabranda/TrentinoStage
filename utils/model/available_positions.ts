@@ -16,13 +16,7 @@ const available_positions = new mongoose.Schema({
         application_time: Date
     }],
     chosen_user: String,
-    creation_time: Date,
-    reviews: [{
-        reviewer_id: String,
-        review: String,
-        rating: Number,
-        creation_time: Date
-    }]
+    creation_time: Date
 })
 
 export default mongoose.models.available_positions ?? mongoose.model("available_positions", available_positions)

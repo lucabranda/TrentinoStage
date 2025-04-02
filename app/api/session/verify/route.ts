@@ -58,7 +58,7 @@ export async function GET(req: NextRequest) {
     // Check the session token
     const accountId = await checkSessionToken(sessionToken)
 
-    if (accountId === null) {
+    if (accountId === null || accountId === '') {
         return NextResponse.json({error: "Invalid session token", code: "error-invalid-session"}, { status: 401 })
     }
 
