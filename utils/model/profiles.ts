@@ -16,7 +16,13 @@ const profiles = new mongoose.Schema({
     identifier: String,
     sector: [String],
     website: String,
-    is_company: Boolean
+    is_company: Boolean,
+    reviews: [{
+        reviewer_id: String,
+        review: String,
+        rating: Number,
+        creation_time: Date
+    }]
 })
 
 export default mongoose.models.profiles ?? mongoose.model("profiles", profiles)

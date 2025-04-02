@@ -85,6 +85,9 @@ export async function POST(req: NextRequest) {
 
     if (contentType.includes("multipart/form-data")) {
         formData = await req.formData()
+    } else if (contentType.includes("application/json")) {
+        const jsonData = await req.json()
+        formData = new Map(Object.entries(jsonData))
     } else {
         return NextResponse.json({error: "Unsupported content type", code: "error-invalid-request"}, { status: 405 })
     }

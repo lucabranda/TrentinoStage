@@ -7,6 +7,9 @@ import accounts from "./model/accounts"
 // Functions to help manage the accounts
 
 export async function getAccountInfo(accountId: string) {
+    // Check if the accountID is a valid BSON string
+    if(!accountId || !accountId.match(/^[0-9a-fA-F]{24}$/)) return false
+    
     // Get the account information
     await connectDB()
 
@@ -16,11 +19,14 @@ export async function getAccountInfo(accountId: string) {
 }
 
 export async function getProfileId(accountId: string) {
+    // Check if the accountID is a valid BSON string
+    if(!accountId || !accountId.match(/^[0-9a-fA-F]{24}$/)) return false
+
     await connectDB()
 
     // Get the profile ID associated with the account
     const profileId = await accounts.findOne({ _id: ObjectId.createFromHexString(accountId) }).then(profileId => {
-        if (profileId.profile_id === null) {
+        if (!profileId || profileId.profile_id === null) {
             return null
         }
         return profileId.profile_id
@@ -30,6 +36,9 @@ export async function getProfileId(accountId: string) {
 }
 
 export async function isCompany(accountId: string) {
+    // Check if the accountID is a valid BSON string
+    if(!accountId || !accountId.match(/^[0-9a-fA-F]{24}$/)) return false
+
     await connectDB()
 
     // Check if the account is linked to a company profile

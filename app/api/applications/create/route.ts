@@ -76,6 +76,9 @@ export async function POST(req: NextRequest) {
 
     if (contentType.includes("multipart/form-data")) {
         formData = await req.formData()
+    } else if (contentType.includes("application/json")) {
+        const jsonData = await req.json()
+        formData = new Map(Object.entries(jsonData))
     } else {
         return NextResponse.json({error: "Unsupported content type", code: "error-invalid-request"}, { status: 405 })
     }
@@ -84,8 +87,9 @@ export async function POST(req: NextRequest) {
 
     const userId = await checkSessionToken(token)
 
+    const company = await isCompany(userId)
     // Check if the account is a company
-    if (!(await isCompany(userId))) {
+    if (!company) {
         return NextResponse.json({error: "Invalid account type", code: "error-invalid-account-type"}, { status: 403 })
     } 
 
