@@ -12,6 +12,7 @@ import UserCard from "../dashboard/UserCard";
 import SearchPeople from "../dashboard/SearchPeople";
 import { OfferSectionCompany, OfferSectionUser } from "../dashboard/OfferSection";
 import { ApplicationSectionCompany, ApplicationSectionUser } from "../dashboard/ApplicationSection";
+import {removeSessionToken} from "@/utils/cookie";
 
 
 interface DashboardLayoutProps {
@@ -36,8 +37,13 @@ export default function DashboardLayout({ params, messages, token, isACompany, p
   const [collapsed, setCollapsed] = useState(false);
   const [activeKey, setActiveKey] = useState("1");
 
-  
-     // Sidebar links
+
+  function logout() {
+    removeSessionToken();
+    window.location.href = "/";
+  }
+
+  // Sidebar links
   const itemsSidebar = [
     {
       key: "1",
@@ -65,8 +71,8 @@ export default function DashboardLayout({ params, messages, token, isACompany, p
     },
     {
       key: "5",
-      icon: <a href={`/${( params).lang}/login`}><LogoutOutlined/></a>,
-      label: <Link href={`/${( params).lang}/login`}>{messages["dashboard-logout"]}</Link>, 
+      icon: <a href="#" onClick={() => logout()}><LogoutOutlined/></a>,
+      label: <Link href="#" onClick={() => logout()}>{messages["dashboard-logout"]}</Link>,
     }
   ];
 

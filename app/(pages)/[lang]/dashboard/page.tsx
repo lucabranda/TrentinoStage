@@ -10,7 +10,6 @@ import {ProfilesApi} from '@/api/profilesApi';
 import { AccountsApi } from "@/api/accountsApi";
 
 import { redirect } from 'next/navigation';
-import { removeSessionToken } from "@/utils/cookie";
 import NewProfileForm from "@/components/forms/NewProfileForm";
 
 export default async function Home({ params }: any) {
