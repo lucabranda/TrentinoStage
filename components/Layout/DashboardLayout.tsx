@@ -9,10 +9,10 @@ import { Link } from "@/components/Typography";
 import LanguageSelector from "@/components/buttons/LanguageSelector";
 import CompanyCard from "../dashboard/CompanyCard";
 import UserCard from "../dashboard/UserCard";
-import SearchPeople from "../dashboard/SearchPeople";
 import { OfferSectionCompany, OfferSectionUser } from "../dashboard/OfferSection";
 import { ApplicationSectionCompany, ApplicationSectionUser } from "../dashboard/ApplicationSection";
 import {removeSessionToken} from "@/utils/cookie";
+import InviteMembers from "@/components/dashboard/InviteMembers";
 
 
 interface DashboardLayoutProps {
@@ -31,11 +31,19 @@ interface DashboardLayoutProps {
   website: string; 
 }
 
+enum TabKeys {
+  ProfileInfo = "profileInfo",
+  Offers = "offers",
+  Applications = "applications",
+  Logout = "logout",
+  InviteMembers = "inviteMembers",
+}
+
 
 export default function DashboardLayout({ params, messages, token, isACompany, profileId, styles, name, surname, address, birthDate, bio, sector, website }: DashboardLayoutProps) {
 
   const [collapsed, setCollapsed] = useState(false);
-  const [activeKey, setActiveKey] = useState("1");
+  const [activeKey, setActiveKey] = useState<TabKeys>(TabKeys.ProfileInfo);
 
 
   function logout() {
@@ -46,35 +54,41 @@ export default function DashboardLayout({ params, messages, token, isACompany, p
   // Sidebar links
   const itemsSidebar = [
     {
-      key: "1",
+      key: TabKeys.ProfileInfo,
       icon: isACompany ? <BuildOutlined /> : <UserOutlined />,
       url: `/${( params).lang}/dashboard`,
       label: isACompany ? messages["dashboard-company-profile"] : messages["dashboard-user-profile"],
     },
     {
-      key: "2",
+      key: TabKeys.Offers,
       icon: <SearchOutlined/>,
       label: messages["dashboard-offers"],
       url: `/${( params).lang}/dashboard#offers`,
     },
-    { 
-      key: "3", 
-      icon: <PaperClipOutlined/>, 
+    {
+      key: TabKeys.Applications,
+      icon: <PaperClipOutlined/>,
       label: messages["dashboard-applications"],
       url: `/${( params).lang}/dashboard#applications`
-    },
-    {
-      key: "4",
-      icon: <TeamOutlined />,
-      label: messages["dashboard-search-people"],
-      url: `/${( params).lang}/dashboard#searchpeople`,
-    },
-    {
-      key: "5",
-      icon: <a href="#" onClick={() => logout()}><LogoutOutlined/></a>,
-      label: <Link href="#" onClick={() => logout()}>{messages["dashboard-logout"]}</Link>,
     }
   ];
+
+  if(isACompany){
+      itemsSidebar.push({
+          key: TabKeys.InviteMembers,
+          icon: <TeamOutlined />,
+          label: messages["dashboard-invite-members"],
+          url: `/${( params).lang}/dashboard#searchpeople`,
+      });
+  }
+
+  // Should be kept last
+  itemsSidebar.push({
+    key: TabKeys.Logout,
+    icon: <a href="#" onClick={() => logout()}><LogoutOutlined/></a>,
+    label: <Link href="#" onClick={() => logout()}>{messages["dashboard-logout"]}</Link>,
+    url: "#"
+  });
 
   return (
     <>
@@ -100,7 +114,7 @@ export default function DashboardLayout({ params, messages, token, isACompany, p
             onSelect={(e: any) => setActiveKey(e.key)}
           />
         </Sider>
-        
+
         <Layout>
           <Header className={styles.header}>
             <Link href="/"> <HomeOutlined /> </Link>
@@ -115,7 +129,7 @@ export default function DashboardLayout({ params, messages, token, isACompany, p
           </Header>
           <Content className={styles.content}>
             <main className={styles.main}>
-              {activeKey === "1" && (
+              {activeKey === TabKeys.ProfileInfo && (
                 <section key="profile">
                     <h1 className={styles.title}>{messages["dashboard-hi"]} {name}</h1>
                     <p className={styles.description}>
@@ -128,7 +142,7 @@ export default function DashboardLayout({ params, messages, token, isACompany, p
                     )}
                 </section>
               )}
-              {activeKey === "2" && (
+              {activeKey === TabKeys.Offers && (
                 <section key="offers">
                   {isACompany ? (
                     <OfferSectionCompany session={token} id={profileId} messages={messages} />
@@ -137,7 +151,7 @@ export default function DashboardLayout({ params, messages, token, isACompany, p
                   )}
                 </section>
               )}
-              {activeKey === "3" && (
+              {activeKey === TabKeys.Applications && (
                 <section key="applications">
                   {isACompany ? (
                     <ApplicationSectionCompany session={token} id={profileId} messages={messages} />
@@ -146,15 +160,15 @@ export default function DashboardLayout({ params, messages, token, isACompany, p
                   )}
                 </section>
               )}
-              {activeKey === "4" && (
+              {activeKey === TabKeys.InviteMembers && isACompany && (
                 <section key="searchpeople">
-                  <SearchPeople session={token} id={profileId} messages={messages} styles={styles} />
+                  <InviteMembers session={token} id={profileId} messages={messages} styles={styles} />
                 </section>
               )}
             </main>
           </Content>
           <div className={styles.mobileMenu}>
-            
+
             <Menu
               mode="horizontal"
               items={itemsSidebar.map((item) => ({ ...item, label: "" }))}
