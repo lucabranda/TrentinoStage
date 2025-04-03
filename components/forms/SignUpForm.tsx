@@ -44,7 +44,7 @@ export default function SignUpForm({ messages }: { messages: any }) {
         return;
       }
 
-    router.push("/create-profile");
+    router.push("/dashboard");
       
     } catch (error: any) {
       messageApi.error(
@@ -57,7 +57,7 @@ export default function SignUpForm({ messages }: { messages: any }) {
 
   return (
     <>
-      {contextHolder} {/* Ant Design message holder */}
+      {contextHolder}
       <Form
         name="signup"
         initialValues={{ remember: true }}
@@ -69,6 +69,7 @@ export default function SignUpForm({ messages }: { messages: any }) {
           rules={[
             {
               required: true,
+              type: "email",
               message:
                 messages["signup-email-message"] ||
                 "Please input your Email!",
