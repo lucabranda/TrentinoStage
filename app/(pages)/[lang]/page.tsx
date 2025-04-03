@@ -49,16 +49,16 @@ export default async function Home({ params }: any) {
                 </PrimaryButton>
             </>
           ) : (
-            <>
+            <div style={{ display: "flex", justifyContent: "center", width: "100%", gap: ".5rem" }}>
               <PrimaryButton href="/login" className={styles.ctaButton}>
                 <UserOutlined />
                 {messages["landing-button-login-user"]}
               </PrimaryButton>
-              <DefaultButton href="/login/company" className={styles.ctaButton}>
+              <DefaultButton href="#join" className={styles.ctaButton}>
                   <RocketOutlined />
-                  {messages["landing-button-login-company"]}
+                  {messages["signup-button-signup"]}
               </DefaultButton>
-            </>
+            </div>
           )}
         </section>
 
