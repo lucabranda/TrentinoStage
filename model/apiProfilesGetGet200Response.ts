@@ -18,7 +18,9 @@ export class ApiProfilesGetGet200Response {
     'bio'?: string;
     'website'?: string;
     'birthDate'?: string;
-    'address'?: string;
+    'address'?: {
+        address?: string;
+    };
     'identifier'?: string;
     'sector'?: string;
     'cv'?: string;

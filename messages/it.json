@@ -84,6 +84,8 @@
     "user-card-birthday-label": "Data di nascita",
     "user-card-sector-label": "Settore",
     "user-card-cv-label": "Curriculum Vitae",
+    "user-card-submit-button": "Crea profilo",
+
 
     "error-invalid-session": "La tua sessione è scaduta. Effettua nuovamente il login.",
     "error-profile-not-found": "Profilo non trovato.",
