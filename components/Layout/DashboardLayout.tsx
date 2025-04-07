@@ -43,6 +43,14 @@ interface DashboardLayoutProps {
     partitaIva: string;
 }
 
+enum TabKeys {
+    ProfileInfo = "profileInfo",
+    Offers = "offers",
+    Applications = "applications",
+    Logout = "logout",
+    InviteMembers = "inviteMembers",
+}
+
 export default function DashboardLayout({
                                             params,
                                             messages,
@@ -72,35 +80,41 @@ export default function DashboardLayout({
     // Sidebar links
     const itemsSidebar = [
         {
-            key: "1",
+            key: TabKeys.ProfileInfo,
             icon: isACompany ? <BuildOutlined/> : <UserOutlined/>,
             url: `/${(params).lang}/dashboard`,
             label: isACompany ? messages["dashboard-company-profile"] : messages["dashboard-user-profile"],
         },
         {
-            key: "2",
+            key: TabKeys.Offers,
             icon: <SearchOutlined/>,
             label: messages["dashboard-offers"],
             url: `/${(params).lang}/dashboard#offers`,
         },
         {
-            key: "3",
+            key: TabKeys.Applications,
             icon: <PaperClipOutlined/>,
             label: messages["dashboard-applications"],
             url: `/${(params).lang}/dashboard#applications`
-        },
-        {
-            key: "4",
-            icon: <TeamOutlined/>,
-            label: messages["dashboard-search-people"],
-            url: `/${(params).lang}/dashboard#searchpeople`,
-        },
-        {
-            key: "5",
-            icon: <a href="#" onClick={() => logout()}><LogoutOutlined/></a>,
-            label: <Link href="#" onClick={() => logout()}>{messages["dashboard-logout"]}</Link>,
         }
-    ];
+    ]
+
+    if(isACompany){
+        itemsSidebar.push({
+            key: TabKeys.InviteMembers,
+            icon: <TeamOutlined />,
+            label: messages["dashboard-invite-members"],
+            url: `/${( params).lang}/dashboard#invitemembers`,
+        });
+    }
+
+    // Should be kept last
+    itemsSidebar.push({
+        key: TabKeys.Logout,
+        icon: <a href="#" onClick={() => logout()}><LogoutOutlined/></a>,
+        label: <Link href="#" onClick={() => logout()}>{messages["dashboard-logout"]}</Link>,
+        url: "#"
+    });
 
     return (
         <>
@@ -141,7 +155,7 @@ export default function DashboardLayout({
                     </Header>
                     <Content className={styles.content}>
                         <main className={styles.main}>
-                            {activeKey === "1" && (
+                            {activeKey === TabKeys.ProfileInfo && (
                                 <section key="profile">
 
                                     <ProfileCard session={token} id={profileId} messages={messages}
@@ -162,7 +176,7 @@ export default function DashboardLayout({
                                     }) as ProfileUserData | ProfileCompanyData}/>
                                 </section>
                             )}
-                            {activeKey === "2" && (
+                            {activeKey === TabKeys.Offers && (
                                 <section key="offers">
                                     {isACompany ? (
                                         <OfferSectionCompany session={token} id={profileId} messages={messages}/>
@@ -171,7 +185,7 @@ export default function DashboardLayout({
                                     )}
                                 </section>
                             )}
-                            {activeKey === "3" && (
+                            {activeKey === TabKeys.Applications && (
                                 <section key="applications">
                                     {isACompany ? (
                                         <ApplicationSectionCompany session={token} id={profileId} messages={messages}/>
@@ -180,9 +194,9 @@ export default function DashboardLayout({
                                     )}
                                 </section>
                             )}
-                            {activeKey === "4" && (
-                                <section key="searchpeople">
-
+                            {activeKey === TabKeys.InviteMembers && (
+                                <section key="invitemembers">
+                                    <InviteMembers session={token} id={profileId} messages={messages}/>
                                 </section>
                             )}
 

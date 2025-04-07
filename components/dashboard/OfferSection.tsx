@@ -1,9 +1,9 @@
-// CompanyOffers.tsx
 "use client"
 import React, { useState } from 'react';
 import { Card, List, Button, Input, Space, Typography } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import { DashedButton, PrimaryButton } from '../buttons/Buttons';
+import {ApplicationsApi} from "@/api/applicationsApi";
 const {Item} = List;
 const { Text } = Typography;
 
@@ -43,27 +43,70 @@ const OfferCard = ({ title, description, messages, isCompany }: Offer) => (
 
 const OfferSectionCompany: React.FC<OfferSectionProps> = ({ session, id, messages }) => {
 
-  const [newOffer, setNewOffer] = useState('');
-  const [offers, setOffers] = useState([
-    { title: 'Offer 1', description: 'Description for offer 1' },
-    { title: 'Offer 2', description: 'Description for offer 2' },
-  ]);
+    const [title, setTitle] = useState('');
+    const [description, setDescription] = useState('');
+    const [sector, setSector] = useState('');
+    const [country, setCountry] = useState('');
+    const [region, setRegion] = useState('');
+    const [city, setCity] = useState('');
+    const [weeklyhours, setWeeklyhours] = useState(0);
 
-  const handleAddOffer = () => {
-    if (newOffer) {
-      setOffers([...offers, { title: newOffer, description: '' }]);
-      setNewOffer('');
-    }
-  };
+    //TODO: LOAD OFFERS
+    const [offers, setOffers] = useState([
+        { title: 'Offer 1', description: 'Description for offer 1' },
+        { title: 'Offer 2', description: 'Description for offer 2' },
+    ]);
+
+    const handleAddOffer = () => {
+
+        const api = new ApplicationsApi();
+        api.apiApplicationsCreatePost(
+            session,
+            title,
+            description,
+            sector,
+            country,
+            region,
+            city,
+            weeklyhours
+        ).then(
+
+        );
+
+    };
 
   return(
   <Card title={messages["dashboard-company-offers"] || "Company Offers"}>
-    <Input
-      placeholder={messages["dashboard-new-offer"] || "New Offer"}
-      value={newOffer}
-      onChange={(e) => setNewOffer(e.target.value)}
-      style={{ width: 200 }}
-    />
+      <Input
+          placeholder={messages["dashboard-search-offer"]}
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+      />
+      <Input
+          placeholder={messages["dashboard-search-offer"]}
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+      />
+      <Input
+          placeholder={messages["dashboard-search-offer"]}
+          value={sector}
+          onChange={(e) => setSector(e.target.value)}
+      />
+      <Input
+          placeholder={messages["dashboard-search-offer"]}
+          value={country}
+          onChange={(e) => setCountry(e.target.value)}
+      />
+      <Input
+          placeholder={messages["dashboard-search-offer"]}
+          value={region}
+          onChange={(e) => setRegion(e.target.value)}
+      />
+      <Input
+          placeholder={messages["dashboard-search-offer"]}
+          value={city}
+          onChange={(e) => setCity(e.target.value)}
+      />
     <Button type="primary" onClick={handleAddOffer} style={{ marginLeft: 8 }}>
       {messages["dashboard-add"] || "Add"}
     </Button>
@@ -80,30 +123,44 @@ const OfferSectionCompany: React.FC<OfferSectionProps> = ({ session, id, message
 
 
 const OfferSectionUser: React.FC<OfferSectionProps> = ({ session, id, messages }) => {
-    const [newOffer, setNewOffer] = useState('');
+    const [title, setTitle] = useState('');
+    const [description, setDescription] = useState('');
+    const [sector, setSector] = useState('');
+    const [country, setCountry] = useState('');
+    const [region, setRegion] = useState('');
+    const [city, setCity] = useState('');
+    const [weeklyhours, setWeeklyhours] = useState(0);
+
+    //TODO: LOAD OFFERS
     const [offers, setOffers] = useState([
       { title: 'Offer 1', description: 'Description for offer 1' },
       { title: 'Offer 2', description: 'Description for offer 2' },
     ]);
 
     const handleAddOffer = () => {
-      if (newOffer) {
-        setOffers([...offers, { title: newOffer, description: '' }]);
-        setNewOffer('');
-      }
+
+      const api = new ApplicationsApi();
+      api.apiApplicationsCreatePost(
+          session,
+          title,
+          description,
+          sector,
+          country,
+          region,
+          city,
+          weeklyhours
+      ).then(
+
+      );
+
     };
 
     return(
         <>
         <Card title={messages["dashboard-user-offers"] || "User Offers"}>
-    <Input
-      placeholder={messages["dashboard-search-offer"] || "Search Offer"}
-      value={newOffer}
-      onChange={(e) => setNewOffer(e.target.value)}
-      style={{ width: 200 }}
-    />
-          <Button type="primary" onClick={handleAddOffer} style={{ marginLeft: 8 }}>
-      {messages["dashboard-search"] || "Search"} <SearchOutlined/>
+
+            <Button type="primary" onClick={handleAddOffer} style={{ marginLeft: 8 }}>
+          {messages["dashboard-search"] || "Search"} <SearchOutlined/>
     </Button>
     <List
       dataSource={offers}
