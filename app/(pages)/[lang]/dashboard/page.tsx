@@ -54,11 +54,12 @@ export default async function Home({ params }: any) {
       profileId={profileId}
       name={profileData!.name!}
       surname={profileData!.surname!}
-      address={profileData!.address!}
+      address={profileData!.address! as { address: string; }}
       birthDate={profileData!.birthDate!}
       bio={profileData!.bio!}
       sector={profileData!.sector!}
       website={profileData!.website!}
+      partitaIva={""} //TODO: FIX!!!
     />
   )
 }

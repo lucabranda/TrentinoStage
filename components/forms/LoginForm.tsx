@@ -43,6 +43,21 @@ export default function LogInForm({ messages }: LogInFormProps) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
+      /*
+       const country = formData.get("country") as string
+    const region = formData.get("region") as string
+    const city = formData.get("city") as string
+    const postalCode = formData.get("postalCode") as string
+    const street = formData.get("street") as string
+    const address = formData.get("address") as string
+    let birthDate = formData.get("birthDate") as string
+
+    const bio = formData.get("bio") as string ?? null
+    const identifier = formData.get("identifier") as string
+    const sector = formData.get("sector") as string
+    const website = formData.get("website") as string ?? null
+
+       */
 
       if (!response.ok) {
         const errorData = await response.json();

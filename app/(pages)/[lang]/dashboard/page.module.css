@@ -9,19 +9,40 @@
     height: 100vh !important;
 }
 .menu{
+    margin-top: 1rem !important;
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
     height: 100vh;
+    flex-wrap: nowrap;
+    align-content: center;
+    padding-left: 5rem;
+    padding-right: 5rem;
+}
+
+.menu div{
+    width: 100% !important;
 }
 
 .closeButton{
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-top:2px;
+    margin-top:1rem;
     border-radius: 40% !important;
+    border: none !important;
+}
+.closeButton button{
+    font-size: 20px !important;
+    background-color: transparent;
+    padding: 0.5rem;
+    border-radius: 10px !important;
+    color: #1a1a1a !important;
+    box-shadow: none !important;
+    border: none;
+}
+.closeButton button:hover{
+    background-color: rgba(255, 255, 255, 0.91);
+    cursor: pointer;
 }
 
 .header{
@@ -39,72 +60,21 @@
     height: 100%;
     overflow-y:visible;
     overflow-x: hidden;
+    padding: 3rem !important;
 }
-/*Form*/
-/*
 .formNewProfile{
-    margin-top: 10px;
-    display: flex;
-    flex-direction: column;
-    justify-content: left;
-    align-items: left;
-    margin-bottom: 20px;
+    width: 100%;
+    max-width: 40rem;
 }
-
 
 .form{
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-    justify-content: left;
-    align-items: left;
-}
-.formItem{
     display: flex;
     flex-direction: column;
-    justify-content: left;
-    align-items: left;
-    gap: 10px;
 }
-.formLabel {
-  width: 100%;
-}
-
-.formInput {
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 15px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  transition: border-color 0.3s;
-}
-
-.formInput:focus {
-  border-color: #007bff;
-  outline: none;
-}
-
-.formButton {
-  padding: 10px 15px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.formButton:hover {
-  background-color: #0056b3;
-}
-*/
-
-
 .formItem {
     display: flex;
     flex-direction: column;
     justify-content: flex-start; /* Align to the start */
-    align-items: stretch; /* Stretch to full width */
     gap: 10px; /* Space between items */
 }
 
@@ -113,6 +83,7 @@
     font-size: 16px;
     color: #333;
     width: 100%;
+
 }
 
 .formInput {

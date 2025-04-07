@@ -219,12 +219,12 @@ export async function POST(req: NextRequest) {
 
     await connectDB()
     // Create the profile on the database
-
+    console.log(birthDate)
     try {
         const result = await profiles.create({
             name: name,
             surname: surname,
-            birthDate: new Date(Date.parse(birthDate)).toISOString(),
+            birth_date: birthDate,
             address: {
                 country: country,
                 region: region,
@@ -239,6 +239,7 @@ export async function POST(req: NextRequest) {
             website: website,
             is_company: is_company
         })
+
         const promise = result.save()
 
         // Link the profile to the user
@@ -246,6 +247,7 @@ export async function POST(req: NextRequest) {
 
         await promise
     } catch (e) {
+
         return NextResponse.json({error: "Internal server error", code: "error-internal-server"}, { status: 500 })
     }
 

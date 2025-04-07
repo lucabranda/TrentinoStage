@@ -3,7 +3,6 @@ import React from 'react'
 import {getMessages} from "@/utils/systemMessage";
 import {Layout} from "antd";
 import {Button, Form, Input, Typography, Card, Upload} from 'antd';
-//import {ProfilesApi} from "@/api/profilesApi";
 import { SendOutlined, UploadOutlined } from "@ant-design/icons";
 
 export interface NewProfileFormProps{
@@ -18,42 +17,48 @@ export default async function NewProfileForm({token,messages, styles, isCompany}
     const msgs = await getMessages(messages.lang);
     
 
-    /*const onFinish = async (values: any) => {
-        try {
-             const profilesApi = new ProfilesApi();
-            const res = await profilesApi.apiProfilesNewPost(
-                token,
-                isCompany,
-                values.name,
-                values.surname,
-                values.address.country,
-                values.address.region,
-                values.address.city,
-                values.address.postal_code,
-                values.address.street,
-                values.address.address,
-                values.birth_date,
-                values.bio,
-                values.identifier,
-                values.sector,
-                values.website
-            );
-    
-            // Handle successful response
-            if (res.response.statusCode! >= 200 && res.response.statusCode! < 300) {
-                // Optionally, you can update the state or show a success message
-                console.log("Profile created successfully:", res.body);
-                // Redirect or show success message
-            } else {
-                // Handle unexpected status codes
-                console.error("Unexpected response:", res);
+     const onFinish = async (values: any) => {
+         try {
+             const name = values.name
+             const surname = values.surname
+             const address = values.address
+             const birthdate = values.birthDate
+             const bio = values.bio
+             const sector = values.sector
+
+             console.log(birthdate)
+
+            const res = await fetch("/api/profiles/new", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    sessionToken: token,
+                    is_company: isCompany,
+                    name: name,
+                    surname: surname,
+                    bio:bio,
+                    address: address,
+                    birthDate: new Date(birthdate).toISOString(),
+                    identifier: undefined,
+                    sector: sector,
+                }),
+            });
+            if (!res.ok) {
+                const errorData = await res.json();
+                throw new Error(
+                    errorData.error
+                );
             }
+
+
         } catch (error) {
             // Handle error case
             console.error("Error creating profile:", error);
             // Optionally show an error message to the user
         }
-    };*/
+
+        window.location.href = "/dashboard";
+    };
 
 
   const fields = isCompany ? [
@@ -151,7 +156,7 @@ export default async function NewProfileForm({token,messages, styles, isCompany}
                 initialValues={{ remember: true }}
                 autoComplete="off"
                 className={styles.form}
-                //onFinish={onFinish}
+                onFinish={onFinish}
                 title={msgs["new-profile-title"] || "Create Profile"}
             >
                 <Form.Item>
