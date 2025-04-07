@@ -22,6 +22,7 @@ import {OfferSectionCompany, OfferSectionUser} from "../dashboard/OfferSection";
 import {ApplicationSectionCompany, ApplicationSectionUser} from "../dashboard/ApplicationSection";
 import {removeSessionToken} from "@/utils/cookie";
 import InviteMembers from "@/components/dashboard/InviteMembers";
+import {PrimaryButton} from "@/components/buttons/Buttons";
 
 
 interface DashboardLayoutProps {
@@ -33,7 +34,7 @@ interface DashboardLayoutProps {
     styles: any;
     name: string;
     surname: string;
-    address:{
+    address: {
         address: string;
     }
     birthDate: string;
@@ -118,38 +119,44 @@ export default function DashboardLayout({
 
     return (
         <>
-            <Layout className={styles.layout}>
-                <Sider
-                    width="15%"
-                    className={styles.sider}
-                    collapsible
-                    trigger={null}
-                    collapsed={collapsed}
-                    onCollapse={() => setCollapsed(!collapsed)}
-                >
-                    <div className={styles.closeButton} style={{alignContent: collapsed ? "right" : "left"}}>
-                        <button onClick={() => setCollapsed(!collapsed)}>
-                            {collapsed ? <MenuOutlined/> : <CloseOutlined/>}
-                        </button>
-                    </div>
-                    <Menu
-                        mode="vertical"
-                        items={itemsSidebar}
-                        className={styles.menu}
-                        selectedKeys={[activeKey]}
-                        onSelect={(e: any) => setActiveKey(e.key)}
-                    />
-                </Sider>
+        <Layout className={styles.layout}>
+            <Sider
+                width="15%"
+                className={styles.sider}
+                collapsible
+                trigger={null}
+                collapsed={collapsed}
+                onCollapse={() => setCollapsed(!collapsed)}
+            >
+                <div className={styles.closeButton} style={{alignContent: collapsed ? "right" : "left"}}>
+                    <button onClick={() => setCollapsed(!collapsed)}>
+                        {collapsed ? <MenuOutlined/> : <CloseOutlined/>}
+                    </button>
+                </div>
+                <Menu
+                    mode="vertical"
+                    items={itemsSidebar}
+                    className={styles.menu}
+                    selectedKeys={[activeKey]}
+                    onSelect={(e: any) => setActiveKey(e.key)}
+                />
+            </Sider>
 
-                <Layout>
-                    <Header className={styles.header}>
-                        <Link href="/"> <Image
-                            src={logo}
-                            alt="logo"
-                            width={120}
-                            height={50}
-                            style={{filter: "invert(1)"}}
-                        /> </Link>
+            <Layout>
+                <Header className={styles.header}>
+                    <Link href="/"> <Image
+                        src={logo}
+                        alt="logo"
+                        width={120}
+                        height={50}
+                        style={{filter: "invert(1)"}}
+                    /> </Link>
+                   <div className={styles.headerButtonContainer}>
+                       <LanguageSelector/>
+                       <PrimaryButton onClick={()=>logout()}>
+                           {messages["dashboard-logout"]} <LogoutOutlined/>
+                       </PrimaryButton>
+                   </div>
 
                         <LanguageSelector/>
                     </Header>
@@ -158,23 +165,37 @@ export default function DashboardLayout({
                             {activeKey === TabKeys.ProfileInfo && (
                                 <section key="profile">
 
-                                    <ProfileCard session={token} id={profileId} messages={messages}
-                                                 isCompany={isACompany} profileData={(isACompany ? {
-                                        name,
-                                        address,
-                                        sector,
-                                        website,
-                                        partitaIva
-                                    } as ProfileCompanyData : {
-                                        name,
-                                        surname,
-                                        bio,
-                                        birthDate,
-                                        address,
-                                        sector,
-                                        website,
-                                    }) as ProfileUserData | ProfileCompanyData}/>
-                                </section>
+            </Header>
+            <Content className={styles.content}>
+                <main className={styles.main}>
+                    {activeKey === "1" && (
+                        <section key="profile">
+
+                            <ProfileCard session={token} id={profileId} messages={messages}
+                                         isOwner={true}
+                                         isCompany={isACompany} profileData={(isACompany ? {
+                                name,
+                                address,
+                                sector,
+                                website,
+                                partitaIva
+                            } as ProfileCompanyData : {
+                                name,
+                                surname,
+                                bio,
+                                birthDate,
+                                address,
+                                sector,
+                                website,
+                            }) as ProfileUserData | ProfileCompanyData}/>
+                        </section>
+                    )}
+                    {activeKey === "2" && (
+                        <section key="offers">
+                            {isACompany ? (
+                                <OfferSectionCompany session={token} id={profileId} messages={messages}/>
+                            ) : (
+                                <OfferSectionUser session={token} id={profileId} messages={messages}/>
                             )}
                             {activeKey === TabKeys.Offers && (
                                 <section key="offers">
@@ -200,20 +221,21 @@ export default function DashboardLayout({
                                 </section>
                             )}
 
-                        </main>
-                    </Content>
-                    <div className={styles.mobileMenu}>
+                </main>
+            </Content>
+            <div className={styles.mobileMenu}>
 
-                        <Menu
-                            mode="horizontal"
-                            items={itemsSidebar.map((item) => ({...item, label: ""}))}
-                            className={styles.menu}
-                            selectedKeys={[activeKey]}
-                            onSelect={(e: any) => setActiveKey(e.key)}
-                        />
-                    </div>
-                </Layout>
-            </Layout>
-        </>
-    );
+                <Menu
+                    mode="horizontal"
+                    items={itemsSidebar.map((item) => ({...item, label: ""}))}
+                    className={styles.menu}
+                    selectedKeys={[activeKey]}
+                    onSelect={(e: any) => setActiveKey(e.key)}
+                />
+            </div>
+        </Layout>
+        </Layout>
+</>
+)
+    ;
 }

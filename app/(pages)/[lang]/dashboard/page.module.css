@@ -55,6 +55,13 @@
     width: 100%;
     background-color: #fff !important;
 }
+.headerButtonContainer{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+}
 
 .main{
     height: 100%;
