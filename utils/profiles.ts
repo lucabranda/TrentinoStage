@@ -23,8 +23,19 @@ export async function isProfileOwner(profileId: string, accountId: string) {
 export async function getProfileInfo(profileId: string) {
     // Get the profile information
     await connectDB()
-    console.log("ProfileID: " + profileId)
+
     const profile = await profiles.findOne({ _id: ObjectId.createFromHexString(profileId) })
 
     return profile
+}
+
+export async function isProfileCompany(profileId: string) {
+    // Check if the profile is a company
+    const profile = await getProfileInfo(profileId)
+
+    if (!profile) {
+        return null
+    }
+
+    return profile.is_company
 }

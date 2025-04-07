@@ -5,8 +5,13 @@ export * from './apiAccountsGetProfileIdGet401Response';
 export * from './apiAccountsRegisterPost200Response';
 export * from './apiAccountsRegisterPost401Response';
 export * from './apiAccountsRegisterPost405Response';
+export * from './apiApplicationsModifyPost200Response';
+export * from './apiApplicationsModifyPost403Response';
+export * from './apiApplicationsModifyPost405Response';
+export * from './apiApplicationsModifyPost500Response';
+export * from './apiApplicationsStatusGet200Response';
+export * from './apiApplicationsStatusGet401Response';
 export * from './apiProfilesGetGet200Response';
-export * from './apiProfilesGetGet401Response';
 export * from './apiProfilesInviteGet200Response';
 export * from './apiProfilesInviteGet400Response';
 export * from './apiProfilesIsCompanyGet200Response';
@@ -37,8 +42,13 @@ import { ApiAccountsGetProfileIdGet401Response } from './apiAccountsGetProfileId
 import { ApiAccountsRegisterPost200Response } from './apiAccountsRegisterPost200Response';
 import { ApiAccountsRegisterPost401Response } from './apiAccountsRegisterPost401Response';
 import { ApiAccountsRegisterPost405Response } from './apiAccountsRegisterPost405Response';
+import { ApiApplicationsModifyPost200Response } from './apiApplicationsModifyPost200Response';
+import { ApiApplicationsModifyPost403Response } from './apiApplicationsModifyPost403Response';
+import { ApiApplicationsModifyPost405Response } from './apiApplicationsModifyPost405Response';
+import { ApiApplicationsModifyPost500Response } from './apiApplicationsModifyPost500Response';
+import { ApiApplicationsStatusGet200Response } from './apiApplicationsStatusGet200Response';
+import { ApiApplicationsStatusGet401Response } from './apiApplicationsStatusGet401Response';
 import { ApiProfilesGetGet200Response } from './apiProfilesGetGet200Response';
-import { ApiProfilesGetGet401Response } from './apiProfilesGetGet401Response';
 import { ApiProfilesInviteGet200Response } from './apiProfilesInviteGet200Response';
 import { ApiProfilesInviteGet400Response } from './apiProfilesInviteGet400Response';
 import { ApiProfilesIsCompanyGet200Response } from './apiProfilesIsCompanyGet200Response';
@@ -72,8 +82,13 @@ let typeMap: {[index: string]: any} = {
     "ApiAccountsRegisterPost200Response": ApiAccountsRegisterPost200Response,
     "ApiAccountsRegisterPost401Response": ApiAccountsRegisterPost401Response,
     "ApiAccountsRegisterPost405Response": ApiAccountsRegisterPost405Response,
+    "ApiApplicationsModifyPost200Response": ApiApplicationsModifyPost200Response,
+    "ApiApplicationsModifyPost403Response": ApiApplicationsModifyPost403Response,
+    "ApiApplicationsModifyPost405Response": ApiApplicationsModifyPost405Response,
+    "ApiApplicationsModifyPost500Response": ApiApplicationsModifyPost500Response,
+    "ApiApplicationsStatusGet200Response": ApiApplicationsStatusGet200Response,
+    "ApiApplicationsStatusGet401Response": ApiApplicationsStatusGet401Response,
     "ApiProfilesGetGet200Response": ApiProfilesGetGet200Response,
-    "ApiProfilesGetGet401Response": ApiProfilesGetGet401Response,
     "ApiProfilesInviteGet200Response": ApiProfilesInviteGet200Response,
     "ApiProfilesInviteGet400Response": ApiProfilesInviteGet400Response,
     "ApiProfilesIsCompanyGet200Response": ApiProfilesIsCompanyGet200Response,

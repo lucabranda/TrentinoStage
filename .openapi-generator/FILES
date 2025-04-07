@@ -3,6 +3,7 @@ api.ts
 api/accountsApi.ts
 api/apis.ts
 api/applicationsApi.ts
+api/defaultApi.ts
 api/profilesApi.ts
 api/sessionApi.ts
 git_push.sh
@@ -11,8 +12,13 @@ model/apiAccountsGetProfileIdGet401Response.ts
 model/apiAccountsRegisterPost200Response.ts
 model/apiAccountsRegisterPost401Response.ts
 model/apiAccountsRegisterPost405Response.ts
+model/apiApplicationsModifyPost200Response.ts
+model/apiApplicationsModifyPost403Response.ts
+model/apiApplicationsModifyPost405Response.ts
+model/apiApplicationsModifyPost500Response.ts
+model/apiApplicationsStatusGet200Response.ts
+model/apiApplicationsStatusGet401Response.ts
 model/apiProfilesGetGet200Response.ts
-model/apiProfilesGetGet401Response.ts
 model/apiProfilesInviteGet200Response.ts
 model/apiProfilesInviteGet400Response.ts
 model/apiProfilesIsCompanyGet200Response.ts

@@ -1,4 +1,5 @@
 import mongoose from "mongoose"
+import { title } from "process"
 
 const profiles = new mongoose.Schema({
     name: String,
@@ -19,9 +20,11 @@ const profiles = new mongoose.Schema({
     is_company: Boolean,
     reviews: [{
         reviewer_id: String,
+        title: String,
         review: String,
         rating: Number,
-        creation_time: Date
+        creation_time: Date,
+        edited: Boolean
     }]
 })
 
