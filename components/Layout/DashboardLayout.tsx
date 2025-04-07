@@ -18,7 +18,6 @@ import {
 import {Link} from "@/components/Typography";
 import LanguageSelector from "@/components/buttons/LanguageSelector";
 import ProfileCard, {ProfileCompanyData, ProfileUserData} from "../dashboard/ProfileCard";
-import SearchPeople from "../dashboard/SearchPeople";
 import {OfferSectionCompany, OfferSectionUser} from "../dashboard/OfferSection";
 import {ApplicationSectionCompany, ApplicationSectionUser} from "../dashboard/ApplicationSection";
 import {removeSessionToken} from "@/utils/cookie";
@@ -183,7 +182,7 @@ export default function DashboardLayout({
                             )}
                             {activeKey === "4" && (
                                 <section key="searchpeople">
-                                    <SearchPeople session={token} id={profileId} messages={messages} styles={styles}/>
+
                                 </section>
                             )}
 
