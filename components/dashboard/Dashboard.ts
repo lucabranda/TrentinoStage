@@ -3,6 +3,7 @@ import {ApplicationSectionUser} from "./ApplicationSection";
 import {ApplicationSectionCompany} from "./ApplicationSection";
 import {OfferSectionUser} from "./OfferSection";
 import {OfferSectionCompany} from "./OfferSection";
+import ViewProfileCard from "./ViewProfileCard"
 
 const Dashboard = {
     ProfileCard,
@@ -10,6 +11,7 @@ const Dashboard = {
     ApplicationSectionUser,
     OfferSectionCompany,
     ApplicationSectionCompany,
+    ViewProfileCard
   };
 
 export default Dashboard;

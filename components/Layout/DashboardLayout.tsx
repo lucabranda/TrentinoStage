@@ -11,7 +11,6 @@ import {
     PaperClipOutlined,
     SearchOutlined,
     UserOutlined,
-    SettingOutlined,
     CloseOutlined,
     TeamOutlined
 } from "@ant-design/icons";
@@ -33,7 +32,7 @@ interface DashboardLayoutProps {
     styles: any;
     name: string;
     surname: string;
-    address:{
+    address: {
         address: string;
     }
     birthDate: string;
@@ -99,12 +98,12 @@ export default function DashboardLayout({
         }
     ]
 
-    if(isACompany){
+    if (isACompany) {
         itemsSidebar.push({
             key: TabKeys.InviteMembers,
-            icon: <TeamOutlined />,
+            icon: <TeamOutlined/>,
             label: messages["dashboard-invite-members"],
-            url: `/${( params).lang}/dashboard#invitemembers`,
+            url: `/${(params).lang}/dashboard#invitemembers`,
         });
     }
 
@@ -158,8 +157,9 @@ export default function DashboardLayout({
                             {activeKey === TabKeys.ProfileInfo && (
                                 <section key="profile">
 
-                                    <ProfileCard session={token} id={profileId} messages={messages}
-                                                 isCompany={isACompany} profileData={(isACompany ? {
+                                    <ProfileCard
+                                        session={token} id={profileId} messages={messages} isOwner={true}
+                                        isCompany={isACompany} profileData={(isACompany ? {
                                         name,
                                         address,
                                         sector,
