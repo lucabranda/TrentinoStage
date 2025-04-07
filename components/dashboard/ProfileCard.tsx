@@ -45,10 +45,12 @@ export interface CardProps {
     id: string | number;
     messages: Record<string, string>;
     isCompany: boolean;
+    isOwner: boolean;
     profileData: ProfileUserData | ProfileCompanyData;
 }
 
-export default function ProfileCard({session, id, messages, isCompany, profileData}: CardProps) {
+export default function ProfileCard({session, id, messages, isCompany, isOwner = true, profileData}: CardProps) {
+
     const [isEditing, setIsEditing] = useState<Record<keyof ProfileUserData, boolean>>(
         {} as Record<keyof ProfileUserData, boolean>
     ); // Tracks which fields are being edited
@@ -99,14 +101,8 @@ export default function ProfileCard({session, id, messages, isCompany, profileDa
             <Col span={6} style={{fontWeight: "bold"}}>
                 {label}:
             </Col>
-            <Col span={20}>
-
-                {isEditing[field] ? (
-                    <Input
-                        value={formData[field] as string | undefined}
-                        onChange={(e) => handleChange(field, e.target.value)}
-                    />
-                ) : (
+                {!isOwner ? (
+                    <Col span={20}>
                     <Text>
                         {field === "sector"
                             ? (formData[field] as unknown as string[])?.join(", ")
@@ -114,15 +110,36 @@ export default function ProfileCard({session, id, messages, isCompany, profileDa
                                 ? (formData[field] as unknown as Date)?.toLocaleDateString()
                                 : (field === "address" ? formData.address?.address : formData[field]?.toString() || "")}
                     </Text>
+                    </Col>
+                    
+                ) : (
+                    
+                <>
+                <Col span={20}>
+                {isEditing[field] ? (
+                    <Input
+                        value={formData[field] as string | undefined}
+                        onChange={(e) => handleChange(field, e.target.value)}
+                    />
+                    ) : (
+                        <Text>
+                            {field === "sector"
+                                ? (formData[field] as unknown as string[])?.join(", ")
+                                : field as keyof ProfileUserData === "birthDate"
+                                    ? (formData[field] as unknown as Date)?.toLocaleDateString()
+                                    : (field === "address" ? formData.address?.address : formData[field]?.toString() || "")}
+                        </Text>
+                    )}
+                </Col>
+                <Col span={4}>
+                    <Button
+                        icon={icon}
+                        type="link"
+                        onClick={() => handleEditClick(field)}
+                    />
+                </Col>
+                </>
                 )}
-            </Col>
-            <Col span={4}>
-                <Button
-                    icon={icon}
-                    type="link"
-                    onClick={() => handleEditClick(field)}
-                />
-            </Col>
         </Row>
     );
 
@@ -130,9 +147,10 @@ export default function ProfileCard({session, id, messages, isCompany, profileDa
         <Card
             title={<Title level={4}>{profileData.name || "User Profile"}</Title>}
             extra={
-                <Button type="primary" loading={loading} onClick={handleSaveClick}>
-                    Save Changes
-                </Button>
+                isOwner && (<Button type="primary" loading={loading} onClick={handleSaveClick}>
+                                Save Changes
+                            </Button>)
+
             }
             style={{maxWidth: 600, margin: "auto"}}
         >
@@ -145,7 +163,8 @@ export default function ProfileCard({session, id, messages, isCompany, profileDa
                 {!isCompany ? (
                     <>
                         {renderField("Name", "name", <EditOutlined/>)}
-                        {renderField("Surname", "surname" as keyof (ProfileUserData | ProfileCompanyData), <EditOutlined/>)}
+                        {renderField("Surname", "surname" as keyof (ProfileUserData | ProfileCompanyData),
+                            <EditOutlined/>)}
                         {renderField("Bio", "bio" as keyof (ProfileUserData | ProfileCompanyData), <EditOutlined/>)}
                         {renderField("Sector", "sector", <EditOutlined/>)}
                         {renderField("BirthDate", "birthDate" as keyof (ProfileUserData | ProfileCompanyData),
@@ -156,7 +175,7 @@ export default function ProfileCard({session, id, messages, isCompany, profileDa
                     <>
                         {renderField("Name", "name", <EditOutlined/>)}
                         {renderField("Partita Iva", "partitaIva" as keyof (ProfileUserData |
-                        ProfileCompanyData), <EditOutlined/>)}
+                            ProfileCompanyData), <EditOutlined/>)}
                         {renderField("Sector", "sector", <EditOutlined/>)}
                         {renderField("Address", "address", <EditOutlined/>)}
 
