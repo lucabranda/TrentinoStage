@@ -2,6 +2,8 @@ export * from './accountsApi';
 import { AccountsApi } from './accountsApi';
 export * from './applicationsApi';
 import { ApplicationsApi } from './applicationsApi';
+export * from './defaultApi';
+import { DefaultApi } from './defaultApi';
 export * from './profilesApi';
 import { ProfilesApi } from './profilesApi';
 export * from './sessionApi';

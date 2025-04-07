@@ -15,8 +15,8 @@ import localVarRequest from 'request';
 import http from 'http';
 
 /* tslint:disable:no-unused-locals */
+import { ApiApplicationsStatusGet401Response } from '../model/apiApplicationsStatusGet401Response';
 import { ApiProfilesGetGet200Response } from '../model/apiProfilesGetGet200Response';
-import { ApiProfilesGetGet401Response } from '../model/apiProfilesGetGet401Response';
 import { ApiProfilesInviteGet200Response } from '../model/apiProfilesInviteGet200Response';
 import { ApiProfilesInviteGet400Response } from '../model/apiProfilesInviteGet400Response';
 import { ApiProfilesIsCompanyGet200Response } from '../model/apiProfilesIsCompanyGet200Response';
