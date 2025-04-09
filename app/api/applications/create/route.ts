@@ -121,7 +121,7 @@ export async function POST(req: NextRequest) {
             city
         },
         weekly_hours,
-        applied_users: [{}],
+        applied_users: [],
         chosen_user: "",
         creation_time: new Date().toISOString()
     }
