@@ -35,19 +35,23 @@ interface DashboardLayoutProps {
     surname: string;
     address: {
         address: string;
+        city: string;
+        region: string;
+        country: string;
+        postalCode: string;
     }
-    birthDate: string;
+    birth_date: string;
     bio: string;
     website: string;
     sector: string;
     partitaIva: string;
 }
 
+
 enum TabKeys {
     ProfileInfo = "profileInfo",
     Offers = "offers",
     Applications = "applications",
-    Logout = "logout",
     InviteMembers = "inviteMembers",
 }
 
@@ -61,7 +65,7 @@ export default function DashboardLayout({
                                             name,
                                             surname,
                                             address,
-                                            birthDate,
+                                            birth_date,
                                             bio,
                                             sector,
                                             website,
@@ -69,7 +73,7 @@ export default function DashboardLayout({
                                         }: DashboardLayoutProps) {
 
     const [collapsed, setCollapsed] = useState(false);
-    const [activeKey, setActiveKey] = useState("1");
+    const [activeKey, setActiveKey] = useState(TabKeys.ProfileInfo);
 
 
     function logout() {
@@ -96,6 +100,12 @@ export default function DashboardLayout({
             icon: <PaperClipOutlined/>,
             label: messages["dashboard-applications"],
             url: `/${(params).lang}/dashboard#applications`
+        },
+        {
+            key: TabKeys.InviteMembers,
+            icon: <TeamOutlined/>,
+            label: messages["dashboard-invite-members"],
+            url: `/${(params).lang}/dashboard#invitemembers`,
         }
     ]
 
@@ -164,48 +174,55 @@ export default function DashboardLayout({
                             {activeKey === TabKeys.ProfileInfo && (
                                 <section key="profile">
 
-                                    <ProfileCard
-                                        session={token} id={profileId} messages={messages} isOwner={true}
-                                        isCompany={isACompany} profileData={(isACompany ? {
-                                        name,
-                                        address,
-                                        sector,
-                                        website,
-                                        partitaIva
-                                    } as ProfileCompanyData : {
-                                        name,
-                                        surname,
-                                        bio,
-                                        birthDate,
-                                        address,
-                                        sector,
-                                        website,
-                                    }) as ProfileUserData | ProfileCompanyData}/>
-                                </section>
+            </Header>
+            <Content className={styles.content}>
+                <main className={styles.main}>
+                    {activeKey === TabKeys.ProfileInfo && (
+                        <section key="profile">
+
+                            <ProfileCard session={token} id={profileId} messages={messages}
+                                         isOwner={true}
+                                         isCompany={isACompany} profileData={(isACompany ? {
+                                name,
+                                address,
+                                sector,
+                                website,
+                                partitaIva
+                            } as ProfileCompanyData : {
+                                name,
+                                surname,
+                                bio,
+                                birth_date,
+                                address,
+                                sector,
+                                website,
+                            }) as ProfileUserData | ProfileCompanyData}/>
+
+                        </section>
+                    )}
+                    {activeKey === TabKeys.Offers && (
+                        <section key="offers">
+                            {isACompany ? (
+                                <OfferSectionCompany session={token} id={profileId} messages={messages}/>
+                            ) : (
+                                <OfferSectionUser session={token} id={profileId} messages={messages}/>
                             )}
-                            {activeKey === TabKeys.Offers && (
-                                <section key="offers">
-                                    {isACompany ? (
-                                        <OfferSectionCompany session={token} id={profileId} messages={messages}/>
-                                    ) : (
-                                        <OfferSectionUser session={token} id={profileId} messages={messages}/>
-                                    )}
-                                </section>
+                        </section>
+                    )}
+                    {activeKey === TabKeys.Applications && (
+                        <section key="applications">
+                            {isACompany ? (
+                                <ApplicationSectionCompany session={token} id={profileId} messages={messages}/>
+                            ) : (
+                                <ApplicationSectionUser session={token} id={profileId} messages={messages}/>
                             )}
-                            {activeKey === TabKeys.Applications && (
-                                <section key="applications">
-                                    {isACompany ? (
-                                        <ApplicationSectionCompany session={token} id={profileId} messages={messages}/>
-                                    ) : (
-                                        <ApplicationSectionUser session={token} id={profileId} messages={messages}/>
-                                    )}
-                                </section>
-                            )}
-                            {activeKey === TabKeys.InviteMembers && (
-                                <section key="invitemembers">
-                                    <InviteMembers session={token} id={profileId} messages={messages}/>
-                                </section>
-                            )}
+                        </section>
+                    )}
+                    {activeKey === TabKeys.InviteMembers && (
+                        <section key="invitemembers">
+                            <InviteMembers session={token} id={profileId} messages={messages}/>
+                        </section>
+                    )}
 
                 </main>
             </Content>

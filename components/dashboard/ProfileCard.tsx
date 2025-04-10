@@ -1,5 +1,5 @@
 "use client";
-import React, {useState} from "react";
+import React, { useState } from "react";
 import {
     Card,
     Avatar,
@@ -10,22 +10,25 @@ import {
     Row,
     Col,
     message,
+    Select,
 } from "antd";
-import {
-    EditOutlined,
-    UserOutlined,
-} from "@ant-design/icons";
-import {ProfilesApi} from "@/api/profilesApi";
+import { EditOutlined, UserOutlined } from "@ant-design/icons";
+import { ProfilesApi } from "@/api/profilesApi";
 
-const {Title, Text} = Typography;
+const { Title, Text } = Typography;
+const { Option } = Select;
 
 export interface ProfileUserData {
     name: string;
     surname: string;
     address: {
         address: string;
+        city: string;
+        region: string;
+        country: string;
+        postalCode: string;
     };
-    birthDate: string;
+    birth_date: string;
     bio: string;
     sector: string;
 }
@@ -34,10 +37,15 @@ export interface ProfileCompanyData {
     name: string;
     address: {
         address: string;
+        city: string;
+        region: string;
+        country: string;
+        postalCode: string;
     };
     sector: string;
     partitaIva: string;
     website: string;
+    birth_date: string;
 }
 
 export interface CardProps {
@@ -49,42 +57,57 @@ export interface CardProps {
     profileData: ProfileUserData | ProfileCompanyData;
 }
 
-export default function ProfileCard({session, id, messages, isCompany, isOwner = true, profileData}: CardProps) {
-
-    const [isEditing, setIsEditing] = useState<Record<keyof ProfileUserData, boolean>>(
-        {} as Record<keyof ProfileUserData, boolean>
-    ); // Tracks which fields are being edited
-    const [formData, setFormData] = useState<ProfileUserData | ProfileCompanyData>(profileData); // Local state for form data
+export default function ProfileCard({ session, id, messages, isCompany, isOwner = true, profileData }: CardProps) {
+    const [isEditing, setIsEditing] = useState<Record<string, boolean>>({});
+    const [formData, setFormData] = useState<ProfileUserData | ProfileCompanyData>(profileData);
     const [loading, setLoading] = useState(false);
 
-    const handleEditClick = (field: keyof ProfileUserData) => {
-        setIsEditing((prev) => ({...prev, [field]: true}));
+    const isUserData = (data: ProfileUserData | ProfileCompanyData): data is ProfileUserData => {
+        return (data as ProfileUserData).surname !== undefined;
+    };
+
+    const handleEditClick = (field: string) => {
+        setIsEditing((prev) => ({ ...prev, [field]: true }));
     };
 
     const handleSaveClick = async () => {
+        if (!formData.name || !formData.address?.city) {
+            message.warning("Name and City are required fields");
+            return;
+        }
         setLoading(true);
         try {
             const profilesApi = new ProfilesApi();
-            isCompany ? await profilesApi.apiProfilesModifyPost(
-                session,
-                formData.name,
-                formData.address?.address,
-                formData.sector,
-                (formData as ProfileCompanyData).website,
-                (formData as ProfileCompanyData).partitaIva,
-            ) : await profilesApi.apiProfilesModifyPost(
-                session,
-                formData.name,
-                (formData as ProfileUserData).surname,
-                formData.address?.address,
-                (formData as ProfileUserData).bio,
-                formData.sector,
-                (formData as ProfileUserData).birthDate
-            );
+            if (isCompany) {
+                await profilesApi.apiProfilesModifyPost(
+                    session,
+                    formData.name,
+                    formData.address?.address,
+                    formData.address?.city,
+                    formData.address?.region,
+                    formData.address?.country,
+                    formData.address?.postalCode,
+                    formData.sector,
+                    (formData as ProfileCompanyData).website,
+                    (formData as ProfileCompanyData).partitaIva,
+                );
+            } else {
+                await profilesApi.apiProfilesModifyPost(
+                    session,
+                    formData.name,
+                    (formData as ProfileUserData).surname,
+                    formData.address?.address,
+                    formData.address?.city,
+                    formData.address?.region,
+                    formData.address?.country,
+                    formData.address?.postalCode,
+                    (formData as ProfileUserData).bio,
+                    formData.sector,
+                    (formData as ProfileUserData).birth_date?.substring(0, 10)
+                );
+            }
             message.success(messages.success || "Profile updated successfully");
-            setIsEditing(
-                {} as Record<keyof ProfileUserData, boolean>
-            );
+            setIsEditing({});
         } catch (error) {
             message.error(messages.error || "Error updating profile");
         } finally {
@@ -92,93 +115,126 @@ export default function ProfileCard({session, id, messages, isCompany, isOwner =
         }
     };
 
-    const handleChange = (field: keyof ProfileUserData, value: string | string[]) => {
-        setFormData((prev) => ({...prev, [field]: value}));
+    const handleChange = (field: string, value: any) => {
+        if (field === "address") {
+            setFormData((prev) => ({
+                ...prev,
+                address: {
+                    ...prev.address,
+                    ...value,
+                },
+            }));
+        } else {
+            setFormData((prev) => ({
+                ...prev,
+                [field]: value,
+            }));
+        }
     };
 
-    const renderField = (label: string, field: keyof (ProfileUserData | ProfileCompanyData), icon: React.ReactNode) => (
-        <Row align="middle" style={{marginBottom: 16}}>
-            <Col span={6} style={{fontWeight: "bold"}}>
-                {label}:
-            </Col>
-                {!isOwner ? (
-                    <Col span={20}>
-                    <Text>
-                        {field === "sector"
-                            ? (formData[field] as unknown as string[])?.join(", ")
-                            : field as keyof ProfileUserData === "birthDate"
-                                ? (formData[field] as unknown as Date)?.toLocaleDateString()
-                                : (field === "address" ? formData.address?.address : formData[field]?.toString() || "")}
-                    </Text>
+    const renderField = (label: string, field: string, icon: React.ReactNode) => {
+        if (field === "address") {
+            return ["address", "city", "region", "country", "postalCode"].map((subField) => (
+                <Row align="middle" style={{ marginBottom: 8 }} key={subField}>
+                    <Col span={7} style={{ fontWeight: "bold" }}>
+                        {messages[`user-card-${subField}-label`] || subField}:
                     </Col>
-                    
-                ) : (
-                    
-                <>
-                <Col span={20}>
-                {isEditing[field] ? (
-                    <Input
-                        value={formData[field] as string | undefined}
-                        onChange={(e) => handleChange(field, e.target.value)}
-                    />
+                    <Col span={17}>
+                        {isEditing["address"] && isOwner ? (
+                            <Input
+                                style={{ backgroundColor: "#f6ffed" }}
+                                value={formData.address?.[subField as keyof typeof formData.address] || ""}
+                                onChange={(e) => handleChange("address", { [subField]: e.target.value })}
+                                onPressEnter={handleSaveClick}
+                            />
+                        ) : (
+                            <Text>{formData.address?.[subField as keyof typeof formData.address] || "-"}</Text>
+                        )}
+                    </Col>
+                    {subField === "address" && isOwner && (
+                        <Col span={4}>
+                            <Button icon={icon} type="link" onClick={() => handleEditClick("address")} />
+                        </Col>
+                    )}
+                </Row>
+            ));
+        }
+
+        return (
+            <Row align="middle" style={{ marginBottom: 16 }} key={field}>
+                <Col span={7} style={{ fontWeight: "bold" }}>{label}:</Col>
+                <Col span={17}>
+                    {isEditing[field] && isOwner ? (
+                        field === "sector" ? (
+                            <Select
+                                mode="tags"
+                                style={{ width: "100%" }}
+                                value={formData.sector?.split(", ") || []}
+                                onChange={(value) => handleChange("sector", value.join(", "))}
+                            >
+                                {(formData.sector?.split(", ") || []).map((tag) => (
+                                    <Option key={tag} value={tag}>{tag}</Option>
+                                ))}
+                            </Select>
+                        ) : (
+                            <Input
+                                type={field === "birth_date" ? "date" : "text"}
+                                value={
+                                    field === "birth_date"
+                                        ? new Date(formData[field as keyof (ProfileUserData | ProfileCompanyData)] as string).toISOString().substring(0, 10)
+                                        : (formData[field as keyof (ProfileUserData | ProfileCompanyData)] as string) || ""
+                                }
+                                style={{ backgroundColor: "#f6ffed" }}
+                                onChange={(e) => handleChange(field, e.target.value)}
+                                onPressEnter={handleSaveClick}
+                            />
+
+
+                        )
                     ) : (
                         <Text>
-                            {field === "sector"
-                                ? (formData[field] as unknown as string[])?.join(", ")
-                                : field as keyof ProfileUserData === "birthDate"
-                                    ? (formData[field] as unknown as Date)?.toLocaleDateString()
-                                    : (field === "address" ? formData.address?.address : formData[field]?.toString() || "")}
-                        </Text>
-                    )}
+                        {field === "birth_date"
+                            ? new Date(formData[field as keyof (ProfileUserData | ProfileCompanyData)] as string).toLocaleDateString()
+                            : (formData[field as keyof (ProfileUserData | ProfileCompanyData)] as string) || "-"}
+                    </Text>
+                     )}
                 </Col>
-                <Col span={4}>
-                    <Button
-                        icon={icon}
-                        type="link"
-                        onClick={() => handleEditClick(field)}
-                    />
-                </Col>
-                </>
+                {isOwner && (
+                    <Col span={4}>
+                        <Button icon={icon} type="link" onClick={() => handleEditClick(field)} />
+                    </Col>
                 )}
-        </Row>
-    );
+            </Row>
+        );
+    };
 
     return (
         <Card
-            title={<Title level={4}>{profileData.name || "User Profile"}</Title>}
-            extra={
-                isOwner && (<Button type="primary" loading={loading} onClick={handleSaveClick}>
-                                Save Changes
-                            </Button>)
-
-            }
-            style={{maxWidth: 600, margin: "auto"}}
+            title={<Title level={4}>{formData.name || "User Profile"}</Title>}
+            extra={isOwner && (
+                <Button type="primary" loading={loading} onClick={handleSaveClick}>
+                    Save Changes
+                </Button>
+            )}
+            style={{ maxWidth: 600, margin: "auto" }}
         >
             <Space direction="vertical" size="large">
-                <Avatar
-                    size={64}
-                    icon={<UserOutlined/>}
-                    style={{marginBottom: 16}}
-                />
+                <Avatar size={64} icon={<UserOutlined />} style={{ marginBottom: 16 }} />
+                {renderField(messages["user-card-name-label"], "name", <EditOutlined />)}
                 {!isCompany ? (
                     <>
-                        {renderField("Name", "name", <EditOutlined/>)}
-                        {renderField("Surname", "surname" as keyof (ProfileUserData | ProfileCompanyData),
-                            <EditOutlined/>)}
-                        {renderField("Bio", "bio" as keyof (ProfileUserData | ProfileCompanyData), <EditOutlined/>)}
-                        {renderField("Sector", "sector", <EditOutlined/>)}
-                        {renderField("BirthDate", "birthDate" as keyof (ProfileUserData | ProfileCompanyData),
-                            <EditOutlined/>)}
-                        {renderField("Address", "address", <EditOutlined/>)}
+                        {isUserData(formData) && renderField(messages["user-card-surname-label"], "surname", <EditOutlined />)}
+                        {isUserData(formData) && renderField(messages["user-card-bio-label"], "bio", <EditOutlined />)}
+                        {renderField(messages["user-card-sector-label"], "sector", <EditOutlined />)}
+                        {isUserData(formData) && renderField(messages["user-card-birth-date-label"], "birth_date", <EditOutlined />)}
+                        {renderField(messages["user-card-address-label"], "address", <EditOutlined />)}
                     </>
                 ) : (
                     <>
-                        {renderField("Name", "name", <EditOutlined/>)}
-                        {renderField("Partita Iva", "partitaIva" as keyof (ProfileUserData |
-                            ProfileCompanyData), <EditOutlined/>)}
-                        {renderField("Sector", "sector", <EditOutlined/>)}
-                        {renderField("Address", "address", <EditOutlined/>)}
-
+                        {renderField(messages["company-card-partita-iva-label"], "partitaIva", <EditOutlined />)}
+                        {renderField(messages["company-card-sector-label"], "sector", <EditOutlined />)}
+                        {renderField(messages["company-card-address-label"], "address", <EditOutlined />)}
+                        {renderField(messages["company-card-website-label"], "website", <EditOutlined />)}
                     </>
                 )}
             </Space>

@@ -47,7 +47,7 @@ import profiles from "@/utils/model/profiles"
  *                   type: string
  *                 website:
  *                   type: string
- *                 birthDate:
+ *                 birth_date:
  *                   type: string
  *                   format: date
  *                 address:
@@ -119,7 +119,7 @@ export async function GET(req: NextRequest) {
             surname: surname, 
             bio: bio, 
             website: website,
-            birthDate: profile.birthDate,
+            birth_date: profile.birth_date,
             address: profile.address,
             identifier: profile.identifier,
             sector: profile.sector
@@ -138,7 +138,7 @@ export async function GET(req: NextRequest) {
             surname: surname, 
             bio: bio, 
             website: website,
-            birthDate: profile.birthDate,
+            birth_date: profile.birth_date,
             address: profile.address,
             identifier: profile.identifier,
             sector: profile.sector,

@@ -17,9 +17,13 @@ export class ApiProfilesGetGet200Response {
     'surname'?: string;
     'bio'?: string;
     'website'?: string;
-    'birthDate'?: string;
+    'birth_date'?: string;
     'address'?: {
         address?: string;
+        city?: string;
+        country?: string;
+        region?: string;
+        postalCode?: string;
     };
     'identifier'?: string;
     'sector'?: string;
