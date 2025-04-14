@@ -100,12 +100,6 @@ export default function DashboardLayout({
             icon: <PaperClipOutlined/>,
             label: messages["dashboard-applications"],
             url: `/${(params).lang}/dashboard#applications`
-        },
-        {
-            key: TabKeys.InviteMembers,
-            icon: <TeamOutlined/>,
-            label: messages["dashboard-invite-members"],
-            url: `/${(params).lang}/dashboard#invitemembers`,
         }
     ]
 

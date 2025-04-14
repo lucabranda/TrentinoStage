@@ -55,6 +55,9 @@
     "signup-button-signup-company": "Registrati come impresa",
     "signup-button-signup-user": "Registrati come utente",
     "signup-password-mismatch": "Le password non corrispondono",
+    "signup-invite-code": "Codice d'invito",
+    "signup-invite-code-placeholder": "Inserisci il codice di invito",
+    "signup-invite-code-message": "Solo se si è in possesso ",
 
     "dashboard-logout": "Logout",
     "dashboard-user-profile": "Profilo utente",

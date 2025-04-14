@@ -66,7 +66,7 @@ export default async function Home({params}: any) {
                 bio={profileData!.bio!}
                 sector={profileData!.sector!}
                 website={profileData!.website!}
-                partitaIva={""} //TODO: FIX!!!
+                partitaIva={profileData!.identifier!}
             />
         </>
 

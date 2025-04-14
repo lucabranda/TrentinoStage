@@ -18,15 +18,17 @@ export default function NewProfileForm({token, msgs, styles, isCompany}: NewProf
     const onFinish = async (values: any) => {
         try {
             const name = values.name
-            const surname = values.surname
             const address = values.address
             const country = values.country
             const region = values.region
             const city = values.city
             const postalCode = values.postalCode
-            const birth_date = values.birth_date
             const bio = values.bio
             const sector = values.sector
+            const website = values.website
+            const partitaIva = values.partitaIva
+            const surname = values.surname
+            const birth_date = values.birth_date        
 
 
             const res = await fetch("/api/profiles/new", {
@@ -36,16 +38,14 @@ export default function NewProfileForm({token, msgs, styles, isCompany}: NewProf
                     sessionToken: token,
                     is_company: isCompany,
                     name: name,
-                    surname: surname,
                     bio: bio,
                     address: address,
                     city: city,
                     postalCode: postalCode,
                     region: region,
                     country: country,
-                    birth_date: birth_date,
-                    identifier: undefined,
                     sector: sector,
+                    ...(isCompany ? { website: website, identifier: partitaIva } : { surname: surname, birth_date: birth_date }),
                 }),
             });
             if (!res.ok) {
@@ -64,7 +64,6 @@ export default function NewProfileForm({token, msgs, styles, isCompany}: NewProf
 
         window.location.href = "/dashboard";
     };
-
 
     const fields = isCompany ? [
         {
