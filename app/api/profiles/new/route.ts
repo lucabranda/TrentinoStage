@@ -159,8 +159,6 @@ export async function POST(req: NextRequest) {
     const sector = formData.get("sector") as string
     const website = formData.get("website") as string ?? null
 
-    console.log(is_company)
-
     // Check if the session token is valid
     if (!profileId) {
         return NextResponse.json({error: "Invalid session token", code: "error-invalid-session"}, { status: 401 })
@@ -214,12 +212,22 @@ export async function POST(req: NextRequest) {
         if (surname === null) {
             return NextResponse.json({error: "Surname is required", code: "error-surname-required"}, { status: 401 })
         }
+        if (birthDate === undefined) {
+            return NextResponse.json({error: "Please provide a date of birth", code: "error-birth-date-required"}, { status: 401 })
+        }
         // TODO: Check the correctness of the fiscal code
     }
+    let sectors
+    try {
+        sectors = JSON.parse(sector)
+    } catch {
+        return NextResponse.json({error: "Sector has to be in a valid json format"}, { status: 400 })
+    }
+
+
 
     await connectDB()
     // Create the profile on the database
-    console.log(birthDate)
     try {
         const result = await profiles.create({
             name: name,
@@ -229,25 +237,23 @@ export async function POST(req: NextRequest) {
                 country: country,
                 region: region,
                 city: city,
-                postalCode: postalCode,
+                postal_code: postalCode,
                 street: street,
                 address: address,
             },
             bio: bio,
             identifier: identifier,
-            sector: [sector],
+            sector: sectors,
             website: website,
             is_company: is_company
         })
 
-        const promise = result.save()
+        await result.save()
 
         // Link the profile to the user
-        const res = await accounts.updateOne({_id: ObjectId.createFromHexString(profileId)}, {$set: {profile_id: result._id.toHexString()}})
-
-        await promise
+        await accounts.updateOne({_id: ObjectId.createFromHexString(profileId)}, {$set: {profile_id: result._id.toHexString()}})
     } catch (e) {
-
+        console.error(e)
         return NextResponse.json({error: "Internal server error", code: "error-internal-server"}, { status: 500 })
     }
 
