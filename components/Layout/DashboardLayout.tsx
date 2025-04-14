@@ -118,127 +118,111 @@ export default function DashboardLayout({
         });
     }
 
-    // Should be kept last
-    itemsSidebar.push({
-        key: TabKeys.Logout,
-        icon: <a href="#" onClick={() => logout()}><LogoutOutlined/></a>,
-        label: <Link href="#" onClick={() => logout()}>{messages["dashboard-logout"]}</Link>,
-        url: "#"
-    });
-
     return (
         <>
-        <Layout className={styles.layout}>
-            <Sider
-                width="15%"
-                className={styles.sider}
-                collapsible
-                trigger={null}
-                collapsed={collapsed}
-                onCollapse={() => setCollapsed(!collapsed)}
-            >
-                <div className={styles.closeButton} style={{alignContent: collapsed ? "right" : "left"}}>
-                    <button onClick={() => setCollapsed(!collapsed)}>
-                        {collapsed ? <MenuOutlined/> : <CloseOutlined/>}
-                    </button>
-                </div>
-                <Menu
-                    mode="vertical"
-                    items={itemsSidebar}
-                    className={styles.menu}
-                    selectedKeys={[activeKey]}
-                    onSelect={(e: any) => setActiveKey(e.key)}
-                />
-            </Sider>
+            <Layout className={styles.layout}>
+                <Sider
+                    width="15%"
+                    className={styles.sider}
+                    collapsible
+                    trigger={null}
+                    collapsed={collapsed}
+                    onCollapse={() => setCollapsed(!collapsed)}
+                >
+                    <div className={styles.closeButton} style={{alignContent: collapsed ? "right" : "left"}}>
+                        <button onClick={() => setCollapsed(!collapsed)}>
+                            {collapsed ? <MenuOutlined/> : <CloseOutlined/>}
+                        </button>
+                    </div>
+                    <Menu
+                        mode="vertical"
+                        items={itemsSidebar}
+                        className={styles.menu}
+                        selectedKeys={[activeKey]}
+                        onSelect={(e: any) => setActiveKey(e.key)}
+                    />
+                </Sider>
 
-            <Layout>
-                <Header className={styles.header}>
-                    <Link href="/"> <Image
-                        src={logo}
-                        alt="logo"
-                        width={120}
-                        height={50}
-                        style={{filter: "invert(1)"}}
-                    /> </Link>
-                   <div className={styles.headerButtonContainer}>
-                       <LanguageSelector/>
-                       <PrimaryButton onClick={()=>logout()}>
-                           {messages["dashboard-logout"]} <LogoutOutlined/>
-                       </PrimaryButton>
-                   </div>
+                <Layout>
+                    <Header className={styles.header}>
+                        <Link href="/"> <Image
+                            src={logo}
+                            alt="logo"
+                            width={120}
+                            height={50}
+                            style={{filter: "invert(1)"}}
+                        /> </Link>
+                        <div className={styles.headerButtonContainer}>
+                            <LanguageSelector/>
+                            <PrimaryButton onClick={() => logout()}>
+                                {messages["dashboard-logout"]} <LogoutOutlined/>
+                            </PrimaryButton>
+                        </div>
 
-                        <LanguageSelector/>
                     </Header>
                     <Content className={styles.content}>
                         <main className={styles.main}>
                             {activeKey === TabKeys.ProfileInfo && (
                                 <section key="profile">
+                                    <ProfileCard session={token} id={profileId} messages={messages}
+                                                 isOwner={true}
+                                                 isCompany={isACompany} profileData={(isACompany ? {
+                                        name,
+                                        address,
+                                        sector,
+                                        website,
+                                        partitaIva
+                                    } as ProfileCompanyData : {
+                                        name,
+                                        surname,
+                                        bio,
+                                        birth_date,
+                                        address,
+                                        sector,
+                                        website,
+                                    }) as ProfileUserData | ProfileCompanyData}/>
 
-            </Header>
-            <Content className={styles.content}>
-                <main className={styles.main}>
-                    {activeKey === TabKeys.ProfileInfo && (
-                        <section key="profile">
-
-                            <ProfileCard session={token} id={profileId} messages={messages}
-                                         isOwner={true}
-                                         isCompany={isACompany} profileData={(isACompany ? {
-                                name,
-                                address,
-                                sector,
-                                website,
-                                partitaIva
-                            } as ProfileCompanyData : {
-                                name,
-                                surname,
-                                bio,
-                                birth_date,
-                                address,
-                                sector,
-                                website,
-                            }) as ProfileUserData | ProfileCompanyData}/>
-
-                        </section>
-                    )}
-                    {activeKey === TabKeys.Offers && (
-                        <section key="offers">
-                            {isACompany ? (
-                                <OfferSectionCompany session={token} id={profileId} messages={messages}/>
-                            ) : (
-                                <OfferSectionUser session={token} id={profileId} messages={messages}/>
+                                </section>
                             )}
-                        </section>
-                    )}
-                    {activeKey === TabKeys.Applications && (
-                        <section key="applications">
-                            {isACompany ? (
-                                <ApplicationSectionCompany session={token} id={profileId} messages={messages}/>
-                            ) : (
-                                <ApplicationSectionUser session={token} id={profileId} messages={messages}/>
+                            {activeKey === TabKeys.Offers && (
+                                <section key="offers">
+                                    {isACompany ? (
+                                        <OfferSectionCompany session={token} id={profileId} messages={messages}/>
+                                    ) : (
+                                        <OfferSectionUser session={token} id={profileId} messages={messages}/>
+                                    )}
+                                </section>
                             )}
-                        </section>
-                    )}
-                    {activeKey === TabKeys.InviteMembers && (
-                        <section key="invitemembers">
-                            <InviteMembers session={token} id={profileId} messages={messages}/>
-                        </section>
-                    )}
+                            {activeKey === TabKeys.Applications && (
+                                <section key="applications">
+                                    {isACompany ? (
+                                        <ApplicationSectionCompany session={token} id={profileId} messages={messages}/>
+                                    ) : (
+                                        <ApplicationSectionUser session={token} id={profileId} messages={messages}/>
+                                    )}
+                                </section>
+                            )}
+                            {activeKey === TabKeys.InviteMembers && (
+                                <section key="invitemembers">
+                                    <InviteMembers session={token} id={profileId} messages={messages}/>
+                                </section>
+                            )}
 
-                </main>
-            </Content>
-            <div className={styles.mobileMenu}>
+                        </main>
+                    </Content>
+                    <div className={styles.mobileMenu}>
 
-                <Menu
-                    mode="horizontal"
-                    items={itemsSidebar.map((item) => ({...item, label: ""}))}
-                    className={styles.menu}
-                    selectedKeys={[activeKey]}
-                    onSelect={(e: any) => setActiveKey(e.key)}
-                />
-            </div>
-        </Layout>
-        </Layout>
-</>
-)
-    ;
+                        <Menu
+                            mode="horizontal"
+                            items={itemsSidebar.map((item) => ({...item, label: ""}))}
+                            className={styles.menu}
+                            selectedKeys={[activeKey]}
+                            onSelect={(e: any) => setActiveKey(e.key)}
+                        />
+                    </div>
+                </Layout>
+            </Layout>
+        </>
+    )
+        ;
 }

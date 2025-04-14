@@ -14,8 +14,8 @@ export default function InviteMembers({session, id, messages, styles}: any) {
     }
 
     return(
-        <div className={styles.searchPeopleContainer}>
-            <h1>{messages["dashboard-invite-members"]}</h1>
+        <>
+        <h1>{messages["dashboard-invite-members"]}</h1>
             <p>{messages["invite-members-info"]}</p>
             <br/>
             <Button type="primary"  style={{ marginLeft: 8 }} onClick={async () => {await generateInvite()}}>
@@ -28,6 +28,6 @@ export default function InviteMembers({session, id, messages, styles}: any) {
                     <p><b>{messages["invite-members-invite-code"]}</b>: <u>{inviteCode}</u></p>
                 </Card>
             )}
-        </div>
-    );
+        </>
+            );
 }
