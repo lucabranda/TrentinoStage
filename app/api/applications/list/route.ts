@@ -78,6 +78,12 @@ import applications from '@/utils/model/available_positions'
 export async function GET(req: NextRequest) {
     const token = req.nextUrl.searchParams.get("token") as string
     const companyProfile = req.nextUrl.searchParams.get("profileId") as string
+    const sector = req.nextUrl.searchParams.get("sector") as string
+    const city = req.nextUrl.searchParams.get("city") as string
+    const maxTime = req.nextUrl.searchParams.get("maxTime") as string
+    const minTime = req.nextUrl.searchParams.get("minTime") as string
+
+    const sectors = sector?.split("|")
 
     if (!token) {
         return NextResponse.json({error: "Missing required fields", code: "error-missing-fields"}, { status: 401 })
@@ -94,7 +100,29 @@ export async function GET(req: NextRequest) {
 
     await connectDB()
 
-    const openPositions = await applications.find({ issuer_id: companyProfile, chosen_user: "" })
+    let query = {}
+
+    if (!company) { 
+        query = { chosen_user: "" }
+    }
+    if (companyProfile) {
+        query = { ...query, issuer_id: companyProfile }
+    }
+    if (sector) {
+        query = { ...query, sector: { $in: sectors } }
+    }
+    if (city) {
+        query = { ...query, "location.city": city }
+    }
+    if (maxTime && minTime) {
+        query = { ...query, weekly_hours: { $lte: parseInt(maxTime), $gte: parseInt(minTime)} }
+    } else if (maxTime && !minTime) {
+        query = { ...query, weekly_hours: { $lte: parseInt(maxTime) } }
+    } else if (!maxTime && minTime) {
+        query = { ...query, weekly_hours: { $gte: parseInt(minTime) } }
+    }
+
+    const openPositions = await applications.find(query).sort({ creation_time: -1 })
 
     if (!openPositions) {
         return NextResponse.json({}, { status: 200 })
@@ -107,13 +135,15 @@ export async function GET(req: NextRequest) {
     } else {
         // If the user is not the company that created the positions remove the applied_users and chosen_user fields
         const filteredPositions = openPositions.map((position) => {
-            const { issuer_id, title, description, sector, location } = position.toObject()
+            const { issuer_id, title, description, sector, location, weekly_hours, creation_time } = position.toObject()
             return {
                 issuer_id,
                 title,
                 description,
                 sector,
-                location
+                location,
+                weekly_hours,
+                creation_time
             }
         })
 
