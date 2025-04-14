@@ -10,20 +10,31 @@ export default async function ViewProfileCard({token, profile_id, messages, isAC
 
     const values = (isACompany ? {
         name: profileData!.name,
-        address: profileData!.address,
+        address: {
+            address: profileData!.address?.address,
+            city: profileData!.address?.city,
+            region: profileData!.address?.region,
+            country: profileData!.address?.country,
+            postalCode: profileData!.address?.postalCode
+        },
         sector: profileData!.sector,
-        website: profileData!.website,
+        website: profileData!.website
         //partitaIva: profileData!.partitaIva
-    } as ProfileCompanyData : {
+    } as ProfileCompanyData : { 
         name: profileData!.name,
         surname: profileData!.surname,
         bio: profileData!.bio,
-        birthDate: profileData!.birthDate,
-        address: profileData!.address,
+        birth_date: profileData!.birth_date,
+        address: {
+            address: profileData!.address?.address,
+            city: profileData!.address?.city,
+            region: profileData!.address?.region,
+            country: profileData!.address?.country,
+            postalCode: profileData!.address?.postalCode
+        },
         sector: profileData!.sector,
-        website: profileData!.website,
+        website: profileData!.website
     } as ProfileUserData)
-
     return (
         <>
             <div className={styles.profileCardContainer}>
