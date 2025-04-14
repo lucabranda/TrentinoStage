@@ -21,6 +21,7 @@ import {OfferSectionCompany, OfferSectionUser} from "../dashboard/OfferSection";
 import {ApplicationSectionCompany, ApplicationSectionUser} from "../dashboard/ApplicationSection";
 import {removeSessionToken} from "@/utils/cookie";
 import InviteMembers from "@/components/dashboard/InviteMembers";
+import {PrimaryButton} from "@/components/buttons/Buttons";
 
 
 interface DashboardLayoutProps {
@@ -34,19 +35,23 @@ interface DashboardLayoutProps {
     surname: string;
     address: {
         address: string;
+        city: string;
+        region: string;
+        country: string;
+        postalCode: string;
     }
-    birthDate: string;
+    birth_date: string;
     bio: string;
     website: string;
     sector: string;
     partitaIva: string;
 }
 
+
 enum TabKeys {
     ProfileInfo = "profileInfo",
     Offers = "offers",
     Applications = "applications",
-    Logout = "logout",
     InviteMembers = "inviteMembers",
 }
 
@@ -60,7 +65,7 @@ export default function DashboardLayout({
                                             name,
                                             surname,
                                             address,
-                                            birthDate,
+                                            birth_date,
                                             bio,
                                             sector,
                                             website,
@@ -68,7 +73,7 @@ export default function DashboardLayout({
                                         }: DashboardLayoutProps) {
 
     const [collapsed, setCollapsed] = useState(false);
-    const [activeKey, setActiveKey] = useState("1");
+    const [activeKey, setActiveKey] = useState(TabKeys.ProfileInfo);
 
 
     function logout() {
@@ -95,6 +100,12 @@ export default function DashboardLayout({
             icon: <PaperClipOutlined/>,
             label: messages["dashboard-applications"],
             url: `/${(params).lang}/dashboard#applications`
+        },
+        {
+            key: TabKeys.InviteMembers,
+            icon: <TeamOutlined/>,
+            label: messages["dashboard-invite-members"],
+            url: `/${(params).lang}/dashboard#invitemembers`,
         }
     ]
 
@@ -106,14 +117,6 @@ export default function DashboardLayout({
             url: `/${(params).lang}/dashboard#invitemembers`,
         });
     }
-
-    // Should be kept last
-    itemsSidebar.push({
-        key: TabKeys.Logout,
-        icon: <a href="#" onClick={() => logout()}><LogoutOutlined/></a>,
-        label: <Link href="#" onClick={() => logout()}>{messages["dashboard-logout"]}</Link>,
-        url: "#"
-    });
 
     return (
         <>
@@ -149,17 +152,21 @@ export default function DashboardLayout({
                             height={50}
                             style={{filter: "invert(1)"}}
                         /> </Link>
+                        <div className={styles.headerButtonContainer}>
+                            <LanguageSelector/>
+                            <PrimaryButton onClick={() => logout()}>
+                                {messages["dashboard-logout"]} <LogoutOutlined/>
+                            </PrimaryButton>
+                        </div>
 
-                        <LanguageSelector/>
                     </Header>
                     <Content className={styles.content}>
                         <main className={styles.main}>
                             {activeKey === TabKeys.ProfileInfo && (
                                 <section key="profile">
-
-                                    <ProfileCard
-                                        session={token} id={profileId} messages={messages} isOwner={true}
-                                        isCompany={isACompany} profileData={(isACompany ? {
+                                    <ProfileCard session={token} id={profileId} messages={messages}
+                                                 isOwner={true}
+                                                 isCompany={isACompany} profileData={(isACompany ? {
                                         name,
                                         address,
                                         sector,
@@ -169,11 +176,12 @@ export default function DashboardLayout({
                                         name,
                                         surname,
                                         bio,
-                                        birthDate,
+                                        birth_date,
                                         address,
                                         sector,
                                         website,
                                     }) as ProfileUserData | ProfileCompanyData}/>
+
                                 </section>
                             )}
                             {activeKey === TabKeys.Offers && (
@@ -215,5 +223,6 @@ export default function DashboardLayout({
                 </Layout>
             </Layout>
         </>
-    );
+    )
+        ;
 }
