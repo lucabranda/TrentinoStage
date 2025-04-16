@@ -1,6 +1,7 @@
 "use client"
 import React, {useState} from 'react';
 import {Card, List, Button, Input, Space, Typography, Form, Collapse, Tag, Modal} from 'antd';
+import {message} from 'antd';
 import {
     ClockCircleOutlined,
     DeleteFilled,
@@ -24,10 +25,12 @@ interface Offer {
     title: string;
     description: string;
     city: string;
+    sector: string;
     weekly_hours: number;
     messages: any;
     isCompany: boolean;
     id: string;
+    applied_users?: any[];
 }
 
 interface EditOfferModalProps {
@@ -36,7 +39,7 @@ interface EditOfferModalProps {
     onUpdate: (updatedOffer: Offer) => void;
 }
 
-const EditOfferModal: React.FC<EditOfferModalProps> = ({ offer, session, onUpdate }) => {
+const EditOfferModal: React.FC<EditOfferModalProps> = ({offer, session, onUpdate}) => {
     const [visible, setVisible] = useState(false);
     const [form] = Form.useForm();
 
@@ -54,8 +57,8 @@ const EditOfferModal: React.FC<EditOfferModalProps> = ({ offer, session, onUpdat
         try {
             const response = await fetch(`/api/applications/modify`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ ...values, id: offer.id, token: session, country: "-", region: "-" }),
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({...values, id: offer.id, token: session, country: "-", region: "-"}),
             });
 
             if (response.ok) {
@@ -72,7 +75,7 @@ const EditOfferModal: React.FC<EditOfferModalProps> = ({ offer, session, onUpdat
 
     return (
         <>
-            <Button onClick={handleOpen} icon={<EditFilled />}>
+            <Button onClick={handleOpen} icon={<EditFilled/>}>
                 {offer.messages["dashboard-edit"] || "Edit"}
             </Button>
             <Modal
@@ -89,37 +92,57 @@ const EditOfferModal: React.FC<EditOfferModalProps> = ({ offer, session, onUpdat
                     <Form.Item
                         name="title"
                         label={offer.messages["dashboard-title"] || "Title"}
-                        rules={[{ required: true, message: offer.messages["dashboard-title-required"] || "Please enter the title" }]}
+                        rules={[{
+                            required: true,
+                            message: offer.messages["dashboard-title-required"] || "Please enter the title"
+                        }]}
                     >
-                        <Input />
+                        <Input/>
                     </Form.Item>
                     <Form.Item
                         name="description"
                         label={offer.messages["dashboard-description"] || "Description"}
-                        rules={[{ required: true, message: offer.messages["dashboard-description-required"] || "Please enter the description" }]}
+                        rules={[{
+                            required: true,
+                            message: offer.messages["dashboard-description-required"] || "Please enter the description"
+                        }]}
                     >
-                        <Input />
+                        <Input/>
                     </Form.Item>
                     <Form.Item
                         name="sector"
                         label={offer.messages["dashboard-sector"] || "Sector"}
-                        rules={[{ required: true, message: offer.messages["dashboard-sector-required"] || "Please enter the sector" }]}
+                        rules={[{
+                            required: true,
+                            message: offer.messages["dashboard-sector-required"] || "Please enter the sector"
+                        }]}
                     >
-                        <Input />
+                        <Input/>
                     </Form.Item>
                     <Form.Item
                         name="weekly_hours"
                         label={offer.messages["dashboard-weekly-hours"] || "Weekly Hours"}
-                        rules={[{ required: true, message: offer.messages["dashboard-weekly-hours-required"] || "Please enter the weekly hours" }]}
+                        rules={[{
+                            required: true,
+                            message: offer.messages["dashboard-weekly-hours-required"] || "Please enter the weekly hours"
+                        }, {
+                            validator: (_, value) =>
+                                value && value >= 1
+                                    ? Promise.resolve()
+                                    : Promise.reject(new Error(offer.messages["dashboard-offer-weekly-hours-min"] || "Weekly hours must be at least 1")),
+                        }]}
                     >
-                        <Input type="number" />
+                        <Input type="number"/>
                     </Form.Item>
                     <Form.Item
                         name="city"
                         label={offer.messages["dashboard-city"] || "City"}
-                        rules={[{ required: true, message: offer.messages["dashboard-city-required"] || "Please enter the city" }]}
+                        rules={[{
+                            required: true,
+                            message: offer.messages["dashboard-city-required"] || "Please enter the city"
+                        }]}
                     >
-                        <Input />
+                        <Input/>
                     </Form.Item>
                     <Form.Item>
                         <Button type="primary" htmlType="submit">
@@ -132,31 +155,20 @@ const EditOfferModal: React.FC<EditOfferModalProps> = ({ offer, session, onUpdat
     );
 };
 
-const OfferCard = ({ title, description, city, weekly_hours, messages, id, isCompany, session }: Offer & { session: string }) => (
-    <List.Item
-        actions={[
-            isCompany ?
-                (<>
-                    <Button danger={true} icon={<DeleteFilled/>}/>
-                    &nbsp;
-                    <EditOfferModal offer={{
-                        city, weekly_hours, messages, id, isCompany, description, title
-                    }} session={session} onUpdate={()=>{/*TODO:UPDATE*/}} />
-                    &nbsp;
-                    <DashedButton><SnippetsFilled /> 10 {/*TODO*/}</DashedButton>
-                </>)
-                :
-                <PrimaryButton>{messages["dashboard-apply"] || "Apply"}</PrimaryButton>
+const OfferCard = ({
+                       title,
+                       description,
+                       city,
+                       weekly_hours,
+                       messages,
+                       id,
+                       isCompany,
+                       session,
+                       sector,
+                       applicationsCount
+                   }: Offer & { session: string, applicationsCount?: number }) => (
 
-        ]}
-    >
-        <List.Item.Meta
-            title={<><Text strong>{title}</Text>&nbsp;<Tag color="geekblue"><ClockCircleOutlined/>&nbsp;{weekly_hours}
-            </Tag><Tag color="purple">&nbsp;<PushpinOutlined/>{city}</Tag></>}
-            description={<Text type="secondary">{description}</Text>}
-        />
-    </List.Item>
-
+    <>a</>
 );
 
 interface FormValues {
@@ -169,15 +181,23 @@ interface FormValues {
     country: string;
     creation_time?: string;
     id?: string;
+    applied_users?: any[];
 }
 
 const OfferSectionCompany: React.FC<OfferSectionProps> = ({session, id, messages}) => {
     const [offers, setOffers] = useState<FormValues[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [isCreating, setIsCreating] = useState(false);
+    const [isAccordionOpen, setIsAccordionOpen] = useState("1");
+    const [form] = Form.useForm();
 
     let _offers: FormValues[] = [];
 
-    if(isLoading) {
+    function refresh() {
+        setIsLoading(true);
+    }
+
+    if (isLoading) {
         fetch(`/api/applications/list?token=${session}&profileId=${id}`, {
             method: "GET"
         })
@@ -196,7 +216,8 @@ const OfferSectionCompany: React.FC<OfferSectionProps> = ({session, id, messages
                         sector: item.sector,
                         weekly_hours: item.weekly_hours,
                         creation_time: item.creation_time,
-                        id: item._id
+                        id: item._id,
+                        applied_users: item.applied_users
                     });
                 })
 
@@ -210,103 +231,158 @@ const OfferSectionCompany: React.FC<OfferSectionProps> = ({session, id, messages
 
 
     const handleAddOffer = async (values: FormValues) => {
+        try {
+            setIsCreating(true);
+            const response = await fetch("/api/applications/create", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({...values, token: session, region: "a", country: "a"}),
+            });
 
-        const {title, description, sector, weekly_hours, city} = values;
-
-        const response = await fetch("/api/applications/create", {
-            method: "POST",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({...values, token: session, region: "a", country: "a"}),
-        });
-
-        if (response.ok) {
-            setOffers([...offers, values]);
+            if (response.ok) {
+                refresh();
+                message.success(messages["dashboard-offer-create-success"] || "Offer created successfully!");
+                setIsCreating(false);
+                form.resetFields(); // Clear form fields
+                setIsAccordionOpen(""); // Close accordion
+            } else {
+                throw new Error(messages["dashboard-offer-create-error"] || "Failed to create offer.");
+            }
+        } catch (error) {
+            message.error((error as any).message);
         }
     };
 
     return (
         <Card title={messages["dashboard-company-offers"]}>
-            <Collapse items={
-                [{
-                    key: 1,
-                    label: messages["dashboard-company-offers-create"],
-                    children: (
-                        <Form
-                            name={"create-offer"}
-                            layout={"vertical"}
-                            onFinish={handleAddOffer}
-                        >
-                            <Form.Item
-                                name={"title"}
-                                label={messages["dashboard-offer-title"] || "Offer Title"}
-                                rules={[{
-                                    required: true,
-                                    message: messages["dashboard-offer-title-required"] || "Please enter the offer title"
-                                }]}>
-                                <Input />
-                            </Form.Item>
-                            <Form.Item
-                                name={"description"}
-                                label={messages["dashboard-offer-description"] || "Offer Description"}
-                                rules={[{
-                                    required: true,
-                                    message: messages["dashboard-offer-description-required"] || "Please enter the offer description"
-                                }]}>
-                                <Input />
-                            </Form.Item>
-                            <Form.Item
-                                name={"sector"}
-                                label={messages["dashboard-offer-sector"] || "Offer Sector"}
-                                rules={[{
-                                    required: true,
-                                    message: messages["dashboard-offer-sector-required"] || "Please enter the offer sector"
-                                }]}>
-                                <Input />
-                            </Form.Item>
-                            <Form.Item<number>
-                                name={"weekly_hours"}
-                                label={messages["dashboard-offer-weekly-hours"] || "Weekly Hours"}
-                                rules={[{
-                                    required: true,
-                                    message: messages["dashboard-offer-weekly-hours-required"] || "Please enter the weekly hours",
-                                    min: 1
-                                }]}>
-                                <Input type={"number"} />
-                            </Form.Item>
-                            <Form.Item
-                                name={"city"}
-                                label={messages["dashboard-offer-city"] || "City"}
-                                rules={[{
-                                    required: true,
-                                    message: messages["dashboard-offer-city-required"] || "Please enter the city"
-                                }]}>
-                                <Input />
-                            </Form.Item>
-                            <Button htmlType={"submit"} type={"primary"}>{messages["dashboard-company-offers-create"]}</Button>
-                        </Form>
-                    )
-                }]
-            }/>
-
+            <Collapse
+                activeKey={isAccordionOpen}
+                onChange={(key) => setIsAccordionOpen(isAccordionOpen === "1" ? "" : "1")}
+                items={[
+                    {
+                        key: "1",
+                        label: messages["dashboard-company-offers-create"],
+                        children: (
+                            <Form
+                                form={form}
+                                name={"create-offer"}
+                                layout={"vertical"}
+                                onFinish={handleAddOffer}
+                            >
+                                <Form.Item
+                                    name={"title"}
+                                    label={messages["dashboard-offer-title"] || "Offer Title"}
+                                    rules={[{
+                                        required: true,
+                                        message: messages["dashboard-offer-title-required"] || "Please enter the offer title"
+                                    }]}
+                                >
+                                    <Input/>
+                                </Form.Item>
+                                <Form.Item
+                                    name={"description"}
+                                    label={messages["dashboard-offer-description"] || "Offer Description"}
+                                    rules={[{
+                                        required: true,
+                                        message: messages["dashboard-offer-description-required"] || "Please enter the offer description"
+                                    }]}
+                                >
+                                    <Input/>
+                                </Form.Item>
+                                <Form.Item
+                                    name={"sector"}
+                                    label={messages["dashboard-offer-sector"] || "Offer Sector"}
+                                    rules={[{
+                                        required: true,
+                                        message: messages["dashboard-offer-sector-required"] || "Please enter the offer sector"
+                                    }]}
+                                >
+                                    <Input/>
+                                </Form.Item>
+                                <Form.Item<number>
+                                    name={"weekly_hours"}
+                                    label={messages["dashboard-offer-weekly-hours"] || "Weekly Hours"}
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: messages["dashboard-offer-weekly-hours-required"] || "Please enter the weekly hours",
+                                            min: 1
+                                        },
+                                        {
+                                            validator: (_, value) =>
+                                                value && value >= 1
+                                                    ? Promise.resolve()
+                                                    : Promise.reject(new Error(messages["dashboard-offer-weekly-hours-min"] || "Weekly hours must be at least 1")),
+                                        }
+                                    ]
+                                    }
+                                >
+                                    <Input type={"number"}/>
+                                </Form.Item>
+                                <Form.Item
+                                    name={"city"}
+                                    label={messages["dashboard-offer-city"] || "City"}
+                                    rules={[{
+                                        required: true,
+                                        message: messages["dashboard-offer-city-required"] || "Please enter the city"
+                                    }]}
+                                >
+                                    <Input/>
+                                </Form.Item>
+                                <Button htmlType={"submit"} type={"primary"} loading={isCreating}>
+                                    {messages["dashboard-company-offers-create"]}
+                                </Button>
+                            </Form>
+                        )
+                    }
+                ]}
+            />
             <List
                 dataSource={offers}
                 loading={isLoading}
                 renderItem={(item) => (
-                    <OfferCard title={item.title} description={item.description} city={item.city}
-                               weekly_hours={item.weekly_hours} messages={messages} isCompany={true} id={item.id ?? ""} session={session ?? ""}/>
+                    <List.Item
+                        actions={[
+                            <>
+                                <Button danger={true} icon={<DeleteFilled/>}/>
+                                &nbsp;
+                                <EditOfferModal offer={{
+                                    city: item.city,
+                                    weekly_hours: item.weekly_hours,
+                                    messages,
+                                    id: item.id ?? "",
+                                    isCompany: true,
+                                    description: item.description,
+                                    title: item.title,
+                                    sector: item.sector
+                                }} session={session} onUpdate={() => {
+                                    refresh()
+                                }}/>
+                                &nbsp;
+                                <DashedButton><SnippetsFilled/> {item.applied_users?.length ?? 0}</DashedButton>
+                            </>
+
+                        ]}
+                    >
+                        <List.Item.Meta
+                            title={<><Text strong>{item.title}</Text>&nbsp;<Tag
+                                color="geekblue"><ClockCircleOutlined/>&nbsp;{item.weekly_hours}
+                            </Tag><Tag color="purple">&nbsp;<PushpinOutlined/>{item.city}</Tag></>}
+                            description={<Text type="secondary">{item.description}</Text>}
+                        />
+                    </List.Item>
                 )}
             />
         </Card>
     );
-}
-
+};
 
 const OfferSectionUser: React.FC<OfferSectionProps> = ({session, id, messages}) => {
     const [offers, setOffers] = useState<FormValues[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     let _offers: FormValues[] = [];
 
-    if(isLoading) {
+    if (isLoading) {
 
         fetch(`/api/applications/list?token=${session}&profileId=${id}`, {
             method: "GET"
@@ -346,7 +422,8 @@ const OfferSectionUser: React.FC<OfferSectionProps> = ({session, id, messages}) 
                     dataSource={offers}
                     renderItem={(item) => (
                         <OfferCard title={item.title} description={item.description} city={item.city}
-                                   weekly_hours={item.weekly_hours} messages={messages} isCompany={false} id={item.id ?? ""} session={session ?? ""}/>
+                                   weekly_hours={item.weekly_hours} messages={messages} isCompany={false}
+                                   id={item.id ?? ""} session={session ?? ""} sector={item.sector}/>
                     )}
                 />
             </Card>

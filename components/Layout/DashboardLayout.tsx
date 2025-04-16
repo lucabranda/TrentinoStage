@@ -76,7 +76,6 @@ export default function DashboardLayout({
     const [collapsed, setCollapsed] = useState(false);
     const [activeKey, setActiveKey] = useState(TabKeys.ProfileInfo);
 
-
     function logout() {
         removeSessionToken();
         window.location.href = "/";
@@ -88,6 +87,7 @@ export default function DashboardLayout({
             key: TabKeys.ProfileInfo,
             icon: isACompany ? <BuildOutlined/> : <UserOutlined/>,
             url: `/${(params).lang}/dashboard`,
+            hash: ``,
             label: isACompany ? messages["dashboard-company-profile"] : messages["dashboard-user-profile"],
         },
         {
@@ -95,12 +95,14 @@ export default function DashboardLayout({
             icon: <SearchOutlined/>,
             label: messages["dashboard-offers"],
             url: `/${(params).lang}/dashboard#offers`,
+            hash: `offers`,
         },
         {
             key: TabKeys.Applications,
             icon: <PaperClipOutlined/>,
             label: messages["dashboard-applications"],
-            url: `/${(params).lang}/dashboard#applications`
+            url: `/${(params).lang}/dashboard#applications`,
+            hash: `applications`,
         }
     ]
 
@@ -110,6 +112,7 @@ export default function DashboardLayout({
             icon: <TeamOutlined/>,
             label: messages["dashboard-invite-members"],
             url: `/${(params).lang}/dashboard#invitemembers`,
+            hash: `invitemembers`,
         });
     }
 
@@ -134,7 +137,7 @@ export default function DashboardLayout({
                         items={itemsSidebar}
                         className={styles.menu}
                         selectedKeys={[activeKey]}
-                        onSelect={(e: any) => setActiveKey(e.key)}
+                        onSelect={(e: any) => {setActiveKey(e.key); window.location.hash = itemsSidebar.filter(is => is.key === e.key)[0].hash;}}
                     />
                 </Sider>
 
