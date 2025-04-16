@@ -73,10 +73,10 @@ const EditOfferModal: React.FC<EditOfferModalProps> = ({ offer, session, onUpdat
     return (
         <>
             <Button onClick={handleOpen} icon={<EditFilled />}>
-                Edit
+                {offer.messages["dashboard-edit"] || "Edit"}
             </Button>
             <Modal
-                title="Edit Offer"
+                title={offer.messages["dashboard-edit-offer"] || "Edit Offer"}
                 visible={visible}
                 onCancel={handleClose}
                 footer={null}
@@ -88,42 +88,42 @@ const EditOfferModal: React.FC<EditOfferModalProps> = ({ offer, session, onUpdat
                 >
                     <Form.Item
                         name="title"
-                        label="Title"
-                        rules={[{ required: true, message: 'Please enter the title' }]}
+                        label={offer.messages["dashboard-title"] || "Title"}
+                        rules={[{ required: true, message: offer.messages["dashboard-title-required"] || "Please enter the title" }]}
                     >
                         <Input />
                     </Form.Item>
                     <Form.Item
                         name="description"
-                        label="Description"
-                        rules={[{ required: true, message: 'Please enter the description' }]}
+                        label={offer.messages["dashboard-description"] || "Description"}
+                        rules={[{ required: true, message: offer.messages["dashboard-description-required"] || "Please enter the description" }]}
                     >
                         <Input />
                     </Form.Item>
                     <Form.Item
                         name="sector"
-                        label="Sector"
-                        rules={[{ required: true, message: 'Please enter the sector' }]}
+                        label={offer.messages["dashboard-sector"] || "Sector"}
+                        rules={[{ required: true, message: offer.messages["dashboard-sector-required"] || "Please enter the sector" }]}
                     >
                         <Input />
                     </Form.Item>
                     <Form.Item
                         name="weekly_hours"
-                        label="Weekly Hours"
-                        rules={[{ required: true, message: 'Please enter the weekly hours' }]}
+                        label={offer.messages["dashboard-weekly-hours"] || "Weekly Hours"}
+                        rules={[{ required: true, message: offer.messages["dashboard-weekly-hours-required"] || "Please enter the weekly hours" }]}
                     >
                         <Input type="number" />
                     </Form.Item>
                     <Form.Item
                         name="city"
-                        label="City"
-                        rules={[{ required: true, message: 'Please enter the city' }]}
+                        label={offer.messages["dashboard-city"] || "City"}
+                        rules={[{ required: true, message: offer.messages["dashboard-city-required"] || "Please enter the city" }]}
                     >
                         <Input />
                     </Form.Item>
                     <Form.Item>
                         <Button type="primary" htmlType="submit">
-                            Save
+                            {offer.messages["dashboard-save"] || "Save"}
                         </Button>
                     </Form.Item>
                 </Form>
@@ -131,7 +131,6 @@ const EditOfferModal: React.FC<EditOfferModalProps> = ({ offer, session, onUpdat
         </>
     );
 };
-
 
 const OfferCard = ({ title, description, city, weekly_hours, messages, id, isCompany, session }: Offer & { session: string }) => (
     <List.Item
@@ -226,11 +225,11 @@ const OfferSectionCompany: React.FC<OfferSectionProps> = ({session, id, messages
     };
 
     return (
-        <Card title={messages["dashboard-company-offers"] || "Company Offers"}>
+        <Card title={messages["dashboard-company-offers"]}>
             <Collapse items={
                 [{
                     key: 1,
-                    label: "Create offer",
+                    label: messages["dashboard-company-offers-create"],
                     children: (
                         <Form
                             name={"create-offer"}
@@ -239,59 +238,51 @@ const OfferSectionCompany: React.FC<OfferSectionProps> = ({session, id, messages
                         >
                             <Form.Item
                                 name={"title"}
+                                label={messages["dashboard-offer-title"] || "Offer Title"}
                                 rules={[{
                                     required: true,
-                                    message: messages[""]
-
+                                    message: messages["dashboard-offer-title-required"] || "Please enter the offer title"
                                 }]}>
-                                <Input></Input>
+                                <Input />
                             </Form.Item>
                             <Form.Item
                                 name={"description"}
+                                label={messages["dashboard-offer-description"] || "Offer Description"}
                                 rules={[{
                                     required: true,
-                                    message: messages[""]
-
+                                    message: messages["dashboard-offer-description-required"] || "Please enter the offer description"
                                 }]}>
-                                <Input></Input>
+                                <Input />
                             </Form.Item>
                             <Form.Item
                                 name={"sector"}
+                                label={messages["dashboard-offer-sector"] || "Offer Sector"}
                                 rules={[{
                                     required: true,
-                                    message: messages[""]
-
+                                    message: messages["dashboard-offer-sector-required"] || "Please enter the offer sector"
                                 }]}>
-                                <Input></Input>
+                                <Input />
                             </Form.Item>
                             <Form.Item<number>
                                 name={"weekly_hours"}
+                                label={messages["dashboard-offer-weekly-hours"] || "Weekly Hours"}
                                 rules={[{
                                     required: true,
-                                    message: messages[""],
+                                    message: messages["dashboard-offer-weekly-hours-required"] || "Please enter the weekly hours",
                                     min: 1
-
                                 }]}>
-                                <Input type={"number"}></Input>
+                                <Input type={"number"} />
                             </Form.Item>
                             <Form.Item
                                 name={"city"}
+                                label={messages["dashboard-offer-city"] || "City"}
                                 rules={[{
                                     required: true,
-                                    message: messages[""]
-
+                                    message: messages["dashboard-offer-city-required"] || "Please enter the city"
                                 }]}>
-                                <Input></Input>
+                                <Input />
                             </Form.Item>
-
-                            {/*TODO: Country&Region*/}
-
-                            <Form.Item>
-                                <Button type="primary" htmlType="submit" style={{marginLeft: 8}}>
-                                    {messages["dashboard-add"] || "Add"}
-                                </Button>
-                            </Form.Item>
-
+                            <Button htmlType={"submit"} type={"primary"}>{messages["dashboard-company-offers-create"]}</Button>
                         </Form>
                     )
                 }]

@@ -158,7 +158,33 @@
     "error-city-required": "Si prega di fornire una città.",
     "error-postal-code-required": "Si prega di fornire un codice postale.",
     "error-street-required": "Si prega di fornire una via.",
-    "error-address-required": "Si prega di fornire un indirizzo."
-    
-    
+    "error-address-required": "Si prega di fornire un indirizzo.",
+
+    "dashboard-edit": "Modifica",
+    "dashboard-edit-offer": "Modifica Offerta",
+    "dashboard-title": "Titolo",
+    "dashboard-title-required": "Inserisci il titolo",
+    "dashboard-description": "Descrizione",
+    "dashboard-description-required": "Inserisci la descrizione",
+    "dashboard-sector": "Settore",
+    "dashboard-sector-required": "Inserisci il settore",
+    "dashboard-weekly-hours": "Ore Settimanali",
+    "dashboard-weekly-hours-required": "Inserisci le ore settimanali",
+    "dashboard-city": "Città",
+    "dashboard-city-required": "Inserisci la città",
+    "dashboard-save": "Salva",
+    "dashboard-offer-title": "Titolo",
+    "dashboard-offer-title-required": "Inserisci il titolo dell'annuncio",
+    "dashboard-offer-description": "Descrizione",
+    "dashboard-offer-description-required": "Inserisci la descrizione dell'annuncio",
+    "dashboard-offer-sector": "Settore",
+    "dashboard-offer-sector-required": "Inserisci il settore dell'annuncio",
+    "dashboard-offer-weekly-hours": "Ore settimanali",
+    "dashboard-offer-weekly-hours-required": "Inserisci le ore settimanali",
+    "dashboard-offer-city": "Città",
+    "dashboard-offer-city-required": "Inserisci la città",
+    "dashboard-company-offers-create": "Crea annuncio",
+    "dashboard-company-offers": "Annunci",
+    "dashboard-offer-create-success": "Annuncio creato con successo",
+    "dashboard-offer-create-error" : "Errore durante la creazione dell'annuncio"
 }

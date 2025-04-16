@@ -19,6 +19,10 @@ import http from 'http';
 import { ObjectSerializer, Authentication, VoidAuth, Interceptor } from '../model/models';
 
 import { HttpError, RequestFile } from './apis';
+import { loadEnvConfig } from '@next/env'
+
+const projectDir = process.cwd()
+loadEnvConfig(projectDir)
 
 let defaultBasePath = process.env.BASE_PATH!;
 
