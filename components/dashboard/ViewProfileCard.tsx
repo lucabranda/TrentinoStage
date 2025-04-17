@@ -15,11 +15,12 @@ export default async function ViewProfileCard({token, profile_id, messages, isAC
             city: profileData!.address?.city,
             region: profileData!.address?.region,
             country: profileData!.address?.country,
-            postalCode: profileData!.address?.postalCode
+            postal_code: profileData!.address?.postalCode,
+            street: profileData!.address?.street
         },
         sector: profileData!.sector,
-        website: profileData!.website
-        //partitaIva: profileData!.partitaIva
+        website: profileData!.website,
+        partitaIva: profileData!.identifier
     } as ProfileCompanyData : { 
         name: profileData!.name,
         surname: profileData!.surname,
@@ -30,7 +31,8 @@ export default async function ViewProfileCard({token, profile_id, messages, isAC
             city: profileData!.address?.city,
             region: profileData!.address?.region,
             country: profileData!.address?.country,
-            postalCode: profileData!.address?.postalCode
+            postal_code: profileData!.address?.postalCode,
+            street: profileData!.address?.street
         },
         sector: profileData!.sector,
         website: profileData!.website

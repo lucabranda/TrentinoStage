@@ -354,7 +354,7 @@ export class ProfilesApi {
      * @param sector User\\\&#39;s sector. Multiple sectors can be separated by commas.
      * @param website User\\\&#39;s website.
      */
-    public async apiProfilesModifyPost (sessionToken?: string, name?: string, surname?: string, country?: string, region?: string, city?: string, postalCode?: string, street?: string, address?: string, bio?: string, sector?: string, website?: string, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: http.IncomingMessage; body?: any;  }> {
+    public async apiProfilesModifyPost (sessionToken?: string, name?: string, surname?: string, country?: string, region?: string, city?: string, postalCode?: string, street?: string, address?: string, bio?: string, sector?: string, website?: string, birth_date?: string, identifier?: string, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: http.IncomingMessage; body?: any;  }> {
         const localVarPath = this.basePath + '/api/profiles/modify';
         let localVarQueryParameters: any = {};
         let localVarHeaderParams: any = (<any>Object).assign({}, this._defaultHeaders);
@@ -410,6 +410,14 @@ export class ProfilesApi {
 
         if (website !== undefined) {
             localVarFormParams['website'] = ObjectSerializer.serialize(website, "string");
+        }
+
+        if (birth_date !== undefined) {
+            localVarFormParams['birth_date'] = ObjectSerializer.serialize(birth_date, "string");
+        }
+
+        if (identifier !== undefined) {
+            localVarFormParams['identifier'] = ObjectSerializer.serialize(identifier, "string");
         }
 
         let localVarRequestOptions: localVarRequest.Options = {

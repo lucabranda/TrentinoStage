@@ -159,6 +159,173 @@
         }
       }
     },
+    "/api/accounts/role": {
+      "get": {
+        "summary": "Retrieve the role of an account based on a session token.",
+        "description": "This endpoint retrieves the role of an account by validating the provided session token.",
+        "tags": [
+          "Accounts"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "token",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The session token used to identify the account."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved the role of the account.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "role": {
+                      "type": "string",
+                      "description": "The role of the account."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized access due to missing or invalid session token.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Error message."
+                    },
+                    "code": {
+                      "type": "string",
+                      "description": "Error code."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/applications/apply": {
+      "post": {
+        "summary": "Apply for a new application",
+        "description": "Endpoint to allow users to apply for a specific application. Only individual accounts are allowed to apply.",
+        "consumes": [
+          "multipart/form-data",
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "application",
+            "description": "Application data",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "token": {
+                  "type": "string",
+                  "description": "Session token of the user."
+                },
+                "applicationId": {
+                  "type": "string",
+                  "description": "ID of the application to apply for."
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Application created successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Application created successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden. Invalid token or account type.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Invalid token"
+                    },
+                    "code": {
+                      "type": "string",
+                      "example": "error-invalid-token"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Application not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Application not found"
+                    },
+                    "code": {
+                      "type": "string",
+                      "example": "error-application-not-found"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Unsupported content type or missing applicationId field.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Unsupported content type"
+                    },
+                    "code": {
+                      "type": "string",
+                      "example": "error-invalid-request"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/applications/create": {
       "post": {
         "summary": "Create a new application",
@@ -239,6 +406,92 @@
           },
           "405": {
             "description": "Invalid request or unsupported content type"
+          }
+        }
+      }
+    },
+    "/api/applications/list": {
+      "get": {
+        "summary": "Retrieve a list of open positions for a company.",
+        "description": "This endpoint retrieves all open positions for a specified company. \nIf the user accessing the endpoint is the company that created the positions, \nall fields are returned. Otherwise, sensitive fields such as `applied_users` \nand `chosen_user` are omitted.\n",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "token",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The session token of the user making the request."
+          },
+          {
+            "in": "query",
+            "name": "profileId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The profile ID of the company whose positions are being queried."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A list of open positions.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "issuer_id": {
+                        "type": "string",
+                        "description": "The ID of the company that created the position."
+                      },
+                      "title": {
+                        "type": "string",
+                        "description": "The title of the position."
+                      },
+                      "description": {
+                        "type": "string",
+                        "description": "A description of the position."
+                      },
+                      "sector": {
+                        "type": "string",
+                        "description": "The sector of the position."
+                      },
+                      "location": {
+                        "type": "string",
+                        "description": "The location of the position."
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized access due to missing or invalid session token.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "The error message."
+                    },
+                    "code": {
+                      "type": "string",
+                      "description": "The error code."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error."
           }
         }
       }
@@ -537,7 +790,7 @@
                     "website": {
                       "type": "string"
                     },
-                    "birthDate": {
+                    "birth_date": {
                       "type": "string",
                       "format": "date"
                     },
@@ -867,6 +1120,11 @@
                     "type": "string",
                     "description": "User's website.",
                     "example": "https://example.com"
+                  },
+                  "identifier": {
+                    "type": "string",
+                    "description": "Company's identifier. ",
+                    "example": 123456789100
                   }
                 }
               }
@@ -1058,6 +1316,468 @@
                   "application/json": {
                     "value": {
                       "error": "Internal server error"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/reviews/edit": {
+      "post": {
+        "summary": "Edit a review",
+        "description": "Updates an existing review for a user. At least one of the fields (title, review, or rating) must be provided for the update.",
+        "tags": [
+          "Reviews"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "token": {
+                    "type": "string",
+                    "description": "The session token of the user.",
+                    "example": "user-session-token"
+                  },
+                  "reviewId": {
+                    "type": "string",
+                    "description": "The ID of the review to be updated.",
+                    "example": "64f1c2e5d4a3b2c1a1e5f6d7"
+                  },
+                  "title": {
+                    "type": "string",
+                    "description": "The new title of the review (optional).",
+                    "example": "Updated Review Title"
+                  },
+                  "review": {
+                    "type": "string",
+                    "description": "The new body of the review (optional).",
+                    "example": "This is the updated review content."
+                  },
+                  "rating": {
+                    "type": "integer",
+                    "description": "The new rating for the review (optional).",
+                    "example": 4
+                  }
+                }
+              }
+            },
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "token": {
+                    "type": "string",
+                    "description": "The session token of the user.",
+                    "example": "user-session-token"
+                  },
+                  "reviewId": {
+                    "type": "string",
+                    "description": "The ID of the review to be updated.",
+                    "example": "64f1c2e5d4a3b2c1a1e5f6d7"
+                  },
+                  "title": {
+                    "type": "string",
+                    "description": "The new title of the review (optional).",
+                    "example": "Updated Review Title"
+                  },
+                  "review": {
+                    "type": "string",
+                    "description": "The new body of the review (optional).",
+                    "example": "This is the updated review content."
+                  },
+                  "rating": {
+                    "type": "integer",
+                    "description": "The new rating for the review (optional).",
+                    "example": 4
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Review updated successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Review updated successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing required fields or invalid session token.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Missing required fields"
+                    },
+                    "code": {
+                      "type": "string",
+                      "example": "error-missing-fields"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Review not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Review not found"
+                    },
+                    "code": {
+                      "type": "string",
+                      "example": "error-review-not-found"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Unsupported content type or no fields to update.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Unsupported content type"
+                    },
+                    "code": {
+                      "type": "string",
+                      "example": "error-invalid-request"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/reviews/get": {
+      "get": {
+        "summary": "Retrieve reviews for a specific profile",
+        "description": "Fetches a list of reviews for a given profile, with optional pagination.",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "token",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Session token for authentication."
+          },
+          {
+            "in": "query",
+            "name": "profileId",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The ID of the profile whose reviews are being fetched."
+          },
+          {
+            "in": "query",
+            "name": "from",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 0
+            },
+            "description": "The starting index for pagination."
+          },
+          {
+            "in": "query",
+            "name": "to",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 10
+            },
+            "description": "The ending index for pagination."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A list of reviews for the specified profile.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "reviewer": {
+                        "type": "string",
+                        "description": "The ID of the reviewer."
+                      },
+                      "rating": {
+                        "type": "number",
+                        "description": "The rating given by the reviewer."
+                      },
+                      "comment": {
+                        "type": "string",
+                        "description": "The review comment."
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid session token.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Access to the profile's reviews is forbidden.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Profile not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/reviews/review": {
+      "post": {
+        "summary": "Create a review for a profile.",
+        "description": "Allows users to create reviews for profiles. Users can only review companies, and companies can only review users.",
+        "tags": [
+          "Reviews"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "token": {
+                    "type": "string",
+                    "description": "The session token of the user."
+                  },
+                  "reviewedProfile": {
+                    "type": "string",
+                    "description": "The ID of the profile being reviewed."
+                  },
+                  "title": {
+                    "type": "string",
+                    "description": "The title of the review."
+                  },
+                  "review": {
+                    "type": "string",
+                    "description": "The content of the review."
+                  },
+                  "rating": {
+                    "type": "integer",
+                    "description": "The rating for the review (1-5).",
+                    "minimum": 1,
+                    "maximum": 5
+                  }
+                }
+              }
+            },
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "token": {
+                    "type": "string",
+                    "description": "The session token of the user."
+                  },
+                  "reviewedProfile": {
+                    "type": "string",
+                    "description": "The ID of the profile being reviewed."
+                  },
+                  "title": {
+                    "type": "string",
+                    "description": "The title of the review."
+                  },
+                  "review": {
+                    "type": "string",
+                    "description": "The content of the review."
+                  },
+                  "rating": {
+                    "type": "integer",
+                    "description": "The rating for the review (1-5).",
+                    "minimum": 1,
+                    "maximum": 5
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Review created successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "description": "Success message."
+                    },
+                    "data": {
+                      "type": "object",
+                      "description": "The created review data.",
+                      "properties": {
+                        "reviewer_id": {
+                          "type": "string",
+                          "description": "The ID of the reviewer."
+                        },
+                        "title": {
+                          "type": "string",
+                          "description": "The title of the review."
+                        },
+                        "review": {
+                          "type": "string",
+                          "description": "The content of the review."
+                        },
+                        "rating": {
+                          "type": "integer",
+                          "description": "The rating of the review."
+                        },
+                        "creation_time": {
+                          "type": "string",
+                          "format": "date-time",
+                          "description": "The creation time of the review."
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Invalid token.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Error message."
+                    },
+                    "code": {
+                      "type": "string",
+                      "description": "Error code."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Profile not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Error message."
+                    },
+                    "code": {
+                      "type": "string",
+                      "description": "Error code."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Invalid request or missing parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Error message."
+                    },
+                    "code": {
+                      "type": "string",
+                      "description": "Error code."
                     }
                   }
                 }

@@ -10,6 +10,7 @@ import { getAccountInfo } from "@/utils/accounts"
  *   get:
  *     summary: Retrieve the role of an account based on a session token.
  *     description: This endpoint retrieves the role of an account by validating the provided session token.
+ *     tags: ["Accounts"]
  *     parameters:
  *       - in: query
  *         name: token

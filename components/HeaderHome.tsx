@@ -28,20 +28,6 @@ interface HeaderHomeProps {
 
 const SECTION_IDS = ["hero", "services", "join"];
 
-const getActiveSection = (scrollPosition: number): string => {
-  for (const id of SECTION_IDS) {
-    const section = document.getElementById(id);
-    if (
-      section &&
-      section.offsetTop <= scrollPosition &&
-      section.offsetTop + section.offsetHeight > scrollPosition
-    ) {
-      return id;
-    }
-  }
-  return "hero";
-};
-
 export default function HeaderHome({
   messages,
   logo,
@@ -49,17 +35,26 @@ export default function HeaderHome({
   isLogged
 }: HeaderHomeProps) {
   const [activeSection, setActiveSection] = useState("hero");
-
   useEffect(() => {
     const handleScroll = () => {
-      const scrollPosition = window.scrollY + window.innerHeight / 2;
-      setActiveSection(getActiveSection(scrollPosition));
+      const currentSection = SECTION_IDS.find((id) => {
+        const element = document.getElementById(id);
+        if (element) {
+          const rect = element.getBoundingClientRect();
+          return rect.top <= 80 && rect.bottom >= 80;
+        }
+        return false;
+      });
+  
+      if (currentSection && currentSection !== activeSection) {
+        setActiveSection(currentSection);
+      }
     };
-
+  
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
+  }, [activeSection]);
+  
   const menuItems = [
     {
       key: "hero",
@@ -82,6 +77,7 @@ export default function HeaderHome({
     removeSessionToken();
     window.location.reload();
   }
+
 
   return (
     <Header className={styles.header}>

@@ -2,7 +2,7 @@
 import React, {useEffect, useState} from 'react'
 import {Button, Form, Input, Typography, Card, Upload, Layout, Select} from 'antd';
 import {SendOutlined, UploadOutlined} from "@ant-design/icons";
-import {sectors, countries, regions} from "@/utils/enums";
+import {sectors, countries, regions, cities} from "@/utils/enums";
 
 export interface NewProfileFormProps {
     token: string,
@@ -17,19 +17,22 @@ export default function NewProfileForm({token, msgs, styles, isCompany}: NewProf
 
     const onFinish = async (values: any) => {
         try {
-            const name = values.name
-            const address = values.address
-            const country = values.country
-            const region = values.region
-            const city = values.city
-            const postalCode = values.postalCode
-            const bio = values.bio
-            const sector = values.sector
-            const website = values.website
-            const partitaIva = values.partitaIva
-            const surname = values.surname
-            const birth_date = values.birth_date        
+            const name = values.name;
+            const address = values.address;
+            const city = values.city;
+            const postalCode = values.postalCode;
+            const street = values.street;
+            const region = values.region;
+            const country = values.country;
+            //const sector = "{\"sector\":\"" + values.sector + "\"}";
+            const sector = values.sector;
+            const bio = values.bio;
+            const birth_date = values?.birth_date || undefined;
+            //const profilePicture = values.profilePicture;
 
+            const website = (isCompany) && values?.website;
+            const partitaIva = (isCompany) && values?.partitaIva;
+            const surname = (!isCompany) && values?.surname;
 
             const res = await fetch("/api/profiles/new", {
                 method: "POST",
@@ -38,19 +41,24 @@ export default function NewProfileForm({token, msgs, styles, isCompany}: NewProf
                     sessionToken: token,
                     is_company: isCompany,
                     name: name,
-                    bio: bio,
                     address: address,
                     city: city,
                     postalCode: postalCode,
                     region: region,
                     country: country,
                     sector: sector,
-                    ...(isCompany ? { website: website, identifier: partitaIva } : { surname: surname, birth_date: birth_date }),
+                    street: street,
+                    bio: bio,
+                    birthDate: birth_date,
+                    ...(isCompany && {website: website}),
+                    ...(isCompany && {identifier: partitaIva}),
+                    ...(!isCompany && {surname: surname})
                 }),
             });
             if (!res.ok) {
                 const errorData = await res.json();
                 throw new Error(
+                    
                     errorData.error
                 );
             }
@@ -87,9 +95,14 @@ export default function NewProfileForm({token, msgs, styles, isCompany}: NewProf
             rules: [{required: true, message: msgs["error-city-not-provided"]}]
         },
         {
-            label: <span className={styles.formLabel}>{msgs["company-card-postalcode-label"]}</span>,
+            label: <span className={styles.formLabel}>{msgs["company-card-street-label"]}</span>,
+            name: "street",
+            rules: [{required: true, message: msgs["error-street-not-provided"]}]
+        },
+        {
+            label: <span className={styles.formLabel}>{msgs["company-card-postalCode-label"]}</span>,
             name: "postalCode",
-            rules: [{required: true, message: msgs["error-postalcode-not-provided"]}]
+            rules: [{required: true, message: msgs["error-postalCode-not-provided"]}]
         },
         {
             label: <span className={styles.formLabel}>{msgs["company-card-address-label"]}</span>,
@@ -105,6 +118,11 @@ export default function NewProfileForm({token, msgs, styles, isCompany}: NewProf
             label: <span className={styles.formLabel}>{msgs["company-card-profile-picture-label"]}</span>,
             name: "profilePicture",
             rules: [{required: false, message: msgs["error-profile-picture-not-provided"]}]
+        },
+        {
+            label: <span className={styles.formLabel}>{msgs["user-card-birth-date-label"]}</span>,
+            name: "birth_date",
+            rules: [{required: false, message: msgs["error-birth-date-not-provided"]}]
         },
         {
             label: <span className={styles.formLabel}>{msgs["company-card-bio-label"]}</span>,
@@ -153,9 +171,14 @@ export default function NewProfileForm({token, msgs, styles, isCompany}: NewProf
             rules: [{required: true, message: msgs["error-city-not-provided"]}]
         },
         {
-            label: <span className={styles.formLabel}>{msgs["company-card-postalcode-label"]}</span>,
+            label: <span className={styles.formLabel}>{msgs["company-card-street-label"]}</span>,
+            name: "street",
+            rules: [{required: true, message: msgs["error-street-not-provided"]}]
+        },
+        {
+            label: <span className={styles.formLabel}>{msgs["company-card-postalCode-label"]}</span>,
             name: "postalCode",
-            rules: [{required: true, message: msgs["error-postalcode-not-provided"]}]
+            rules: [{required: true, message: msgs["error-postalCode-not-provided"]}]
         },
         {
             label: <span className={styles.formLabel}>{msgs["company-card-address-label"]}</span>,
@@ -170,7 +193,7 @@ export default function NewProfileForm({token, msgs, styles, isCompany}: NewProf
         {
             label: <span className={styles.formLabel}>{msgs["user-card-birth-date-label"]}</span>,
             name: "birth_date",
-            rules: [{required: false, message: msgs["error-birth_date-not-provided"]}]
+            rules: [{required: false, message: msgs["error-birth-date-not-provided"]}]
         },
         {
             label: <span className={styles.formLabel}>{msgs["user-card-cv-label"]}</span>,
@@ -188,7 +211,10 @@ export default function NewProfileForm({token, msgs, styles, isCompany}: NewProf
     useEffect(() => {
         setCountry((document.getElementById("country") as HTMLSelectElement).value);
     }, []);
-
+    const [region, setRegion] = useState("TRENTINOALTOADIGE");
+    useEffect(() => {
+        setRegion((document.getElementById("region") as HTMLSelectElement).value);
+    }, []);
     return (
         <Layout style={{
             display: "flex",
@@ -241,7 +267,7 @@ export default function NewProfileForm({token, msgs, styles, isCompany}: NewProf
                                 >
                                     {Object.entries(sectors).map(([key, label]) => (
                                         <Select.Option key={key} value={key}>
-                                            {msgs[`enum-sector-${label}`]}
+                                            {msgs[`enum-sector-${key}`]}
                                         </Select.Option>
                                     ))}
                                 </Select>
@@ -256,7 +282,7 @@ export default function NewProfileForm({token, msgs, styles, isCompany}: NewProf
                                 >
                                     {Object.entries(countries).map(([key, label]) => (
                                         <Select.Option key={key} value={key}>
-                                            {msgs[`enum-country-${label}`]}
+                                            {msgs[`enum-country-${key}`]}
                                         </Select.Option>
                                     ))}
                                 </Select>
@@ -266,10 +292,11 @@ export default function NewProfileForm({token, msgs, styles, isCompany}: NewProf
                                         className={styles.formSelect}
                                         placeholder={msgs["select-default"] || "---"}
                                         id="region"
+                                        onChange={(value) => setRegion(value)}
                                     >
                                         {Object.entries(regions).map(([key, label]) => (
                                             <Select.Option key={key} value={key}>
-                                                {msgs[`enum-region-${label}`]}
+                                                {msgs[`enum-region-${key}`]}
                                             </Select.Option>
                                         ))}
                                     </Select>
@@ -277,6 +304,18 @@ export default function NewProfileForm({token, msgs, styles, isCompany}: NewProf
                                     <Input className={styles.formInput}/>
                                 )
 
+                            ) : field.name === "city"  && region === "TRENTINOALTOADIGE" ? (
+                                <Select
+                                    className={styles.formSelect}
+                                    placeholder={msgs["select-default"] || "---"}
+                                    id="city"
+                                >
+                                    {Object.entries(cities).map(([key, label]) => (
+                                        <Select.Option key={key} value={key}>
+                                            {cities[key as keyof typeof cities] as string}
+                                        </Select.Option>
+                                    ))}
+                                </Select>
                             ) : (
                                 <Input className={styles.formInput}/>
                             )}

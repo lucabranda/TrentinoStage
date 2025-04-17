@@ -31,7 +31,7 @@ export default function  SignUpFormCompany ({messages}: { messages: any }) {
             const formData = new FormData();
             formData.append("email", email); // Map email to expected server field
             formData.append("password", password);
-           if(token !== null){
+           if(token !== undefined){
                 formData.append("token", token)
                 formData.append("role", "company-employee");
             }else{
@@ -119,7 +119,7 @@ export default function  SignUpFormCompany ({messages}: { messages: any }) {
             <Input
                 prefix={<></>}
                 placeholder={messages["signup-invite-code-placeholder"] || "Invite Code"}/>
-            {messages["signup-invite-code-message"] }
+
 
         </Form.Item>
        <Form.Item>

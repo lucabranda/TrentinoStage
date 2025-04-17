@@ -20,6 +20,8 @@ import { ApiAccountsGetProfileIdGet401Response } from '../model/apiAccountsGetPr
 import { ApiAccountsRegisterPost200Response } from '../model/apiAccountsRegisterPost200Response';
 import { ApiAccountsRegisterPost401Response } from '../model/apiAccountsRegisterPost401Response';
 import { ApiAccountsRegisterPost405Response } from '../model/apiAccountsRegisterPost405Response';
+import { ApiAccountsRoleGet200Response } from '../model/apiAccountsRoleGet200Response';
+import { ApiAccountsRoleGet401Response } from '../model/apiAccountsRoleGet401Response';
 
 import { ObjectSerializer, Authentication, VoidAuth, Interceptor } from '../model/models';
 
@@ -165,7 +167,7 @@ export class AccountsApi {
     /**
      * Creates a new account. If an invitation token is provided, the account will be connected to the profile associated with the token. Returns a session token upon successful registration.
      * @summary Register a new account
-     * @param token Invitation token to connect the account to a profile.
+     * @param UNKNOWN_PARAMETER_NAME Invitation token to connect the account to a profile.
      * @param email The email address of the new account.
      * @param password The password for the new account.
      * @param role The role of the account. It\\\&#39;s mandatory if no invitation token is provided. Possible values are \\\&quot;admin\\\&quot;, \\\&quot;user\\\&quot;, \\\&quot;company-manager\\\&quot;, \\\&quot;company-employee\\\&quot;.
@@ -235,6 +237,78 @@ export class AccountsApi {
                     } else {
                         if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
                             body = ObjectSerializer.deserialize(body, "ApiAccountsRegisterPost200Response");
+                            resolve({ response: response, body: body });
+                        } else {
+                            reject(new HttpError(response, body, response.statusCode));
+                        }
+                    }
+                });
+            });
+        });
+    }
+    /**
+     * This endpoint retrieves the role of an account by validating the provided session token.
+     * @summary Retrieve the role of an account based on a session token.
+     * @param token The session token used to identify the account.
+     */
+    public async apiAccountsRoleGet (token: string, options: {headers: {[name: string]: string}} = {headers: {}}) : Promise<{ response: http.IncomingMessage; body: ApiAccountsRoleGet200Response;  }> {
+        const localVarPath = this.basePath + '/api/accounts/role';
+        let localVarQueryParameters: any = {};
+        let localVarHeaderParams: any = (<any>Object).assign({}, this._defaultHeaders);
+        const produces = ['application/json'];
+        // give precedence to 'application/json'
+        if (produces.indexOf('application/json') >= 0) {
+            localVarHeaderParams.Accept = 'application/json';
+        } else {
+            localVarHeaderParams.Accept = produces.join(',');
+        }
+        let localVarFormParams: any = {};
+
+        // verify required parameter 'token' is not null or undefined
+        if (token === null || token === undefined) {
+            throw new Error('Required parameter token was null or undefined when calling apiAccountsRoleGet.');
+        }
+
+        if (token !== undefined) {
+            localVarQueryParameters['token'] = ObjectSerializer.serialize(token, "string");
+        }
+
+        (<any>Object).assign(localVarHeaderParams, options.headers);
+
+        let localVarUseFormData = false;
+
+        let localVarRequestOptions: localVarRequest.Options = {
+            method: 'GET',
+            qs: localVarQueryParameters,
+            headers: localVarHeaderParams,
+            uri: localVarPath,
+            useQuerystring: this._useQuerystring,
+            json: true,
+        };
+
+        let authenticationPromise = Promise.resolve();
+        authenticationPromise = authenticationPromise.then(() => this.authentications.default.applyToRequest(localVarRequestOptions));
+
+        let interceptorPromise = authenticationPromise;
+        for (const interceptor of this.interceptors) {
+            interceptorPromise = interceptorPromise.then(() => interceptor(localVarRequestOptions));
+        }
+
+        return interceptorPromise.then(() => {
+            if (Object.keys(localVarFormParams).length) {
+                if (localVarUseFormData) {
+                    (<any>localVarRequestOptions).formData = localVarFormParams;
+                } else {
+                    localVarRequestOptions.form = localVarFormParams;
+                }
+            }
+            return new Promise<{ response: http.IncomingMessage; body: ApiAccountsRoleGet200Response;  }>((resolve, reject) => {
+                localVarRequest(localVarRequestOptions, (error, response, body) => {
+                    if (error) {
+                        reject(error);
+                    } else {
+                        if (response.statusCode && response.statusCode >= 200 && response.statusCode <= 299) {
+                            body = ObjectSerializer.deserialize(body, "ApiAccountsRoleGet200Response");
                             resolve({ response: response, body: body });
                         } else {
                             reject(new HttpError(response, body, response.statusCode));

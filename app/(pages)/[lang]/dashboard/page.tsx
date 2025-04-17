@@ -34,15 +34,33 @@ export default async function Home({params}: any) {
 
 
     var _isACompany = await profilesApi.apiProfilesIsCompanyGet(sessionToken, accountId);
-    const isACompany = _isACompany.body.isCompany || false;
+    const isACompany = _isACompany.body.isCompany || (await accountsApi.apiAccountsRoleGet(sessionToken)).body.role?.includes("company-") as boolean;
 
 
-    if (!profileId)
+    if (!profileId && !(await accountsApi.apiAccountsRoleGet(sessionToken)).body.role?.includes("company-employee"))
         return (<NewProfileForm token={sessionToken} msgs={messages} styles={styles} isCompany={isACompany}/>);
 
+    const baseUrl = process.env.BASE_PATH || "http://localhost:3000";
 
-    var _profileData = await profilesApi.apiProfilesGetGet(sessionToken, profileId);
-    var profileData = _profileData.body;
+    //var _profileData = await profilesApi.apiProfilesGetGet(sessionToken, profileId as string);
+    //var profileData = _profileData.body;
+    
+    var profileData;
+    try {
+        const res = await fetch(`${baseUrl}/api/profiles/get?token=${encodeURIComponent(sessionToken)}&profileId=${encodeURIComponent(profileId!)}`, {
+            method: "GET",
+            headers: { "Content-Type": "application/json" },
+        });        
+        if (!res.ok) {
+            const errorData = await res.json();
+            console.log(errorData);
+            throw new Error(errorData.error);
+        }
+
+        profileData = await res.json();
+    }catch (error) {
+        return Promise.reject(error);
+    }
 
     return (
         <>
@@ -52,7 +70,7 @@ export default async function Home({params}: any) {
                 messages={messages}
                 token={sessionToken}
                 isACompany={isACompany}
-                profileId={profileId}
+                profileId={profileId as string}
                 name={profileData!.name!}
                 surname={profileData!.surname!}
                 address={profileData!.address! as {
@@ -60,9 +78,10 @@ export default async function Home({params}: any) {
                     city: string;
                     region: string;
                     country: string;
-                    postalCode: string;
+                    postal_code: string;
+                    street: string;
                 }}
-                birth_date={profileData!.birth_date!}
+                birth_date={profileData!.birth_date!.toString()}
                 bio={profileData!.bio!}
                 sector={profileData!.sector!}
                 website={profileData!.website!}
