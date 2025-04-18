@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { checkSessionToken } from "@/utils/session"
 import { sanitize } from "string-sanitizer"
-
+import dayjs from "dayjs"
 
 import connectDB from "@/utils/db"
 import profiles from "@/utils/model/profiles"
@@ -117,8 +117,10 @@ export async function POST(req: NextRequest) {
     const identifier = safeSanitize(formData.get("identifier") )
     const bio = safeSanitize(formData.get("bio"))
     const sector = safeSanitize(formData.get("sector") )
-    const birth_date = safeSanitize(formData.get("birthDate") )
     const website = safeSanitize(formData.get("website"))
+
+    const rawBirthDate = formData.get("birthDate")
+    const birth_date = typeof rawBirthDate === "string" ? rawBirthDate.trim() : null
 
     let edit: { 
         [key: string]: string | null | { [key: string]: string | null } | string[]
@@ -169,9 +171,16 @@ export async function POST(req: NextRequest) {
     if(identifier){
         edit['identifier'] = identifier
     }
-    if(birth_date){
-        edit['birth_date'] = birth_date
+
+    if (birth_date) {
+        const parsedDate = dayjs(birth_date)
+        if (parsedDate.isValid()) {
+            edit['birth_date'] = parsedDate.format("MM-DD-YYYY")
+        } else {
+            return NextResponse.json({ error: "Invalid birth date format", code: "error-invalid-date" }, { status: 400 })
+        }
     }
+
 
     await connectDB()
 

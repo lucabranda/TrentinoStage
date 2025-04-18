@@ -317,7 +317,7 @@ export default function ProfileCard({session, id, messages, isCompany, isOwner =
                                             display: "flex",
                                             padding:2
                                         }}
-                                        onChange={(value) => {handleChange("birth_date", value.toString())}}
+                                        onChange={(value) => {handleChange("birth_date", value.toISOString())}}
                                     />)
                                     :(
                                     <Input
@@ -381,7 +381,7 @@ export default function ProfileCard({session, id, messages, isCompany, isOwner =
                     :
                     (
                         <Button type="primary" onClick={() => setShowEdit(true)}>
-                            Edit <EditOutlined/>
+                            {messages["dashboard-profile-card-edit"] || "Edit"} <EditOutlined/>
                         </Button>
                     )
             )}

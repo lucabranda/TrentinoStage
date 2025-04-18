@@ -66,6 +66,9 @@
     "dashboard-applications": "Candidature",
     "dashboard-settings": "Impostazioni",
     "dashboard-invite-members": "Invita membri",
+    "dashboard-profile-card-cancel": "Cancella",
+    "dashboard-profile-card-save": "Salva",
+    "dashboard-profile-card-edit": "Modifica",
 
     "invite-members-info": "Invita i colleghi ad unirsi alla tua azienda su Trentino Stage.\nGenereremo un codice da utilizzare al momento della loro registrazione.\nIl codice di invito è valido per un solo utilizzo.",
     "invite-members-generate": "Genera codice di invito",
