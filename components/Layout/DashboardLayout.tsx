@@ -21,7 +21,7 @@ import {OfferSectionCompany, OfferSectionUser} from "../dashboard/OfferSection";
 import {ApplicationSectionCompany, ApplicationSectionUser} from "../dashboard/ApplicationSection";
 import {removeSessionToken} from "@/utils/cookie";
 import InviteMembers from "@/components/dashboard/InviteMembers";
-import {PrimaryButton} from "@/components/buttons/Buttons";
+import {DashedButton, LinkButton} from "@/components/buttons/Buttons";
 
 
 interface DashboardLayoutProps {
@@ -38,7 +38,8 @@ interface DashboardLayoutProps {
         city: string;
         region: string;
         country: string;
-        postalCode: string;
+        postal_code: string;
+        street: string;
     }
     birth_date: string;
     bio: string;
@@ -100,12 +101,6 @@ export default function DashboardLayout({
             icon: <PaperClipOutlined/>,
             label: messages["dashboard-applications"],
             url: `/${(params).lang}/dashboard#applications`
-        },
-        {
-            key: TabKeys.InviteMembers,
-            icon: <TeamOutlined/>,
-            label: messages["dashboard-invite-members"],
-            url: `/${(params).lang}/dashboard#invitemembers`,
         }
     ]
 
@@ -154,9 +149,9 @@ export default function DashboardLayout({
                         /> </Link>
                         <div className={styles.headerButtonContainer}>
                             <LanguageSelector/>
-                            <PrimaryButton onClick={() => logout()}>
+                            <LinkButton onClick={() => logout()}>
                                 {messages["dashboard-logout"]} <LogoutOutlined/>
-                            </PrimaryButton>
+                            </LinkButton>
                         </div>
 
                     </Header>

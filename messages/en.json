@@ -63,7 +63,14 @@
     "dashboard-offers": "Offers",
     "dashboard-applications": "Applications",
     "dashboard-settings": "Settings",
-    
+    "dashboard-invite-members": "Invite Members",
+    "dashboard-profile-card-cancel": "Cancel",
+    "dashboard-profile-card-save": "Save",
+    "dashboard-profile-card-edit": "Edit",
+
+    "invite-members-info": "Invite your colleagues to join your company on Trentino Stage.\nWe will generate a code for them to use during registration.\nThe invitation code is valid for a single use.",
+    "invite-members-generate": "Generate invitation code",
+    "invite-members-invite-code": "Invitation code",
 
     "company-card-name-label": "Company Name",
     "company-card-partita-iva-label": "VAT Number",
@@ -74,21 +81,24 @@
     "company-card-city-label": "City",
     "company-card-country-label": "Country",
     "company-card-region-label": "Region",
-    "company-card-postalCode-label": "Postal Code",
+    "company-card-postal_code-label": "Postal Code",
     "company-card-address-label": "Address",
+    "company-card-street-label": "Street",
 
     "user-card-name-label": "Name",
     "user-card-surname-label": "Surname",
     "user-card-bio-label": "Biography",
     "user-card-profile-picture-label": "Profile Picture",
-    "user-card-birthday-label": "Date of Birth",
+    "user-card-birth-date-label": "Date of Birth",
     "user-card-sector-label": "Sector",
     "user-card-cv-label": "Curriculum Vitae",
+    "user-card-submit-button": "Create Profile",
     "user-card-city-label": "City",
     "user-card-country-label": "Country",
     "user-card-region-label": "Region",
-    "user-card-postalCode-label": "Postal Code",
+    "user-card-postal_code-label": "Postal Code",
     "user-card-address-label": "Address",
+    "user-card-street-label": "Street",
 
     "enum-country-ITALY": "Italy",
     "enum-country-GERMANY": "Germany",
@@ -123,7 +133,8 @@
     "enum-sector-DEVELOPMENT": "Development",
     "enum-sector-IT": "IT",
     "enum-sector-MARKETING": "Marketing",
-
+    "enum-sector-SPORT": "Sport",
+    "enum-sector-FOOD": "Food",
 
     "error-invalid-session": "Your session has expired. Please log in again.",
     "error-profile-not-found": "Profile not found.",

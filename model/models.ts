@@ -5,9 +5,16 @@ export * from './apiAccountsGetProfileIdGet401Response';
 export * from './apiAccountsRegisterPost200Response';
 export * from './apiAccountsRegisterPost401Response';
 export * from './apiAccountsRegisterPost405Response';
+export * from './apiAccountsRoleGet200Response';
+export * from './apiAccountsRoleGet401Response';
+export * from './apiApplicationsApplyPost200Response';
+export * from './apiApplicationsApplyPost403Response';
+export * from './apiApplicationsApplyPost404Response';
+export * from './apiApplicationsApplyPost405Response';
+export * from './apiApplicationsListGet200ResponseInner';
+export * from './apiApplicationsListGet401Response';
 export * from './apiApplicationsModifyPost200Response';
 export * from './apiApplicationsModifyPost403Response';
-export * from './apiApplicationsModifyPost405Response';
 export * from './apiApplicationsModifyPost500Response';
 export * from './apiApplicationsStatusGet200Response';
 export * from './apiApplicationsStatusGet401Response';
@@ -42,9 +49,16 @@ import { ApiAccountsGetProfileIdGet401Response } from './apiAccountsGetProfileId
 import { ApiAccountsRegisterPost200Response } from './apiAccountsRegisterPost200Response';
 import { ApiAccountsRegisterPost401Response } from './apiAccountsRegisterPost401Response';
 import { ApiAccountsRegisterPost405Response } from './apiAccountsRegisterPost405Response';
+import { ApiAccountsRoleGet200Response } from './apiAccountsRoleGet200Response';
+import { ApiAccountsRoleGet401Response } from './apiAccountsRoleGet401Response';
+import { ApiApplicationsApplyPost200Response } from './apiApplicationsApplyPost200Response';
+import { ApiApplicationsApplyPost403Response } from './apiApplicationsApplyPost403Response';
+import { ApiApplicationsApplyPost404Response } from './apiApplicationsApplyPost404Response';
+import { ApiApplicationsApplyPost405Response } from './apiApplicationsApplyPost405Response';
+import { ApiApplicationsListGet200ResponseInner } from './apiApplicationsListGet200ResponseInner';
+import { ApiApplicationsListGet401Response } from './apiApplicationsListGet401Response';
 import { ApiApplicationsModifyPost200Response } from './apiApplicationsModifyPost200Response';
 import { ApiApplicationsModifyPost403Response } from './apiApplicationsModifyPost403Response';
-import { ApiApplicationsModifyPost405Response } from './apiApplicationsModifyPost405Response';
 import { ApiApplicationsModifyPost500Response } from './apiApplicationsModifyPost500Response';
 import { ApiApplicationsStatusGet200Response } from './apiApplicationsStatusGet200Response';
 import { ApiApplicationsStatusGet401Response } from './apiApplicationsStatusGet401Response';
@@ -82,9 +96,16 @@ let typeMap: {[index: string]: any} = {
     "ApiAccountsRegisterPost200Response": ApiAccountsRegisterPost200Response,
     "ApiAccountsRegisterPost401Response": ApiAccountsRegisterPost401Response,
     "ApiAccountsRegisterPost405Response": ApiAccountsRegisterPost405Response,
+    "ApiAccountsRoleGet200Response": ApiAccountsRoleGet200Response,
+    "ApiAccountsRoleGet401Response": ApiAccountsRoleGet401Response,
+    "ApiApplicationsApplyPost200Response": ApiApplicationsApplyPost200Response,
+    "ApiApplicationsApplyPost403Response": ApiApplicationsApplyPost403Response,
+    "ApiApplicationsApplyPost404Response": ApiApplicationsApplyPost404Response,
+    "ApiApplicationsApplyPost405Response": ApiApplicationsApplyPost405Response,
+    "ApiApplicationsListGet200ResponseInner": ApiApplicationsListGet200ResponseInner,
+    "ApiApplicationsListGet401Response": ApiApplicationsListGet401Response,
     "ApiApplicationsModifyPost200Response": ApiApplicationsModifyPost200Response,
     "ApiApplicationsModifyPost403Response": ApiApplicationsModifyPost403Response,
-    "ApiApplicationsModifyPost405Response": ApiApplicationsModifyPost405Response,
     "ApiApplicationsModifyPost500Response": ApiApplicationsModifyPost500Response,
     "ApiApplicationsStatusGet200Response": ApiApplicationsStatusGet200Response,
     "ApiApplicationsStatusGet401Response": ApiApplicationsStatusGet401Response,

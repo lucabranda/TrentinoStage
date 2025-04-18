@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { checkSessionToken } from "@/utils/session"
 import { sanitize } from "string-sanitizer"
-
+import dayjs from "dayjs"
 
 import connectDB from "@/utils/db"
 import profiles from "@/utils/model/profiles"
@@ -47,7 +47,7 @@ import { ObjectId } from "mongodb"
  *                 type: string
  *                 description: User's city.
  *                 example: "Los Angeles"
- *               postalCode:
+ *               postal_code:
  *                 type: string
  *                 description: User's postal code.
  *                 example: "90001"
@@ -106,18 +106,21 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({error: "Profile not found", code: "error-profile-not-found"}, { status: 404 })
     }
 
-    const name = sanitize(formData.get("name") as string) ?? null
-    const surname = sanitize(formData.get("surname") as string) ?? null
-    const country = sanitize(formData.get("address") as string) ?? null
-    const region = sanitize(formData.get("region") as string) ?? null
-    const city = sanitize(formData.get("city") as string) ?? null
-    const postalCode = sanitize(formData.get("postalCode") as string) ?? null
-    const street = sanitize(formData.get("street") as string) ?? null
-    const address = sanitize(formData.get("address") as string) ?? null
+    const name = safeSanitize(formData.get("name"))
+    const surname = safeSanitize(formData.get("surname"))
+    const country = safeSanitize(formData.get("country"))
+    const region = safeSanitize(formData.get("region"))
+    const city = safeSanitize(formData.get("city")) 
+    const postal_code = safeSanitize(formData.get("postal_code")  )
+    const street = safeSanitize(formData.get("street"))
+    const address = safeSanitize(formData.get("address"))
+    const identifier = safeSanitize(formData.get("identifier") )
+    const bio = safeSanitize(formData.get("bio"))
+    const sector = safeSanitize(formData.get("sector") )
+    const website = safeSanitize(formData.get("website"))
 
-    const bio = formData.get("bio") as string ?? null
-    const sector = formData.get("sector") as string ?? null
-    const website = formData.get("website") as string ?? null
+    const rawBirthDate = formData.get("birthDate")
+    const birth_date = typeof rawBirthDate === "string" ? rawBirthDate.trim() : null
 
     let edit: { 
         [key: string]: string | null | { [key: string]: string | null } | string[]
@@ -142,8 +145,8 @@ export async function POST(req: NextRequest) {
     if (city) {
         addressObj['city'] = city
     }
-    if (postalCode) {
-        addressObj['postalCode'] = postalCode
+    if (postal_code) {
+        addressObj['postal_code'] = postal_code
     }
     if (street) {
         addressObj['street'] = street
@@ -165,6 +168,19 @@ export async function POST(req: NextRequest) {
     if (website) {
         edit['website'] = website
     }
+    if(identifier){
+        edit['identifier'] = identifier
+    }
+
+    if (birth_date) {
+        const parsedDate = dayjs(birth_date)
+        if (parsedDate.isValid()) {
+            edit['birth_date'] = parsedDate.format("MM-DD-YYYY")
+        } else {
+            return NextResponse.json({ error: "Invalid birth date format", code: "error-invalid-date" }, { status: 400 })
+        }
+    }
+
 
     await connectDB()
 
@@ -181,4 +197,13 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({message: "Profile modified successfully"}, { status: 200 })
 
+}
+
+function safeSanitize(input: unknown): string | null {
+    if (typeof input !== "string") return null
+
+    return input
+        .replace(/<[^>]*>?/gm, "")      // Rimuove tag HTML
+        .replace(/[^\p{L}\p{N}\s.,'-]/gu, "") // Lascia lettere, numeri, spazi, punteggiatura base
+        .trim()
 }

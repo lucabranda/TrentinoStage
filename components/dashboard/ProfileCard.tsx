@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import {
     Card,
     Avatar,
@@ -11,12 +11,22 @@ import {
     Col,
     message,
     Select,
+    DatePicker,
 } from "antd";
-import { EditOutlined, UserOutlined } from "@ant-design/icons";
-import { ProfilesApi } from "@/api/profilesApi";
-
-const { Title, Text } = Typography;
-const { Option } = Select;
+import {
+    CloseCircleOutlined,
+    CloseOutlined,
+    DeleteOutlined,
+    EditOutlined,
+    SaveOutlined,
+    UserOutlined
+} from "@ant-design/icons";
+import {ProfilesApi} from "@/api/profilesApi";
+import {DashedButton, LinkButton} from "../buttons/Buttons";
+import {sectors, regions, countries, cities} from "@/utils/enums";
+import dayjs from 'dayjs';
+const {Title, Text} = Typography;
+const {Option} = Select;
 
 export interface ProfileUserData {
     name: string;
@@ -26,7 +36,8 @@ export interface ProfileUserData {
         city: string;
         region: string;
         country: string;
-        postalCode: string;
+        postal_code: string;
+        street: string;
     };
     birth_date: string;
     bio: string;
@@ -40,12 +51,14 @@ export interface ProfileCompanyData {
         city: string;
         region: string;
         country: string;
-        postalCode: string;
+        postal_code: string;
+        street: string;
     };
     sector: string;
     partitaIva: string;
     website: string;
     birth_date: string;
+    bio: string;
 }
 
 export interface CardProps {
@@ -57,18 +70,46 @@ export interface CardProps {
     profileData: ProfileUserData | ProfileCompanyData;
 }
 
-export default function ProfileCard({ session, id, messages, isCompany, isOwner = true, profileData }: CardProps) {
+/*
+
+finisce la modifica profilo. 
+include: caricamento immagine e cv (appena luca fa gli endpont), 
+sistemare il form. 
+attenzione ai dettagli: mentre sta caricando voglio vedere il bottone settato a loading=true 
+e dopodichè voglio vedere un toast che mostri il successo (vedi login o registrazione). 
+inoltre voglio che dopo l update la pagina sia effettivamente aggiornata anche visivamente
+
+*/
+
+export default function ProfileCard({session, id, messages, isCompany, isOwner = true, profileData}: CardProps) {
+    const [showEdit, setShowEdit] = useState(false);
     const [isEditing, setIsEditing] = useState<Record<string, boolean>>({});
+
     const [formData, setFormData] = useState<ProfileUserData | ProfileCompanyData>(profileData);
     const [loading, setLoading] = useState(false);
+
+
+    const [country, setCountry] = useState("ITALY");
+    useEffect(() => {
+        setCountry((document.getElementById("country") as HTMLSelectElement)?.value as string);
+    }, []);
+    const [region, setRegion] = useState("TRENTINOALTOADIGE");
+    useEffect(() => {
+        setRegion((document.getElementById("region") as HTMLSelectElement)?.value as string);
+    }, []);
+    const [city, setCity] = useState("TRENTO");
+    useEffect(() => {
+        setCity((document.getElementById("city") as HTMLSelectElement)?.value as string);
+    }, []);
 
     const isUserData = (data: ProfileUserData | ProfileCompanyData): data is ProfileUserData => {
         return (data as ProfileUserData).surname !== undefined;
     };
 
-    const handleEditClick = (field: string) => {
-        setIsEditing((prev) => ({ ...prev, [field]: true }));
+    const handleEditClick = (field: string, b: boolean) => {
+        setIsEditing((prev) => ({...prev, [field]: b}));
     };
+
 
     const handleSaveClick = async () => {
         if (!formData.name || !formData.address?.city) {
@@ -77,37 +118,34 @@ export default function ProfileCard({ session, id, messages, isCompany, isOwner 
         }
         setLoading(true);
         try {
-            const profilesApi = new ProfilesApi();
-            if (isCompany) {
-                await profilesApi.apiProfilesModifyPost(
-                    session,
-                    formData.name,
-                    formData.address?.address,
-                    formData.address?.city,
-                    formData.address?.region,
-                    formData.address?.country,
-                    formData.address?.postalCode,
-                    formData.sector,
-                    (formData as ProfileCompanyData).website,
-                    (formData as ProfileCompanyData).partitaIva,
-                );
-            } else {
-                await profilesApi.apiProfilesModifyPost(
-                    session,
-                    formData.name,
-                    (formData as ProfileUserData).surname,
-                    formData.address?.address,
-                    formData.address?.city,
-                    formData.address?.region,
-                    formData.address?.country,
-                    formData.address?.postalCode,
-                    (formData as ProfileUserData).bio,
-                    formData.sector,
-                    (formData as ProfileUserData).birth_date?.substring(0, 10)
-                );
+            const res = await fetch("/api/profiles/modify", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({
+                    sessionToken: session,
+                    isCompany: isCompany,
+                    name: formData.name,
+                    address: formData.address?.address,
+                    country: formData.address?.country,
+                    region: formData.address?.region,
+                    city: formData.address?.city,
+                    postal_code: formData.address?.postal_code,
+                    street: formData.address?.street,
+                    sector: formData.sector,
+                    ...(isCompany ? {website: (formData as ProfileCompanyData).website} : {surname: (formData as ProfileUserData).surname}),
+                    ...(isCompany ? {identifier: (formData as ProfileCompanyData).partitaIva} : {birthDate: (formData as ProfileUserData).birth_date}),
+                    bio: formData.bio
+                }),
+            });
+            if (!res.ok) {
+                const errorData = await res.json();
+                console.log(errorData);
+                throw new Error(errorData.error);
             }
+
             message.success(messages.success || "Profile updated successfully");
             setIsEditing({});
+            setShowEdit(false)
         } catch (error) {
             message.error(messages.error || "Error updating profile");
         } finally {
@@ -130,78 +168,195 @@ export default function ProfileCard({ session, id, messages, isCompany, isOwner 
                 [field]: value,
             }));
         }
+
+
     };
 
-    const renderField = (label: string, field: string, icon: React.ReactNode) => {
+    const renderField = (label: string, field: string) => {
         if (field === "address") {
-            return ["address", "city", "region", "country", "postalCode"].map((subField) => (
-                <Row align="middle" style={{ marginBottom: 8 }} key={subField}>
-                    <Col span={7} style={{ fontWeight: "bold" }}>
-                        {messages[`user-card-${subField}-label`] || subField}:
-                    </Col>
-                    <Col span={17}>
-                        {isEditing["address"] && isOwner ? (
-                            <Input
-                                style={{ backgroundColor: "#f6ffed" }}
-                                value={formData.address?.[subField as keyof typeof formData.address] || ""}
-                                onChange={(e) => handleChange("address", { [subField]: e.target.value })}
-                                onPressEnter={handleSaveClick}
-                            />
-                        ) : (
-                            <Text>{formData.address?.[subField as keyof typeof formData.address] || "-"}</Text>
-                        )}
-                    </Col>
-                    {subField === "address" && isOwner && (
-                        <Col span={4}>
-                            <Button icon={icon} type="link" onClick={() => handleEditClick("address")} />
+            return ["country", "region", "city", "postal_code", "street", "address"].map((subField) => (
+                <Row align="middle" style={{
+                    marginBottom: 16,
+                    width: "fit-content",
+                    justifyContent: "space-between",
+                    paddingInlineStart: 16,
+                    display: "flex"
+                }} key={field}>
+                    <Space style={{width: '20rem !important'}}>
+                        <Col style={{fontWeight: "bold"}}>
+                            {messages[`user-card-${subField}-label`] || subField}:
                         </Col>
-                    )}
+                        <Col style={{marginLeft: 16, width: "15rem"}}>
+                            {isEditing["address"] && isOwner ? (
+                                (subField === "country") ? (
+                                    <Select
+                                        style={{width: "100%"}}
+                                        placeholder={messages["select-default"] || "---"}
+                                        id="country"
+                                        onChange={(value) => {
+                                            handleChange("address", {[subField]: value});
+                                            setCountry(value);
+                                        }}
+                                    >
+                                        {Object.entries(countries).map(([key, label]) => (
+                                            <Select.Option key={key} value={key}>
+                                                {messages[`enum-country-${key}`]}
+                                            </Select.Option>
+                                        ))}
+                                    </Select>
+                                ) : (subField === "region") ? (
+                                    (country === "ITALY") ? (
+                                            <Select
+
+                                                style={{width: "100%"}}
+                                                placeholder={messages["select-default"] || "---"}
+                                                id="region"
+                                                onChange={(value) => {
+                                                    handleChange("address", {[subField]: value});
+                                                    setRegion(value);
+                                                }}
+                                            >
+                                                {Object.entries(regions).map(([key, label]) => (
+                                                    <Select.Option key={key} value={key}>
+                                                        {messages[`enum-region-${key}`]}
+                                                    </Select.Option>
+                                                ))}
+                                            </Select>)
+                                        : (
+                                            <Input
+                                                style={{backgroundColor: "#f6ffed"}}
+                                                value={messages[`enum-region-${formData.address?.[subField as keyof typeof formData.address] || "-"}`]}
+                                                onChange={(e) => handleChange("address", {[subField]: e.target.value})}
+                                                onPressEnter={handleSaveClick}
+                                                id={subField}
+                                            />
+                                        )
+                                ) : (subField === "city") ? (
+                                    (region === "TRENTINOALTOADIGE") ? (
+                                        <Select
+
+                                            style={{width: "100%"}}
+                                            placeholder={messages["select-default"] || "---"}
+                                            id="city"
+                                            onChange={(value) => {
+                                                handleChange("address", {[subField]: value});
+                                                setCity(value)
+                                            }}
+                                        >
+                                            {Object.entries(cities).map(([key, label]) => (
+                                                <Select.Option key={key} value={key}>
+                                                    {cities[key as keyof typeof cities] as string}
+                                                </Select.Option>
+                                            ))}
+                                        </Select>
+                                    ) : (
+                                        <Input
+                                            style={{backgroundColor: "#f6ffed"}}
+                                            value={messages[`enum-city-${formData.address?.[subField as keyof typeof formData.address] || "-"}`]}
+                                            onChange={(e) => handleChange("address", {[subField]: e.target.value})}
+                                            onPressEnter={handleSaveClick}
+                                            id="city"
+                                        />
+                                    )
+                                ) : (
+                                    <Input
+                                        style={{backgroundColor: "#f6ffed"}}
+                                        value={formData.address?.[subField as keyof typeof formData.address] || "-"}
+                                        onChange={(e) => handleChange("address", {[subField]: e.target.value})}
+                                        onPressEnter={handleSaveClick}
+                                        id={subField}
+                                    />
+                                )
+                            ) : (
+                                <Text id={subField}>
+                                    {(subField === "country" || subField === "region") ?
+                                            messages[`enum-${subField}-${formData.address?.[subField as keyof typeof formData.address]}`]
+                                        : (subField === "city" &&  formData.address.region === "TRENTINOALTOADIGE") ?
+                                                cities[(formData.address?.[subField as keyof typeof formData.address]) as keyof typeof cities] as string
+                                        : formData.address?.[subField as keyof typeof formData.address] || ""
+                                    }
+                                </Text>
+                            )
+                            }
+                        </Col>
+                    </Space>
                 </Row>
             ));
         }
 
         return (
-            <Row align="middle" style={{ marginBottom: 16 }} key={field}>
-                <Col span={7} style={{ fontWeight: "bold" }}>{label}:</Col>
-                <Col span={17}>
-                    {isEditing[field] && isOwner ? (
-                        field === "sector" ? (
-                            <Select
-                                mode="tags"
-                                style={{ width: "100%" }}
-                                value={formData.sector?.split(", ") || []}
-                                onChange={(value) => handleChange("sector", value.join(", "))}
-                            >
-                                {(formData.sector?.split(", ") || []).map((tag) => (
-                                    <Option key={tag} value={tag}>{tag}</Option>
-                                ))}
-                            </Select>
+            <Row align="middle" style={{
+                marginBottom: 16,
+                width: "100%",
+                justifyContent: "space-between",
+                paddingInlineEnd: 16,
+                display: "inline-flex"
+            }} key={field}>
+                <Space style={{display: "flex", maxWidth: (field === "bio") ? "75%" : "90%"}}>
+                    <Col style={{fontWeight: "bold"}}>{label}:</Col>
+                    <Col style={{marginLeft: 16, display: "flex", width: "15rem"}}>
+                        {isEditing[field] && isOwner ? (
+                            field === "sector" ? (
+                                <Select
+                                    style={{width: "100%"}}
+                                    placeholder={messages["select-default"] || "---"}
+                                    id="sector"
+                                    onChange={(value) => handleChange("sector", value)}
+                                >
+                                    {Object.entries(sectors).map(([key, label]) => (
+                                        <Select.Option key={key} value={key}>
+                                            {messages[`enum-sector-${key}`]}
+                                        </Select.Option>
+                                    ))}
+                                </Select>
+                            ) : (
+                                (field === "birth_date") ?
+                                    (<DatePicker
+                                        style={{
+                                            backgroundColor: "#f6ffed",
+                                            display: "flex",
+                                            padding:2
+                                        }}
+                                        onChange={(value) => {handleChange("birth_date", value.toISOString())}}
+                                    />)
+                                    :(
+                                    <Input
+                                        type={"text"}
+                                        value={(formData[field as keyof (ProfileUserData | ProfileCompanyData)] as string) || ""}
+                                        style={{
+                                            backgroundColor: "#f6ffed",
+                                            display: "flex",
+                                            padding: (field === "bio") ? 24 : 2
+                                        }}
+                                        onChange={(e) => handleChange(field, e.target.value)}
+                                        onPressEnter={handleSaveClick}
+                                        id={field}
+                                    />)
+                            )
                         ) : (
-                            <Input
-                                type={field === "birth_date" ? "date" : "text"}
-                                value={
-                                    field === "birth_date"
-                                        ? new Date(formData[field as keyof (ProfileUserData | ProfileCompanyData)] as string).toISOString().substring(0, 10)
-                                        : (formData[field as keyof (ProfileUserData | ProfileCompanyData)] as string) || ""
+                           
+                               <Text id={field}>
+                                { field === "birth_date" ?
+                                    (formData[field as keyof (ProfileUserData | ProfileCompanyData)] as string).substring(0, 10)
+                                    : field === "sector" ?
+                                    messages[`enum-sector-${formData[field as keyof (ProfileUserData | ProfileCompanyData)]}`] 
+                                    : (formData[field as keyof (ProfileUserData | ProfileCompanyData)] as string) || ""
                                 }
-                                style={{ backgroundColor: "#f6ffed" }}
-                                onChange={(e) => handleChange(field, e.target.value)}
-                                onPressEnter={handleSaveClick}
-                            />
-
-
-                        )
-                    ) : (
-                        <Text>
-                        {field === "birth_date"
-                            ? new Date(formData[field as keyof (ProfileUserData | ProfileCompanyData)] as string).toLocaleDateString()
-                            : (formData[field as keyof (ProfileUserData | ProfileCompanyData)] as string) || "-"}
-                    </Text>
-                     )}
-                </Col>
-                {isOwner && (
-                    <Col span={4}>
-                        <Button icon={icon} type="link" onClick={() => handleEditClick(field)} />
+                            </Text>
+                        )}
+                    </Col>
+                </Space>
+                {isOwner && showEdit && (
+                    <Col style={{display: "flex"}}>
+                        {isEditing[field] ? (
+                            <DashedButton onClick={() => handleEditClick(field, false)}>
+                                <CloseOutlined/>
+                            </DashedButton>
+                        ) : (
+                            <LinkButton onClick={() => handleEditClick(field, true)}>
+                                <EditOutlined/>
+                            </LinkButton>
+                        )}
                     </Col>
                 )}
             </Row>
@@ -212,29 +367,96 @@ export default function ProfileCard({ session, id, messages, isCompany, isOwner 
         <Card
             title={<Title level={4}>{formData.name || "User Profile"}</Title>}
             extra={isOwner && (
-                <Button type="primary" loading={loading} onClick={handleSaveClick}>
-                    Save Changes
-                </Button>
+                showEdit ?
+                    (
+                        <div style={{display: "flex", gap: 16}}>
+                            <LinkButton onClick={() => setShowEdit(false)}>
+                                {messages["dashboard-profile-card-cancel"] || "Cancel"}
+                            </LinkButton>
+                            <Button type="primary" loading={loading} onClick={handleSaveClick}>
+                                {messages["dashboard-profile-card-save"] || "Save"} <SaveOutlined/>
+                            </Button>
+                        </div>
+                    )
+                    :
+                    (
+                        <Button type="primary" onClick={() => setShowEdit(true)}>
+                            {messages["dashboard-profile-card-edit"] || "Edit"} <EditOutlined/>
+                        </Button>
+                    )
             )}
-            style={{ maxWidth: 600, margin: "auto" }}
+            style={{maxWidth: 700, margin: "auto"}}
         >
-            <Space direction="vertical" size="large">
-                <Avatar size={64} icon={<UserOutlined />} style={{ marginBottom: 16 }} />
-                {renderField(messages["user-card-name-label"], "name", <EditOutlined />)}
+            <Space direction="vertical" size="large" style={{width: "100%", maxHeight: 600, overflowY: "scroll"}}>
+                <Avatar size={64} icon={<UserOutlined/>} style={{marginBottom: 16}}/>
+
                 {!isCompany ? (
                     <>
-                        {isUserData(formData) && renderField(messages["user-card-surname-label"], "surname", <EditOutlined />)}
-                        {isUserData(formData) && renderField(messages["user-card-bio-label"], "bio", <EditOutlined />)}
-                        {renderField(messages["user-card-sector-label"], "sector", <EditOutlined />)}
-                        {isUserData(formData) && renderField(messages["user-card-birth-date-label"], "birth_date", <EditOutlined />)}
-                        {renderField(messages["user-card-address-label"], "address", <EditOutlined />)}
+                        {renderField(messages["user-card-name-label"], "name")}
+                        {isUserData(formData) && renderField(messages["user-card-surname-label"], "surname")}
+                        {isUserData(formData) && renderField(messages["user-card-bio-label"], "bio",)}
+                        {renderField(messages["user-card-sector-label"], "sector")}
+                        {isUserData(formData) && renderField(messages["user-card-birth-date-label"], "birth_date")}
+
+                        <Row align="middle" style={{
+                            marginBottom: 16,
+                            width: "100%",
+                            justifyContent: "space-between",
+                            paddingInlineEnd: 16
+                        }} key={"address"}>
+                            <Col style={{fontWeight: "bold"}}>{messages["user-card-address-label"]}</Col>
+                            {isOwner && showEdit && (
+
+                                <Col>
+                                    {isEditing["address"] ? (
+                                        <DashedButton onClick={() => handleEditClick("address", false)}>
+                                            <CloseOutlined/>
+                                        </DashedButton>
+                                    ) : (
+                                        <LinkButton onClick={() => handleEditClick("address", true)}>
+                                            <EditOutlined/>
+                                        </LinkButton>
+                                    )}
+                                </Col>
+                            )}
+
+                        </Row>
+
+                        {renderField(messages["user-card-address-label"], "address")}
+
                     </>
+
                 ) : (
                     <>
-                        {renderField(messages["company-card-partita-iva-label"], "partitaIva", <EditOutlined />)}
-                        {renderField(messages["company-card-sector-label"], "sector", <EditOutlined />)}
-                        {renderField(messages["company-card-address-label"], "address", <EditOutlined />)}
-                        {renderField(messages["company-card-website-label"], "website", <EditOutlined />)}
+                        {renderField(messages["user-card-name-label"], "name")}
+                        {renderField(messages["company-card-partita-iva-label"], "partitaIva")}
+                        {renderField(messages["company-card-sector-label"], "sector")}
+                        <Row align="middle" style={{
+                            marginBottom: 16,
+                            width: "100%",
+                            justifyContent: "space-between",
+                            paddingInlineEnd: 16
+                        }} key={"address"}>
+                            <Col style={{fontWeight: "bold"}}>{messages["user-card-address-label"]}</Col>
+                            {isOwner && showEdit && (
+
+                                <Col>
+                                    {isEditing["address"] ? (
+                                        <DashedButton onClick={() => handleEditClick("address", false)}>
+                                            <CloseOutlined/>
+                                        </DashedButton>
+                                    ) : (
+                                        <LinkButton onClick={() => handleEditClick("address", true)}>
+                                            <EditOutlined/>
+                                        </LinkButton>
+                                    )}
+                                </Col>
+                            )}
+
+                        </Row>
+                        {renderField(messages["company-card-address-label"], "address")}
+                        {renderField(messages["company-card-website-label"], "website")}
+
                     </>
                 )}
             </Space>

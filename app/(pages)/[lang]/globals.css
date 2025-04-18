@@ -44,3 +44,7 @@ a {
     color-scheme: dark;
   }
 }
+
+.w-f{
+  width: 100% !important;
+}

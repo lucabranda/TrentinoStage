@@ -19,10 +19,8 @@ export default async function ProfileCardView({params}: any) {
     const token = await cookieStore.get('trentino-stage-session')?.value || "";
 
     console.log(token)
-    var _accountId = await sessionApi.apiSessionVerifyGet(token);
-    const accountId = _accountId.body.profileId;
 
-    var _isACompany = await profilesApi.apiProfilesIsCompanyGet(token, accountId);
+    var _isACompany = await profilesApi.apiProfilesIsCompanyGet(token, profile_id);
     const isACompany = _isACompany.body.isCompany || false;
 
 

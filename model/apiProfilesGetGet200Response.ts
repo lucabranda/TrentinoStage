@@ -24,6 +24,7 @@ export class ApiProfilesGetGet200Response {
         country?: string;
         region?: string;
         postalCode?: string;
+        street?: string;
     };
     'identifier'?: string;
     'sector'?: string;

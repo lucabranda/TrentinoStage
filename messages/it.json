@@ -55,6 +55,9 @@
     "signup-button-signup-company": "Registrati come impresa",
     "signup-button-signup-user": "Registrati come utente",
     "signup-password-mismatch": "Le password non corrispondono",
+    "signup-invite-code": "Codice d'invito",
+    "signup-invite-code-placeholder": "Inserisci il codice di invito",
+    "signup-invite-code-message": "Solo se si è in possesso ",
 
     "dashboard-logout": "Logout",
     "dashboard-user-profile": "Profilo utente",
@@ -63,6 +66,9 @@
     "dashboard-applications": "Candidature",
     "dashboard-settings": "Impostazioni",
     "dashboard-invite-members": "Invita membri",
+    "dashboard-profile-card-cancel": "Cancella",
+    "dashboard-profile-card-save": "Salva",
+    "dashboard-profile-card-edit": "Modifica",
 
     "invite-members-info": "Invita i colleghi ad unirsi alla tua azienda su Trentino Stage.\nGenereremo un codice da utilizzare al momento della loro registrazione.\nIl codice di invito è valido per un solo utilizzo.",
     "invite-members-generate": "Genera codice di invito",
@@ -77,8 +83,9 @@
     "company-card-city-label": "Città",
     "company-card-country-label": "Paese",
     "company-card-region-label": "Regione",
-    "company-card-postalCode-label": "CAP",
+    "company-card-postal_code-label": "CAP",
     "company-card-address-label": "Indirizzo",
+    "company-card-street-label": "Via",
 
     "user-card-name-label": "Nome",
     "user-card-surname-label": "Cognome",
@@ -91,8 +98,9 @@
     "user-card-city-label": "Città",
     "user-card-country-label": "Paese",
     "user-card-region-label": "Regione",
-    "user-card-postalCode-label": "CAP",
+    "user-card-postal_code-label": "CAP",
     "user-card-address-label": "Indirizzo",
+    "user-card-street-label": "Via",
 
     "enum-country-ITALY": "Italia",
     "enum-country-GERMANY": "Germania",
@@ -105,8 +113,8 @@
     "enum-region-BASILICATA": "Basilicata",
     "enum-region-CALABRIA": "Calabria",
     "enum-region-CAMPANIA": "Campania",
-    "enum-region-EMILIA_ROMAGNA": "Emilia-Romagna",
-    "enum-region-FVG": "Friuli-Venezia Giulia",
+    "enum-region-EMILIAROMAGNA": "Emilia Romagna",
+    "enum-region-FVG": "Friuli Venezia Giulia",
     "enum-region-LAZIO": "Lazio",
     "enum-region-LIGURIA": "Liguria",
     "enum-region-LOMBARDIA": "Lombardia",
@@ -117,9 +125,9 @@
     "enum-region-SARDEGNA": "Sardegna",
     "enum-region-SICILIA": "Sicilia",
     "enum-region-TOSCANA": "Toscana",
-    "enum-region-TRENTINO_ALTO_ADIGE": "Trentino-Alto Adige",
+    "enum-region-TRENTINOALTOADIGE": "Trentino Alto Adige",
     "enum-region-UMBRIA": "Umbria",
-    "enum-region-VALLE_AOSTA": "Valle d'Aosta",
+    "enum-region-VALLEAOSTA": "Valle d'Aosta",
     "enum-region-VENETO": "Veneto",
 
     "enum-sector-ART": "Arte",
@@ -127,6 +135,8 @@
     "enum-sector-DEVELOPMENT": "Sviluppo",
     "enum-sector-IT": "IT",
     "enum-sector-MARKETING": "Marketing",
+    "enum-sector-SPORT": "Sport",
+    "enum-sector-FOOD": "Cibo",
 
 
     "error-invalid-session": "La tua sessione è scaduta. Effettua nuovamente il login.",

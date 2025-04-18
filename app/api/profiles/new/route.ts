@@ -217,14 +217,6 @@ export async function POST(req: NextRequest) {
         }
         // TODO: Check the correctness of the fiscal code
     }
-    let sectors
-    try {
-        sectors = JSON.parse(sector)
-    } catch {
-        return NextResponse.json({error: "Sector has to be in a valid json format"}, { status: 400 })
-    }
-
-
 
     await connectDB()
     // Create the profile on the database
@@ -243,7 +235,7 @@ export async function POST(req: NextRequest) {
             },
             bio: bio,
             identifier: identifier,
-            sector: sectors,
+            sector: [sector],
             website: website,
             is_company: is_company
         })
