@@ -11,6 +11,7 @@ import {AccountsApi} from "@/api/accountsApi";
 
 import {redirect} from 'next/navigation';
 import NewProfileForm from "@/components/forms/NewProfileForm";
+import { ApplicationsApi } from "@/api";
 
 export default async function Home({params}: any) {
     const messages = await getMessages((await params).lang);
@@ -61,6 +62,21 @@ export default async function Home({params}: any) {
     }catch (error) {
         return Promise.reject(error);
     }
+    var applicationsList;
+    try {
+        const res = await fetch(`${baseUrl}/api/applications/list?token=${encodeURIComponent(sessionToken)}&profileId=${encodeURIComponent(profileId!)}`, {
+            method: "GET",
+            headers: { "Content-Type": "application/json" },
+        });
+        if (!res.ok) {
+            const errorData = await res.json();
+            console.log(errorData);
+            throw new Error(errorData.error);
+        }
+        applicationsList = await res.json();
+    }catch (error) {
+        return Promise.reject(error);
+    }
 
     return (
         <>
@@ -81,11 +97,12 @@ export default async function Home({params}: any) {
                     postal_code: string;
                     street: string;
                 }}
-                birth_date={profileData!.birth_date!.toString()}
+                birth_date={profileData!.birth_date?.toString()}
                 bio={profileData!.bio!}
                 sector={profileData!.sector!}
                 website={profileData!.website!}
                 partitaIva={profileData!.identifier!}
+                applicationsList={applicationsList}
             />
         </>
 
