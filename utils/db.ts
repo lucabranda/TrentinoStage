@@ -21,7 +21,7 @@ if (!cached) {
   cached = global.mongoose = { conn: null, promise: null };
 }
 
-async function connectDB() {
+export async function connectDB() {
   if (cached.conn) {
     return cached.conn;
   }
@@ -39,4 +39,7 @@ async function connectDB() {
   return cached.conn;
 }
 
-export default connectDB;
+export function checkBsonFormat(id: string) {
+  if (!id) return false;
+  return id.match(/^[0-9a-fA-F]{24}$/) !== null;
+}

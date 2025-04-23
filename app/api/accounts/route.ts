@@ -1,26 +1,65 @@
-import { NextRequest, NextResponse } from "next/server"
-import bycript from "bcrypt"
-import { createSessionToken } from "@/utils/session"
-
-import { connectDB } from "@/utils/db"
-import accounts from "@/utils/model/accounts"
-import invite_tokens from "@/utils/model/invite_tokens"
-
-// Creates the account but leaves the profile_id as null. It will have to be set later with the profiles/create/new-profile endpoint.
-// If the link contains an invitation token the account will be automatically connected to the profile
-// Returns the session token
-
 /**
  * @swagger
- * /api/accounts/register:
+ * /api/accounts:
+ *   get:
+ *     summary: Retrieve account information based on session token
+ *     description: Fetches the role and profile ID of an account using a valid session token.
+ *     tags: [Accounts]
+ *     parameters:
+ *       - in: query
+ *         name: token
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The session token of the account.
+ *     responses:
+ *       200:
+ *         description: Successfully retrieved account information.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 role:
+ *                   type: string
+ *                   description: The role of the account.
+ *                 profileId:
+ *                   type: string
+ *                   description: The profile ID associated with the account.
+ *       401:
+ *         description: Unauthorized or invalid session token.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   description: Error message.
+ *                 code:
+ *                   type: string
+ *                   description: Error code.
+ *
  *   post:
- *     summary: Register a new account
- *     description: Creates a new account. If an invitation token is provided, the account will be connected to the profile associated with the token. Returns a session token upon successful registration.
- *     tags: ["Accounts"]
- *     consumes:
- *       - multipart/form-data
+ *     summary: Create a new account
+ *     description: Registers a new account with email, password, and optional invitation token or role.
+ *     tags: [Accounts]
  *     requestBody:
+ *       required: true
  *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 description: The email address of the new account.
+ *               password:
+ *                 type: string
+ *                 description: The password for the new account.
+ *               role:
+ *                 type: string
+ *                 description: The role of the new account (required if no invitation token is provided).
  *         multipart/form-data:
  *           schema:
  *             type: object
@@ -32,18 +71,18 @@ import invite_tokens from "@/utils/model/invite_tokens"
  *                 type: string
  *                 description: The password for the new account.
  *               role:
- *                  token: string
- *                  description: The role of the account. It's mandatory if no invitation token is provided. Possible values are "admin", "user", "company-manager", "company-employee".
- * 
+ *                 type: string
+ *                 description: The role of the new account (required if no invitation token is provided).
  *     parameters:
  *       - in: query
  *         name: token
- *         type: string
  *         required: false
- *         description: Invitation token to connect the account to a profile.
+ *         schema:
+ *           type: string
+ *         description: An optional invitation token for account creation.
  *     responses:
  *       200:
- *         description: Account created successfully.
+ *         description: Successfully created a new account.
  *         content:
  *           application/json:
  *             schema:
@@ -51,9 +90,9 @@ import invite_tokens from "@/utils/model/invite_tokens"
  *               properties:
  *                 token:
  *                   type: string
- *                   description: Session token for the newly created account.
+ *                   description: The session token for the newly created account.
  *       401:
- *         description: Bad request. Possible reasons include invalid email, email already in use, invalid password, or invalid invitation token.
+ *         description: Unauthorized or invalid input.
  *         content:
  *           application/json:
  *             schema:
@@ -61,10 +100,12 @@ import invite_tokens from "@/utils/model/invite_tokens"
  *               properties:
  *                 error:
  *                   type: string
- *                   description: "Error message explaining the reason for failure."
- *                   example: "Email is already in use"
+ *                   description: Error message.
+ *                 code:
+ *                   type: string
+ *                   description: Error code.
  *       405:
- *         description: "Unsupported content type."
+ *         description: Unsupported content type.
  *         content:
  *           application/json:
  *             schema:
@@ -72,10 +113,45 @@ import invite_tokens from "@/utils/model/invite_tokens"
  *               properties:
  *                 error:
  *                   type: string
- *                   description: "Error message explaining the reason for failure."
- *                   example: "Unsupported content type"
+ *                   description: Error message.
  */
+import { NextRequest, NextResponse } from "next/server"
+import bycript from "bcrypt"
+import { createSessionToken } from "@/utils/session"
+
+import { connectDB, checkBsonFormat } from "@/utils/db"
+import accounts from "@/utils/model/accounts"
+import invite_tokens from "@/utils/model/invite_tokens"
+import { checkSessionToken } from "@/utils/session"
+import { getAccountInfo } from "@/utils/accounts"
+
+
+// Get the account information (role and profile_id) given the session token
+export async function GET(req: NextRequest) {
+    const connection = connectDB()
+
+    const token = req.nextUrl.searchParams.get("token") as string
+
+    if (!token) {
+        return NextResponse.json({error: "Missing required fields", code: "error-missing-fields"}, { status: 401 })
+    }
+
+    const accountId = await checkSessionToken(token)
+
+    if (!accountId) {
+        return NextResponse.json({error: "Invalid session token", code: "error-invalid-session"}, { status: 401 })
+    }
+
+    await connection
+    const account = await getAccountInfo(accountId)
+
+    return NextResponse.json({ email: account.email, role: account.role, profileId: account.profile_id }, { status: 200 })
+}
+
+
+// Creates the account
 export async function POST(req: NextRequest) {
+    const connection = connectDB()
 
     let formData
     const contentType = req.headers.get("content-type") ?? ""
@@ -113,6 +189,8 @@ export async function POST(req: NextRequest) {
     const date = new Date().toISOString()
 
     let sessionToken
+
+    await connection
 
     if (token !== null) {
         // register with an invitation token

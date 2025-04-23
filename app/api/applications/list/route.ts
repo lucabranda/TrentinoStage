@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { checkSessionToken } from '@/utils/session'
 import { getProfileId, isCompany } from '@/utils/accounts'
 
-import connectDB from '@/utils/db'
+import { connectDB } from '@/utils/db'
 import applications from '@/utils/model/available_positions'
 
 // Api endpoint to lis all the open positions for a company
@@ -30,10 +30,34 @@ import applications from '@/utils/model/available_positions'
  *         description: The session token of the user making the request.
  *       - in: query
  *         name: profileId
- *         required: true
+ *         required: false
  *         schema:
  *           type: string
  *         description: The profile ID of the company whose positions are being queried.
+ *       - in: query
+ *         name: sector
+ *         required: false
+ *         schema:
+ *           type: string
+ *         description: Filter positions by sector. Multiple sectors can be separated by `|`.
+ *       - in: query
+ *         name: city
+ *         required: false
+ *         schema:
+ *           type: string
+ *         description: Filter positions by city.
+ *       - in: query
+ *         name: maxTime
+ *         required: false
+ *         schema:
+ *           type: string
+ *         description: Filter positions by maximum weekly hours.
+ *       - in: query
+ *         name: minTime
+ *         required: false
+ *         schema:
+ *           type: string
+ *         description: Filter positions by minimum weekly hours.
  *     responses:
  *       200:
  *         description: A list of open positions.
@@ -57,8 +81,18 @@ import applications from '@/utils/model/available_positions'
  *                     type: string
  *                     description: The sector of the position.
  *                   location:
+ *                     type: object
+ *                     properties:
+ *                       city:
+ *                         type: string
+ *                         description: The city of the position.
+ *                   weekly_hours:
+ *                     type: integer
+ *                     description: The weekly hours required for the position.
+ *                   creation_time:
  *                     type: string
- *                     description: The location of the position.
+ *                     format: date-time
+ *                     description: The creation time of the position.
  *       401:
  *         description: Unauthorized access due to missing or invalid session token.
  *         content:

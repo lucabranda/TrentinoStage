@@ -2,9 +2,10 @@ import { NextRequest, NextResponse } from 'next/server'
 import { checkSessionToken } from '@/utils/session'
 import { ObjectId } from 'mongodb'
 
-import connectDB from '@/utils/db'
+import { connectDB } from '@/utils/db'
 import accounts from '@/utils/model/accounts'
 import profiles from '@/utils/model/profiles'
+import { profile } from 'console'
 
 /**
  * @swagger
@@ -153,6 +154,7 @@ export async function POST(req: NextRequest) {
     const street = formData.get("street") as string
     const address = formData.get("address") as string
     let birthDate = formData.get("birthDate") as string
+    const profileImage = formData.get("profile_image") as string ?? null
 
     const bio = formData.get("bio") as string ?? null
     const identifier = formData.get("identifier") as string
@@ -163,13 +165,17 @@ export async function POST(req: NextRequest) {
     if (!profileId) {
         return NextResponse.json({error: "Invalid session token", code: "error-invalid-session"}, { status: 401 })
     }
+    
     // Check if the user doesn't have a profile already
-
     const existingProfile = await accounts.findOne({_id: ObjectId.createFromHexString(profileId), profile_id: null})
     if (!existingProfile) {
         return NextResponse.json({error: "User already has a profile", code: "error-profile-already-exists"}, { status: 401 })
     }
 
+    // Check if the profileImage is in a valid format
+    if (profileImage && ( !isValidBase64Image(profileImage) || !isSizeOk(profileImage) )) {
+        return NextResponse.json({error: "Profile image is not in a valid format or is too large"}, { status: 400 })
+    }
 
     // Check all the inputs 
     if (name === null) {
@@ -233,6 +239,7 @@ export async function POST(req: NextRequest) {
             name: name,
             surname: surname,
             birth_date: birthDate,
+            profile_image: profileImage,
             address: {
                 country: country,
                 region: region,
@@ -263,4 +270,15 @@ export async function POST(req: NextRequest) {
 
 function stringToBool(str: string): boolean {
     return str === "true"
+}
+
+function isValidBase64Image(data: string): boolean {
+    const base64ImageRegex = /^data:image\/(png|jpeg|jpg|gif|webp);base64,[A-Za-z0-9+/=\s]+$/
+    return base64ImageRegex.test(data)
+}
+
+function isSizeOk(data: string): boolean {
+    const base64Length = data.split(',')[1]?.length || 0
+    const sizeInBytes = (base64Length * 3) / 4
+    return sizeInBytes <= 2 * 1024 * 1024 // 2MB
 }

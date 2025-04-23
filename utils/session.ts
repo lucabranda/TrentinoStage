@@ -2,7 +2,7 @@ import { loadEnvConfig } from "@next/env"
 import crypto from "crypto"
 import { sessionConfig } from "./config"
 
-import connectDB from "./db"
+import { connectDB } from "./db"
 import auth_tokens from "./model/auth_tokens"
 
 import { cookies } from 'next/headers'

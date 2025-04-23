@@ -1,7 +1,7 @@
 import { checkSessionToken } from '@/utils/session'
 import { NextRequest, NextResponse } from 'next/server'
 
-import connectDB from '@/utils/db'
+import { connectDB } from '@/utils/db'
 import available_positions from '@/utils/model/available_positions'
 import { ObjectId } from 'mongodb'
 import { getProfileId } from '@/utils/accounts'
