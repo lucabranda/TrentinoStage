@@ -2,7 +2,7 @@ import { checkSessionToken } from "@/utils/session"
 import { NextRequest, NextResponse } from "next/server"
 import { getProfileId, isCompany } from "@/utils/accounts"
 
-import connectDB from "@/utils/db"
+import { connectDB } from "@/utils/db"
 import available_positions from "@/utils/model/available_positions"
 
 /**

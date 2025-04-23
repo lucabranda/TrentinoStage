@@ -3,11 +3,12 @@ import { POST as CreatePOST } from '../../app/api/session/create/route'
 import { POST as DestroyPOST } from '../../app/api/session/destroy/route'
 import { GET as VerifyGET } from '../../app/api/session/verify/route'
 
+const basePath = process.env.BASE_PATH
 
 describe('Create session api testing', () => {
     it('Should return 401 because of wrong credentials', async () => {
         const requestBody = { email: 'testuser', password: 'wrongPassword' }
-        const request = new NextRequest('http://localhost:3000/api/session/create', {
+        const request = new NextRequest(basePath + '/api/session/create', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(requestBody),
@@ -20,7 +21,7 @@ describe('Create session api testing', () => {
 
     it('Should return 200 because of correct credentials', async () => {
         const requestBody = { email: 'test11@example.com', password: 'Passw0rd' }
-        const request = new NextRequest('http://localhost:3000/api/session/create', {
+        const request = new NextRequest(basePath + '/api/session/create', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(requestBody),
@@ -34,7 +35,7 @@ describe('Create session api testing', () => {
 
 describe('Destroy session api testing', () => {
     it('Should return 401 because of wrong token', async () => {
-        const request = new NextRequest('http://localhost:3000/api/session/destroy', {
+        const request = new NextRequest(basePath + '/api/session/destroy', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ token: 'wrongToken' }),
@@ -49,7 +50,7 @@ describe('Destroy session api testing', () => {
 describe('Verify session api testing', () => {
     it('Should return 401 because of incorrect token', async () => {
         const token = 'wrongToken'
-        const request = new NextRequest(`http://localhost:3000/api/session/verify?token=${token}`)
+        const request = new NextRequest(basePath + `/api/session/verify?token=${token}`)
     
         const response = await VerifyGET(request)
     

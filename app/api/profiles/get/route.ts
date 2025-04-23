@@ -5,7 +5,7 @@ import { isProfileOwner } from "@/utils/profiles"
 import { getAccountInfo } from "@/utils/accounts"
 
 import { ObjectId } from "mongodb"
-import connectDB from "@/utils/db"
+import { connectDB } from "@/utils/db"
 import profiles from "@/utils/model/profiles"
 
 // Given the profile ID and the authentication token returns the profile information

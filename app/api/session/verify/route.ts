@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { checkSessionToken } from "@/utils/session"
 import { ObjectId } from "mongodb"
 
-import connectDB from "@/utils/db"
+import { connectDB } from "@/utils/db"
 import accounts from "@/utils/model/accounts"
 
 /**

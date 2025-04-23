@@ -2,6 +2,7 @@ import { NextRequest } from "next/server"
 import { POST as CreatePOST } from "../../app/api/applications/create/route"
 import { POST as ModifyPOST } from "../../app/api/applications/modify/route"
 
+const basePath = process.env.BASE_PATH
 
 describe('Applications create api testing', () => {
     it('Should return 403 because of an invalid session token', async () => {
@@ -16,7 +17,7 @@ describe('Applications create api testing', () => {
             weekly_hours: 40 
         }
 
-        const request = new NextRequest('http://localhost:3000/api/applications/create', {
+        const request = new NextRequest(basePath + '/api/applications/create', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(requestBody),
@@ -42,7 +43,7 @@ describe('Applications modify api testing', () => {
             weekly_hours: 40 
         }
 
-        const request = new NextRequest('http://localhost:3000/api/applications/create', {
+        const request = new NextRequest(basePath + '/api/applications/create', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(requestBody),
