@@ -41,7 +41,7 @@ export default async function ViewProfileCard({token, profile_id, messages, isAC
         <>
             <div className={styles.profileCardContainer}>
                 <ProfileCard isCompany={isACompany} profileData={(values) as ProfileUserData | ProfileCompanyData}
-                             session={token} id={profile_id} messages={messages} isOwner={false}></ProfileCard>
+                             session={token} id={profile_id} messages={messages} isOwner={false} closeButton={<></>}></ProfileCard>
             </div>
         </>
     )

@@ -177,8 +177,9 @@ export default function DashboardLayout({
                                         address,
                                         sector,
                                         website,
-                                    }) as ProfileUserData | ProfileCompanyData}/>
-
+                                    }) as ProfileUserData | ProfileCompanyData}
+                                    closeButton={<></>}/>
+                                    
                                 </section>
                             )}
                             {activeKey === TabKeys.Offers && (

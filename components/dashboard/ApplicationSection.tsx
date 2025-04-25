@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Card, List, Button, Space, Typography, Select, InputNumber } from 'antd';
-import { CheckCircleOutlined, CheckOutlined, CloseCircleOutlined, CloseOutlined, DeleteOutlined, MinusCircleOutlined } from '@ant-design/icons';
-import { DashedButton, PrimaryButton } from '../buttons/Buttons';
+import { Card, List, Button, Space, Typography, Select, InputNumber, Avatar, Spin } from 'antd';
+import { CheckCircleOutlined, CheckOutlined, CloseCircleOutlined, CloseOutlined, DeleteOutlined, LoadingOutlined, MinusCircleOutlined } from '@ant-design/icons';
+import { DashedButton, LinkButton, PrimaryButton } from '../buttons/Buttons';
 import { Paragraph, Title } from '../Typography';
+import {ProfilesApi} from "@/api/profilesApi";
+import ProfileCard, {ProfileCompanyData, ProfileUserData} from "@/components/dashboard/ProfileCard";
 const {Item} = List;
 const { Text } = Typography;
 
@@ -27,7 +29,11 @@ interface Application {
         _id: string,
         issuer_id: string,
         weekly_hours: number,
-        applied_users: string[],
+        applied_users: {
+          _id: string;
+          application_time: string;
+          user_id: string;
+        }[],
         chosen_user: string,
         creation_time: string
     };
@@ -48,110 +54,282 @@ const handleDelete = (session: string, id: string ) => {
     
 }
 
-const ApplicationCard = ({ item, token, id, messages, isCompany }: Application) => {
-  const [showCompleteCard, setShowCompleteCard] = useState(false);  
-  return(
+function useUserProfileData(token: string, id: string, isACompany: boolean) {
+  const [values, setValues] = useState<ProfileUserData | ProfileCompanyData>()
+
+  useEffect(() => {
+    const fetchProfileData = async () => {
+      const profilesApi = new ProfilesApi();
+      const _profileData = await profilesApi.apiProfilesGetGet(token, id);
+      const profileData = _profileData.body;
+      const values = (isACompany ? {
+        name: profileData!.name,
+        address: {
+          address: profileData!.address?.address,
+          city: profileData!.address?.city,
+          region: profileData!.address?.region,
+          country: profileData!.address?.country,
+          postal_code: profileData!.address?.postalCode,
+          street: profileData!.address?.street
+        },
+        sector: profileData!.sector,
+        website: profileData!.website,
+        partitaIva: profileData!.identifier,
+      } : {
+        name: profileData!.name,
+        surname: profileData!.surname,
+        bio: profileData!.bio,
+        birth_date: profileData!.birth_date,
+        address: {
+          address: profileData!.address?.address,
+          city: profileData!.address?.city,
+          region: profileData!.address?.region,
+          country: profileData!.address?.country,
+          postal_code: profileData!.address?.postalCode,
+          street: profileData!.address?.street
+        },
+        sector: profileData!.sector,
+        website: profileData!.website,
+      });
+      setValues(values as ProfileCompanyData | ProfileUserData);
+    };
+
+    if (token && id) {
+      fetchProfileData();
+    }
+  }, [token, id]);
+  
+  return values;
+
+}
+
+const UserDetailsRow = ({user, token, messages, itemId, issuerId}: {
+  user: {
+    _id: string;
+    application_time: string;
+    user_id: string;
+  };
+  token: string;
+  messages: any;
+  itemId: string;
+  issuerId: string;
+  
+}) => {
+
+  const [showProfileCard, setShowProfileCard] = useState(false);
+  const profile_data = useUserProfileData(token, user.user_id, false) as ProfileUserData;
+  return (
     <>
-        <Item style={{ display: 'flex', gap: 24, justifyContent: 'space-between' }}>
-          {/* status view: pending, accepted, rejected. Display a colored circle*/}
-          {!isCompany && (
-            item.chosen_user === undefined ? (
-              <MinusCircleOutlined style={{ color: 'gold' }} />
-            ) : item.chosen_user === item.issuer_id ? (
-              <CheckCircleOutlined style={{ color: 'green' }} />
-            ) : (
-              <CloseCircleOutlined style={{ color: 'red' }} />
-            )
-          )}
-            <List.Item.Meta
-                title={<Text strong>{item.title}</Text>}
-                description={
-                <Space direction="vertical" style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <Paragraph>
-                      <Text ><b> {messages["dashboard-application-description"] || "Description"}: </b></Text>
-                      <Text type="secondary">{item.description}</Text>
-                    </Paragraph>
-                    <Paragraph>
-                      <Text ><b> {messages["dashboard-application-sector"] || "Sector"}: </b></Text>
-                      <Text type="secondary">{item.sector}</Text>
-                    </Paragraph>
-                    <Paragraph>
-                      <Text ><b> {messages["dashboard-application-location"] || "Location"}: </b></Text>
-                      <Text type="secondary">{item.location?.city}</Text>
-                    </Paragraph>
-                    <Paragraph>
-                      <Text ><b> {messages["dashboard-application-time"] || "Time"}: </b></Text>
-                      <Text type="secondary">{item.minTime} - {item.maxTime}</Text>
-                    </Paragraph>
-                    {isCompany ?
-                      <div style={{ display: 'flex', gap: 8 }}>
-                        <PrimaryButton onClick={() => {handleAccept(token, id, item._id, item.issuer_id)}} style={{ borderColor: 'green', backgroundColor: 'green' }}><CheckOutlined /></PrimaryButton>
-                        <DashedButton onClick={() => {handleReject(token, id, item._id, item.issuer_id)}} style={{ borderColor: 'red', color: 'red' , backgroundColor:'lightcoral'}}><CloseOutlined /></DashedButton>
-                        <PrimaryButton onClick={() => setShowCompleteCard(!showCompleteCard)}>{messages["dashboard-show-details"] || "Show details"}</PrimaryButton>
+    <Item style={{display: 'flex', gap: 24, justifyContent: 'space-between'}} id={itemId}>
+      <List.Item.Meta
+          key={user._id}
+          title={<Avatar src={user._id}
+                          onClick={() => setShowProfileCard(!showProfileCard)}/>}
+          description={
+              <Space direction="vertical" style={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'space-between'
+              }}>
+                  <Text strong>{profile_data?.name}</Text>
+                  {/*
+                  <Text strong>{user.message}</Text>
+                  */}
+                  <div style={{display: 'flex', gap: 8}}>
+                      <LinkButton
+                          onClick={() => handleAccept(token, issuerId, itemId, user.user_id)}
+                          style={{
+                              border: '1px solid green',
+                              borderColor: 'green',
+                              color: 'green'
+                          }}><CheckOutlined/></LinkButton>
+                      <LinkButton
+                          onClick={() => handleReject(token, issuerId, itemId, user.user_id)}
+                          style={{
+                              borderColor: 'red',
+                              border:'1px solid red',
+                              color: 'red'
+                          }}><CloseOutlined/></LinkButton>
+                       <PrimaryButton 
+                       onClick={()=>setShowProfileCard(!showProfileCard)} 
+                          >
+                            {messages["dashboard-application-show-user-profile"] || "Show user profile"}
+                          </PrimaryButton>
+                        
                       </div>
-                    :
-                      <div style={{ display: 'flex', gap: 8 }}>
-                        <DashedButton onClick={() => {handleDelete(token, id)}} style={{ borderColor: 'red', color: 'red', backgroundColor: 'lightcoral' }}><DeleteOutlined style={{ color: 'red' }} /></DashedButton>
-                        <PrimaryButton onClick={() => setShowCompleteCard(!showCompleteCard)}>{messages["dashboard-show-details"] || "Show details"}</PrimaryButton>
-                      </div>
-                    }
-                   </Space>
-                }
-            />
-        </Item>
-        {showCompleteCard && (
-          <div
-            style={{
-              position: 'fixed',
-              top: 0,
-              left: 0,
-              width: '100vw',
-              height: '100vh',
-              backgroundColor: 'rgba(0,0,0,0.5)',
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              zIndex: 1000,
-            }}
-          >
-            <Card
-              style={{
-                width: 800,
-                backgroundColor: 'white',
-                borderRadius: 10,
-                padding: 20,
-              }}
-            >
-              <Space direction="vertical" size="large" style={{ width: '100%' ,display: 'flex'}}>
-                <Space style={{ justifyContent: 'space-between' , width: '100%' ,display: 'flex'}}> 
-                <Title level={3}>{item.title}</Title>
-                  <Button  onClick={() => setShowCompleteCard(false)} style={{border: 'none'}}><CloseCircleOutlined /></Button>
-                </Space>
-               <Paragraph>{item.description}</Paragraph>
-                <List
-                  dataSource={[
-                    { label: 'Sector', value: item.sector },
-                    { label: 'Location', value: `${item.location?.city}, ${item.location?.region}, ${item.location?.country}` },
-                    { label: 'Time', value: `${item.minTime} - ${item.maxTime}` },
-                    { label: 'Issuer ID', value: item.issuer_id },
-                    { label: 'Weekly hours', value: item.weekly_hours },
-                    { label: 'Applied users', value: item.applied_users?.join(', ') },
-                    { label: 'Chosen user', value: item.chosen_user || 'None' },
-                    { label: 'Creation time', value: item.creation_time },
-
-                  ]}
-                  renderItem={(item) => (
-                    <List.Item>
-                      <Text strong>{item.label}</Text> <Text>{item.value}</Text>
-                    </List.Item>
-                  )}
-                />
-                
               </Space>
-            </Card>
-          </div>
+          }
+      />
+  </Item>
+  {showProfileCard && (
+      <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100vw',
+          height: '100vh',
+          backgroundColor: 'rgba(0,0,0,0.5)',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          zIndex: 1000,
+          
+      }}
+      >
+          
+          <ProfileCard session={token} messages={messages} isCompany={false} isOwner={false} profileData={profile_data} id={user.user_id} closeButton={ (<Button onClick={() => setShowProfileCard(false)}
+                                                                                                                                                        style={{border: 'none'}}><CloseCircleOutlined/></Button>)}/>
+      </div>
+  )}
+</>
+  );
+};
 
-        )}
+
+const ApplicationCard = ({ item, token, id, messages, isCompany }: Application) => {
+  const [showCompleteCard, setShowCompleteCard] = useState(false);
+    return (
+        <>
+            {(isCompany) ? (
+                (item.applied_users.length > 0) ? (
+                    <>
+                        <Item style={{display: 'flex', gap: 24, justifyContent: 'space-between'}} id={item._id}>
+                            <Title level={4}> {item.title}</Title>
+                            <Text type="secondary">{item.applied_users.length} {messages["dashboard-applications"]}</Text>
+                        </Item>
+                        {item.applied_users.map((user) => (<UserDetailsRow user={user} token={token} messages={messages} itemId={item._id} issuerId={id}  /> ))}
+                    </>
+                ) : (
+                    <>
+                        <Item style={{display: 'flex', gap: 24, justifyContent: 'space-between'}} id={item._id}>
+                            <Title level={4}> {item.title}</Title>
+                            <Text type="secondary">0 {messages["dashboard-applications"]}</Text>
+                        </Item>
+                    </>
+                )
+            ) : (
+                <>
+                    <Item style={{display: 'flex', gap: 24, justifyContent: 'space-between'}} id={item._id}>
+
+                        {(item.chosen_user === undefined) ? (
+                            <MinusCircleOutlined style={{color: 'gold'}}/>
+                        ) : item.chosen_user === item.issuer_id ? (
+                            <CheckCircleOutlined style={{color: 'green'}}/>
+                        ) : (
+                            <CloseCircleOutlined style={{color: 'red'}}/>
+                        )}
+
+                        <List.Item.Meta
+                            title={<Text strong>{item.title}</Text>}
+                            description={
+                                <Space direction="vertical" style={{
+                                    display: 'flex',
+                                    flexDirection: 'row',
+                                    alignItems: 'center',
+                                    justifyContent: 'space-between'
+                                }}>
+
+                                    <Paragraph>
+                                        <Text><b> {messages["dashboard-application-description"] || "Description"}: </b></Text>
+                                        <Text type="secondary">{item.description}</Text>
+                                    </Paragraph>
+                                    <Paragraph>
+                                        <Text><b> {messages["dashboard-application-sector"] || "Sector"}: </b></Text>
+                                        <Text type="secondary">{item.sector}</Text>
+                                    </Paragraph>
+                                    <Paragraph>
+                                        <Text><b> {messages["dashboard-application-location"] || "Location"}: </b></Text>
+                                        <Text type="secondary">{item.location?.city}</Text>
+                                    </Paragraph>
+                                    <Paragraph>
+                                        <Text><b> {messages["dashboard-application-time"] || "Time"}: </b></Text>
+                                        <Text type="secondary">{item.minTime} - {item.maxTime}</Text>
+                                    </Paragraph>
+
+                                    <div style={{display: 'flex', gap: 8}}>
+                                        <DashedButton onClick={() => {
+                                            handleDelete(token, id)
+                                        }} style={{
+                                            borderColor: 'red',
+                                            color: 'red',
+                                            backgroundColor: 'lightcoral'
+                                        }}><DeleteOutlined style={{color: 'red'}}/></DashedButton>
+                                        <PrimaryButton
+                                            onClick={() => setShowCompleteCard(!showCompleteCard)}>{messages["dashboard-show-details"] || "Show details"}</PrimaryButton>
+                                    </div>
+                                </Space>
+                            }
+                        />
+
+                    </Item>
+                </>
+            )}
+            
+            {showCompleteCard && (
+                <div
+                    style={{
+                        position: 'fixed',
+                        top: 0,
+                        left: 0,
+                        width: '100vw',
+                        height: '100vh',
+                        backgroundColor: 'rgba(0,0,0,0.5)',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        zIndex: 1000,
+                    }}
+                >
+                    <Card
+                        style={{
+                            width: 800,
+                            backgroundColor: 'white',
+                            borderRadius: 10,
+                            padding: 20,
+                        }}
+                    >
+                        <Space direction="vertical" size="large" style={{width: '100%', display: 'flex'}}>
+                            <Space style={{justifyContent: 'space-between', width: '100%', display: 'flex'}}>
+                                <Title level={3}>{item.title}</Title>
+                                <Button onClick={() => setShowCompleteCard(false)}
+                                        style={{border: 'none'}}><CloseCircleOutlined/></Button>
+                            </Space>
+                            <Paragraph>{item.description}</Paragraph>
+                            <List
+                                dataSource={[
+                                    {label: 'Sector', value: item.sector},
+                                    {
+                                        label: 'Location',
+                                        value: `${item.location?.city}, ${item.location?.region}, ${item.location?.country}`
+                                    },
+                                    {label: 'Time', value: `${item.minTime} - ${item.maxTime}`},
+                                    {label: 'Issuer ID', value: item.issuer_id},
+                                    {label: 'Weekly hours', value: item.weekly_hours},
+                                    {
+                                        label: 'Applied users',
+                                        value: item.applied_users?.map((user:{
+                                          _id: string,
+                                        }) => user._id).join(', ')
+                                    },
+                                    {label: 'Chosen user', value: item.chosen_user || 'None'},
+                                    {label: 'Creation time', value: item.creation_time},
+
+                                ]}
+                                renderItem={(item) => (
+                                    <List.Item>
+                                        <Text strong>{item.label}</Text> <Text>{item.value}</Text>
+                                    </List.Item>
+                                )}
+                            />
+
+                        </Space>
+                    </Card>
+                </div>
+
+            )}
+
+
         </>
     );
 }
@@ -181,7 +359,7 @@ const useApplications = (session: string, id: string) => {
 };
 
 function ApplicationSectionCompany({ session, id, messages }: ApplicationSectionProps) {
-  const [showFilters, setShowFilters] = useState(false);
+  /*const [showFilters, setShowFilters] = useState(false);
 
   const [sector, setSector] = useState("-");
   const [country, setCountry] = useState("-");
@@ -192,21 +370,51 @@ function ApplicationSectionCompany({ session, id, messages }: ApplicationSection
   const [weeklyHours, setWeeklyHours] = useState(40);
   const [creation_time, setCreationTime] = useState("-");
   const [applied_users, setAppliedUsers] = useState<string[]>([]);
-  const [chosen_user, setChosenUser] = useState("-");
+  const [chosen_user, setChosenUser] = useState("-");*/
+    let { applications, loading, error } = useApplications(session, id);
+    /*TODO modstra solo le applications che hanno un numero di usenti che hanno applicato maggiore di 0 */
+    applications = applications.filter((application:{
+        sector: string,
+        maxTime: number,
+        minTime: number,
+        location: {
+            country: string,
+            region: string,
+            city: string,
+        },
+        weekly_hours: number,
+        applied_users: {
+            _id: string,
+            application_time: string;
+            user_id: string;
+        }[],
+        chosen_user: string,
+        creation_time: string
+    }) => application.applied_users.length > 0);
 
-  const { applications, loading, error } = useApplications(session, id);
-
-  const sectors: Set<string> = new Set(applications.map((application: {sector: string}) => application.sector).filter((sector: string) => sector !== null));
+  /*  const sectors: Set<string> = new Set(applications.map((application: {sector: string}) => application.sector).filter((sector: string) => sector !== null));
   const cities: Set<string> = new Set(applications.map((application: {location: {city: string}}) => application.location?.city).filter((city: string) => city !== null));
   const countries: Set<string> = new Set(applications.map((application: {location: {country: string}}) => application.location?.country).filter((country: string) => country !== null));
   const regions: Set<string> = new Set(applications.map((application: {location: {region: string}}) => application.location?.region).filter((region: string) => region !== null));
-  const appliedUsers: Set<string> = new Set(applications.map((application: {applied_users: string[]}) => application.applied_users).filter((applied_users: string[]) => applied_users !== null).flat());
-  const creationTimes: Set<string> = new Set(applications.map((application: {creation_time: string}) => application.creation_time).filter((creation_time: string) => creation_time !== null));
+  const appliedUsers: Set<string> = new Set(
+    applications
+      .map((application) => application.applied_users)
+      .flat()
+      .filter((applied_user) => applied_user !== null)
+      .map((applied_user) => applied_user.user_id)
+  );
+  const creationTimes: Set<string> = new Set(
+    applications
+      .map((application) => application.creation_time)
+      .filter((creation_time) => creation_time !== null)
+  );
   const chosenUsers: Set<string> = new Set(applications.map((application: {chosen_user: string}) => application.chosen_user).filter((chosen_user: string) => chosen_user !== null));
-
-  if (loading) return <Card title={messages["dashboard-company-appliactions"] || "Company Applications"}>
-    <Text type="secondary">Loading...</Text>
-  </Card>;
+  */
+  if (loading) return  <Card title={messages["dashboard-user-appliactions"] || "User Applications"}>
+  <Space align="center" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+    <Spin indicator={<LoadingOutlined spin />} size="large"  />
+  </Space>
+</Card>
 
   if (error) return <Card title={messages["dashboard-company-appliactions"] || "Company Applications"}>
     <Text type="secondary">{error}</Text>
@@ -214,11 +422,11 @@ function ApplicationSectionCompany({ session, id, messages }: ApplicationSection
 
   return(
     <Card title={messages["dashboard-company-appliactions"] || "Company Applications"}>
-      <Space direction="vertical" style={{ marginBottom: 16, display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+      {/*(<Space direction="vertical" style={{ marginBottom: 16, display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
         <Text>{messages["dashboard-applications-filter"] || "Filter applications"}</Text>
         <PrimaryButton onClick={() => {setShowFilters(!showFilters)}}>{showFilters ? messages["dashboard-hide-filters"] || "Hide filters" : messages["dashboard-show-filters"] || "Show filters"}</PrimaryButton>
-      </Space>
-      {showFilters && (
+      </Space>)*/}
+      {/*showFilters && (
       <Space direction="vertical" style={{ marginBottom: 16, display: 'flex' }}>
         <Space style={{ display: 'flex', gap: 8 }}>
         <Text>{messages["dashboard-sectors"] || "Sectors"}</Text>
@@ -283,7 +491,7 @@ function ApplicationSectionCompany({ session, id, messages }: ApplicationSection
         
         <Button type="primary" onClick={() => {setSector("-"); setCountry("-"); setRegion("-"); setCity("-"); setMaxTime(24); setMinTime(0); setWeeklyHours(40); setCreationTime("-"); setAppliedUsers([]); setChosenUser("-")}}>{messages["dashboard-reset"] || "Reset"}</Button>
       </Space>
-      )}
+      )*/}
       
       <List
         dataSource={applications.filter((application: {
@@ -296,13 +504,17 @@ function ApplicationSectionCompany({ session, id, messages }: ApplicationSection
             city: string,
           },
           weekly_hours: number,
-          applied_users: string[],
+          applied_users: {
+            _id: string,
+            application_time: string;
+          user_id: string;
+          }[],
           chosen_user: string,
           creation_time: string
         }) => {
-          if(sector != '-' || city != '-' || country != '-' || region != '-' || minTime != 0 || maxTime != 24 || weeklyHours != 40 || creation_time != '-' || applied_users.length > 0 || chosen_user != '-')  
-            return (sector != '-' ?  application.sector === sector : true) && (city != '-' ? application.location?.city === city : true) && (country != '-' ? application.location?.country === country : true) && (region != '-' ? application.location?.region === region : true) && (minTime != 0 ? application.minTime <= minTime : true) && (maxTime != 24 ? application.maxTime >= maxTime : true) && (weeklyHours != 40 ? application.weekly_hours === weeklyHours : true) && (creation_time != '-' ? application.creation_time === creation_time : true) && (applied_users.length > 0 ? application.applied_users.includes(applied_users[0]) : true) && (chosen_user != '-' ? application.chosen_user === chosen_user : true);
-          return applications
+          /*if(sector != '-' || city != '-' || country != '-' || region != '-' || minTime != 0 || maxTime != 24 || weeklyHours != 40 || creation_time != '-' || applied_users.length > 0 || chosen_user != '-')  
+            return (sector != '-' ?  application.sector === sector : true) && (city != '-' ? application.location?.city === city : true) && (country != '-' ? application.location?.country === country : true) && (region != '-' ? application.location?.region === region : true) && (minTime != 0 ? application.minTime <= minTime : true) && (maxTime != 24 ? application.maxTime >= maxTime : true) && (weeklyHours != 40 ? application.weekly_hours === weeklyHours : true) && (creation_time != '-' ? application.creation_time === creation_time : true) && (applied_users.length > 0  /* ? application.applied_users.includes(null) : true && (chosen_user != '-' ? application.chosen_user === chosen_user : true);
+          */return applications
         })}
         renderItem={(item: {
           title: string, 
@@ -318,7 +530,11 @@ function ApplicationSectionCompany({ session, id, messages }: ApplicationSection
           _id: string,
           issuer_id: string,
           weekly_hours: number,
-          applied_users: string[],
+          applied_users: {
+            _id: string;
+            application_time: string;
+            user_id: string;
+          }[],
           chosen_user: string,
           creation_time: string
         }) => (
@@ -333,15 +549,20 @@ function ApplicationSectionCompany({ session, id, messages }: ApplicationSection
  function ApplicationSectionUser({ session, id, messages }: ApplicationSectionProps) {
   const [status, setStatus] = useState('-');
 
-  const { applications, loading, error } = useApplications(session, id);
+  let { applications, loading, error } = useApplications(session, id);
 
-  if (loading) return <Card title={messages["dashboard-user-appliactions"] || "User Applications"}>
-    <Text type="secondary">Loading...</Text>
-  </Card>;
+     if (loading) return (
+    <Card title={messages["dashboard-user-appliactions"] || "User Applications"}>
+  <Space align="center" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+    <Spin indicator={<LoadingOutlined spin />} size="large"  />
+  </Space>
+    </Card>
+  );
   
-  if (error) return <Card title={messages["dashboard-user-appliactions"] || "User Applications"}>
-    <Text type="secondary">{error}</Text>
-  </Card>;
+  if (error) return (
+    <Card title={messages["dashboard-user-appliactions"] || "User Applications"}>
+      <Text type="secondary">{error}</Text>
+  </Card>);
   
   return(
         <Card title={messages["dashboard-user-appliactions"] || "User Applications"}>
@@ -396,7 +617,11 @@ function ApplicationSectionCompany({ session, id, messages }: ApplicationSection
             _id: string,
             issuer_id: string,
             weekly_hours: number,
-            applied_users: string[],
+            applied_users: {
+              _id: string;
+              application_time: string;
+              user_id: string;
+            }[],
             chosen_user: string,
             creation_time: string
           }) => (

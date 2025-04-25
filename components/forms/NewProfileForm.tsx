@@ -1,6 +1,6 @@
 "use client";
 import React, {useEffect, useState} from 'react'
-import {Button, Form, Input, Typography, Card, Upload, Layout, Select} from 'antd';
+import {Button, Form, Input, Typography, Card, Upload, Layout, Select, DatePicker} from 'antd';
 import {SendOutlined, UploadOutlined} from "@ant-design/icons";
 import {sectors, countries, regions, cities} from "@/utils/enums";
 
@@ -28,7 +28,7 @@ export default function NewProfileForm({token, msgs, styles, isCompany}: NewProf
             const sector = values.sector;
             const bio = values.bio;
             const birth_date = values?.birth_date || undefined;
-            //const profilePicture = values.profilePicture;
+            const profilePicture = values.profilePicture.file.thumbUrl;
 
             const website = (isCompany) && values?.website;
             const partitaIva = (isCompany) && values?.partitaIva;
@@ -50,6 +50,7 @@ export default function NewProfileForm({token, msgs, styles, isCompany}: NewProf
                     street: street,
                     bio: bio,
                     birthDate: birth_date,
+                    profile_image: profilePicture,
                     ...(isCompany && {website: website}),
                     ...(isCompany && {identifier: partitaIva}),
                     ...(!isCompany && {surname: surname})
@@ -70,7 +71,7 @@ export default function NewProfileForm({token, msgs, styles, isCompany}: NewProf
             // Optionally show an error message to the user
         }
 
-        window.location.href = "/dashboard";
+        //window.location.href = "/dashboard";
     };
 
     const fields = isCompany ? [
@@ -272,7 +273,11 @@ export default function NewProfileForm({token, msgs, styles, isCompany}: NewProf
                                     ))}
                                 </Select>
                             ) : field.name === "birth_date" ? (
-                                <Input className={styles.formInput} type="date"/>
+                                <DatePicker
+                                    className={styles.formInput}
+                                    format="DD/MM/YYYY"
+                                    placeholder={msgs["select-default"] || "---"}
+                                />
                             ) : field.name === "country" ? (
                                 <Select
                                     className={styles.formSelect}

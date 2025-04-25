@@ -153,7 +153,7 @@ export async function POST(req: NextRequest) {
     const street = formData.get("street") as string
     const address = formData.get("address") as string
     let birthDate = formData.get("birthDate") as string
-
+    const profilePicture = formData.get("profile_image") as string ?? null
     const bio = formData.get("bio") as string ?? null
     const identifier = formData.get("identifier") as string
     const sector = formData.get("sector") as string
@@ -184,6 +184,9 @@ export async function POST(req: NextRequest) {
     }
     if (sector === null) {
         return NextResponse.json({error: "Sector is required", code: "error-sector-required"}, { status: 401 })
+    }
+    if(profilePicture === null) {
+        return NextResponse.json({error: "Profile picture is required", code: "error-profile-picture-required"}, { status: 401 })
     }
 
     // If the user is a company check the presence of an address, sector and the correctness of the identifier

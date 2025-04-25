@@ -112,6 +112,7 @@ export async function GET(req: NextRequest) {
     const surname = profile.surname
     const bio = profile.bio
     const website = profile.website
+    const profile_image = profile.profile_image
     
     if (await isOwner) {
         return NextResponse.json({
@@ -122,7 +123,8 @@ export async function GET(req: NextRequest) {
             birth_date: profile.birth_date,
             address: profile.address,
             identifier: profile.identifier,
-            sector: profile.sector
+            sector: profile.sector,
+            profile_image: profile_image
         }, { status: 200 })
     } else if ((await accountInfo).role === "company-manager" || (await accountInfo).role === "company-employee") {
         return NextResponse.json({
