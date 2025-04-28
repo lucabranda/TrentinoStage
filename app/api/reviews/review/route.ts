@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { checkSessionToken } from '@/utils/session'
 import { getProfileId } from '@/utils/accounts'
 import profiles from '@/utils/model/profiles'
-import connectDB from '@/utils/db'
+import { connectDB } from '@/utils/db'
 import { sanitize } from 'string-sanitizer'
 import { isProfileCompany } from '@/utils/profiles'
 import { ObjectId } from "mongodb"

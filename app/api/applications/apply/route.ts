@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { checkSessionToken } from "@/utils/session"
 import { getProfileId, isCompany } from "@/utils/accounts"
 import available_positions from "@/utils/model/available_positions"
-import connectDB from "@/utils/db";
+import { connectDB } from "@/utils/db";
 
 
 

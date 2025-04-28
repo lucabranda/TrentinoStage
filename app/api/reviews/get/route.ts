@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { checkSessionToken } from "@/utils/session"
-import connectDB from "@/utils/db"
+import { connectDB } from "@/utils/db"
 import profiles from "@/utils/model/profiles"
 import { isCompany } from "@/utils/accounts"
 import { isProfileCompany, isProfileOwner } from "@/utils/profiles"

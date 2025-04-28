@@ -1,5 +1,5 @@
 "use client";
-import React, {HtmlHTMLAttributes, useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {
     Card,
     Avatar,
@@ -68,7 +68,6 @@ export interface CardProps {
     isCompany: boolean;
     isOwner: boolean;
     profileData: ProfileUserData | ProfileCompanyData;
-    closeButton: any;
 }
 
 /*
@@ -82,7 +81,7 @@ inoltre voglio che dopo l update la pagina sia effettivamente aggiornata anche v
 
 */
 
-export default function ProfileCard({session, id, messages, isCompany, isOwner = true, profileData, closeButton}: CardProps) {
+export default function ProfileCard({session, id, messages, isCompany, isOwner = true, profileData}: CardProps) {
     const [showEdit, setShowEdit] = useState(false);
     const [isEditing, setIsEditing] = useState<Record<string, boolean>>({});
 
@@ -119,8 +118,8 @@ export default function ProfileCard({session, id, messages, isCompany, isOwner =
         }
         setLoading(true);
         try {
-            const res = await fetch("/api/profiles/modify", {
-                method: "POST",
+            const res = await fetch("/api/profiles", {
+                method: "PUT",
                 headers: {"Content-Type": "application/json"},
                 body: JSON.stringify({
                     sessionToken: session,
@@ -130,9 +129,9 @@ export default function ProfileCard({session, id, messages, isCompany, isOwner =
                     country: formData.address?.country,
                     region: formData.address?.region,
                     city: formData.address?.city,
-                    postal_code: formData.address?.postal_code,
+                    postalCode: formData.address?.postal_code,
                     street: formData.address?.street,
-                    sector: formData.sector,
+                    sector: [formData.sector].join(","),
                     ...(isCompany ? {website: (formData as ProfileCompanyData).website} : {surname: (formData as ProfileUserData).surname}),
                     ...(isCompany ? {identifier: (formData as ProfileCompanyData).partitaIva} : {birthDate: (formData as ProfileUserData).birth_date}),
                     bio: formData.bio
@@ -276,7 +275,6 @@ export default function ProfileCard({session, id, messages, isCompany, isOwner =
                                                 cities[(formData.address?.[subField as keyof typeof formData.address]) as keyof typeof cities] as string
                                         : formData.address?.[subField as keyof typeof formData.address] || ""
                                     }
-                                    
                                 </Text>
                             )
                             }
@@ -339,7 +337,7 @@ export default function ProfileCard({session, id, messages, isCompany, isOwner =
                            
                                <Text id={field}>
                                 { field === "birth_date" ?
-                                    (formData[field as keyof (ProfileUserData | ProfileCompanyData)] as string)
+                                    (formData[field as keyof (ProfileUserData | ProfileCompanyData)] as string)?.substring(0, 10)
                                     : field === "sector" ?
                                     messages[`enum-sector-${formData[field as keyof (ProfileUserData | ProfileCompanyData)]}`] 
                                     : (formData[field as keyof (ProfileUserData | ProfileCompanyData)] as string) || ""
@@ -367,12 +365,7 @@ export default function ProfileCard({session, id, messages, isCompany, isOwner =
 
     return (
         <Card
-            title={
-                <Space style={{justifyContent: 'space-between', width: '100%', display: 'flex'}}>
-                <Title level={4}>{formData.name || "User Profile"}</Title>
-                {closeButton}
-                </Space>
-           }
+            title={<Title level={4}>{formData.name || "User Profile"}</Title>}
             extra={isOwner && (
                 showEdit ?
                     (
@@ -392,12 +385,11 @@ export default function ProfileCard({session, id, messages, isCompany, isOwner =
                         </Button>
                     )
             )}
-            style={(!isOwner) ? {width: "60%", margin:"auto"} : {maxWidth: 900, margin: "auto"}}
+            style={{maxWidth: 700, margin: "auto"}}
         >
-            
             <Space direction="vertical" size="large" style={{width: "100%", maxHeight: 600, overflowY: "scroll"}}>
-                
-            <Avatar size={64} src={null} style={{marginBottom: 16}}/>
+                <Avatar size={64} icon={<UserOutlined/>} style={{marginBottom: 16}}/>
+
                 {!isCompany ? (
                     <>
                         {renderField(messages["user-card-name-label"], "name")}

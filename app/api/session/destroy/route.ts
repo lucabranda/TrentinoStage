@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { checkSessionToken } from "@/utils/session"
 
-import connectDB from "@/utils/db"
+import { connectDB } from "@/utils/db"
 import auth_tokens from "@/utils/model/auth_tokens"
 
 

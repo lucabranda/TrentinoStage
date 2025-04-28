@@ -2,7 +2,7 @@ import { NextResponse, NextRequest } from "next/server"
 import { createSessionToken } from "@/utils/session"
 import bcrypt from "bcrypt"
 
-import connectDB from "@/utils/db"
+import { connectDB } from "@/utils/db"
 import accounts from "@/utils/model/accounts"
 
 

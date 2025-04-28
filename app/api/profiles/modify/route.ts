@@ -3,7 +3,7 @@ import { checkSessionToken } from "@/utils/session"
 import { sanitize } from "string-sanitizer"
 import dayjs from "dayjs"
 
-import connectDB from "@/utils/db"
+import { connectDB } from "@/utils/db"
 import profiles from "@/utils/model/profiles"
 import { getProfileId } from "@/utils/accounts"
 import { ObjectId } from "mongodb"
