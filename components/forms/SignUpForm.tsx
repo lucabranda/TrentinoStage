@@ -31,7 +31,7 @@ export default function SignUpForm({ messages }: { messages: any }) {
       formData.append("password", password);
       formData.append("role", "user");
       // Send POST request to /api/accounts/register
-      const response = await fetch("/api/accounts/register", {
+      const response = await fetch("/api/accounts", {
         method: "POST",
         body: formData, // Use FormData
       });

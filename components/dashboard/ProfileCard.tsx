@@ -118,8 +118,8 @@ export default function ProfileCard({session, id, messages, isCompany, isOwner =
         }
         setLoading(true);
         try {
-            const res = await fetch("/api/profiles/modify", {
-                method: "POST",
+            const res = await fetch("/api/profiles", {
+                method: "PUT",
                 headers: {"Content-Type": "application/json"},
                 body: JSON.stringify({
                     sessionToken: session,
@@ -129,9 +129,9 @@ export default function ProfileCard({session, id, messages, isCompany, isOwner =
                     country: formData.address?.country,
                     region: formData.address?.region,
                     city: formData.address?.city,
-                    postal_code: formData.address?.postal_code,
+                    postalCode: formData.address?.postal_code,
                     street: formData.address?.street,
-                    sector: formData.sector,
+                    sector: [formData.sector].join(","),
                     ...(isCompany ? {website: (formData as ProfileCompanyData).website} : {surname: (formData as ProfileUserData).surname}),
                     ...(isCompany ? {identifier: (formData as ProfileCompanyData).partitaIva} : {birthDate: (formData as ProfileUserData).birth_date}),
                     bio: formData.bio
@@ -337,7 +337,7 @@ export default function ProfileCard({session, id, messages, isCompany, isOwner =
                            
                                <Text id={field}>
                                 { field === "birth_date" ?
-                                    (formData[field as keyof (ProfileUserData | ProfileCompanyData)] as string).substring(0, 10)
+                                    (formData[field as keyof (ProfileUserData | ProfileCompanyData)] as string)?.substring(0, 10)
                                     : field === "sector" ?
                                     messages[`enum-sector-${formData[field as keyof (ProfileUserData | ProfileCompanyData)]}`] 
                                     : (formData[field as keyof (ProfileUserData | ProfileCompanyData)] as string) || ""
