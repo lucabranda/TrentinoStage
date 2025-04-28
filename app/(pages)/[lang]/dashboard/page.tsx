@@ -19,6 +19,8 @@ export default async function Home({params}: any) {
         method: "GET",
     });
 
+    console.log(sessionResponse);
+
     if (!sessionResponse.ok) {
         redirect(`/login`);
     }
