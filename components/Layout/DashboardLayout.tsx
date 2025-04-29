@@ -76,6 +76,11 @@ export default function DashboardLayout({
     const [collapsed, setCollapsed] = useState(false);
     const [activeKey, setActiveKey] = useState(TabKeys.ProfileInfo);
 
+    function logout() {
+        removeSessionToken();
+        window.location.reload();
+    }
+
     const itemsSidebar = [
         {
             key: TabKeys.ProfileInfo,
