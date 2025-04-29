@@ -187,5 +187,9 @@
     "dashboard-company-offers-create": "Crea annuncio",
     "dashboard-company-offers": "Annunci",
     "dashboard-offer-create-success": "Annuncio creato con successo",
-    "dashboard-offer-create-error" : "Errore durante la creazione dell'annuncio"
+    "dashboard-offer-create-error" : "Errore durante la creazione dell'annuncio",
+    "dashboard-delete": "Elimina",
+    "dashboard-cancel": "Annulla",
+    "dashboard-offer-delete-message": "Sei sicuro di voler eliminare questo annuncio?",
+    "dashboard-offer-delete-confirm": "Eliminazione annuncio"
 }
