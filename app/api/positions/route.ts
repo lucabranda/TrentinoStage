@@ -358,8 +358,6 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({error: "Internal server error", code: "error-internal-server"}, { status: 500 })
     }
 
-    console.log("Data: " + data)
-
     return NextResponse.json({message: "Application created successfully", data}, { status: 200 })
 
 }
@@ -397,8 +395,6 @@ export async function PUT(req: NextRequest) {
     if (!profileId) {
         return NextResponse.json({error: "Invalid token", code: "error-invalid-session-token"}, { status: 403 })
     }
-
-    console.log(profileId, weekly_hours)
 
     let edit: { 
         [key: string]: string | null | { [key: string]: string | null } | string[] | number

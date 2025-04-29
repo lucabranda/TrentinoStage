@@ -149,8 +149,6 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({error: "Invalid token", code: "error-invalid-session-token"}, { status: 403 })
     }
 
-    console.log(profileId)
-
     let edit: { 
         [key: string]: string | null | { [key: string]: string | null } | string[] | number
     } = {}

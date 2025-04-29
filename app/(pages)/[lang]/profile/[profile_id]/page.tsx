@@ -1,6 +1,4 @@
 import {getMessages} from "@/utils/systemMessage";
-import {ProfilesApi} from "@/api/profilesApi";
-import {SessionApi} from "@/api/sessionApi";
 import {cookies} from "next/headers";
 import {isLoggedIn} from "@/utils/session";
 import {redirect} from "next/navigation";
@@ -12,17 +10,22 @@ export default async function ProfileCardView({params}: any) {
 
     const msgs = await getMessages((await params).lang);
     const profile_id = (await params).profile_id;
-    const sessionApi = new SessionApi();
-    const profilesApi = new ProfilesApi();
-
     const cookieStore = await cookies();
     const token = await cookieStore.get('trentino-stage-session')?.value || "";
 
-    console.log(token)
+    const response = await fetch(`/api/profiles/isCompany?token=${token}&profileId=${profile_id}`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+        },
+    });
 
-    var _isACompany = await profilesApi.apiProfilesIsCompanyGet(token, profile_id);
-    const isACompany = _isACompany.body.isCompany || false;
+    if (!response.ok) {
+        throw new Error(`Errore nella richiesta: ${response.statusText}`);
+    }
 
+    const data = await response.json();
+    const isACompany = data.isCompany || false;
 
     return (
         <>

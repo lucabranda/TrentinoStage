@@ -21,7 +21,6 @@ import {
     SaveOutlined,
     UserOutlined
 } from "@ant-design/icons";
-import {ProfilesApi} from "@/api/profilesApi";
 import {DashedButton, LinkButton} from "../buttons/Buttons";
 import {sectors, regions, countries, cities} from "@/utils/enums";
 import dayjs from 'dayjs';
@@ -139,7 +138,7 @@ export default function ProfileCard({session, id, messages, isCompany, isOwner =
             });
             if (!res.ok) {
                 const errorData = await res.json();
-                console.log(errorData);
+                console.error(errorData);
                 throw new Error(errorData.error);
             }
 

@@ -173,7 +173,6 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({error: "Cannot review a profile of the same type", code: "error-invalid-review"}, { status: 405 })
     }
 
-    console.log(reviewedProfile)
     // Check if the profile has already reviewed the other profile
     const profile = await profiles.findOne({ _id: ObjectId.createFromHexString(reviewedProfile), reviews: { $elemMatch: { reviewer_id: profileId } } })
 
