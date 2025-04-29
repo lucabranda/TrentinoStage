@@ -398,7 +398,7 @@ export async function PUT(req: NextRequest) {
         return NextResponse.json({error: "Invalid token", code: "error-invalid-session-token"}, { status: 403 })
     }
 
-    console.log(profileId)
+    console.log(profileId, weekly_hours)
 
     let edit: { 
         [key: string]: string | null | { [key: string]: string | null } | string[] | number
@@ -431,18 +431,145 @@ export async function PUT(req: NextRequest) {
         }
     }
 
-    await connectDB()
+    await connectDB();
 
-    const update = await available_positions.updateOne({ _id: ObjectId.createFromHexString(profileId) }, edit,{
-        new: true,
-        upsert: true,
-        // Return additional properties about the operation, not just the document
-        includeResultMetadata: true
-    })
+    const update = await available_positions.updateOne(
+        { _id: ObjectId.createFromHexString(formData.get("positionId") as string) },
+        { $set: edit },
+        {
+            new: true,
+            upsert: false,
+        }
+    );
 
     if (update.modifiedCount === 0) {
-        return NextResponse.json({error: "Error modifying application"}, { status: 500 })
+        return NextResponse.json({ error: "Error modifying application" }, { status: 500 });
     }
 
-    return NextResponse.json({message: "Application modified successfully"}, { status: 200 })
+    return NextResponse.json({ message: "Application modified successfully" }, { status: 200 });
+}
+
+/**
+ * @swagger
+ * /api/positions:
+ *   delete:
+ *     summary: Elimina una posizione esistente
+ *     description: Permette a un'azienda di eliminare una posizione esistente. L'utente deve essere autenticato e autorizzato.
+ *     tags:
+ *       - Positions
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - token
+ *               - positionId
+ *             properties:
+ *               token:
+ *                 type: string
+ *                 description: Token di sessione dell'utente.
+ *               positionId:
+ *                 type: string
+ *                 description: ID della posizione da eliminare.
+ *     responses:
+ *       200:
+ *         description: Posizione eliminata con successo.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Position deleted successfully
+ *       400:
+ *         description: Campi richiesti mancanti.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Missing required fields
+ *                 code:
+ *                   type: string
+ *                   example: error-missing-fields
+ *       403:
+ *         description: Token non valido o non autorizzato.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Invalid token
+ *                 code:
+ *                   type: string
+ *                   example: error-invalid-session-token
+ *       404:
+ *         description: Posizione non trovata o non autorizzata.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Position not found or unauthorized
+ *                 code:
+ *                   type: string
+ *                   example: error-not-found
+ *       405:
+ *         description: Tipo di contenuto non supportato.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Unsupported content type
+ *                 code:
+ *                   type: string
+ *                   example: error-invalid-request
+ */
+export async function DELETE(req: NextRequest) {
+    let formData;
+    const contentType = req.headers.get("content-type") ?? "";
+
+    if (contentType.includes("application/json")) {
+        const jsonData = await req.json();
+        formData = new Map(Object.entries(jsonData));
+    } else {
+        return NextResponse.json({ error: "Unsupported content type", code: "error-invalid-request" }, { status: 405 });
+    }
+
+    const token = formData.get("token") as string;
+    const positionId = formData.get("positionId") as string;
+
+    if (!token || !positionId) {
+        return NextResponse.json({ error: "Missing required fields", code: "error-missing-fields" }, { status: 400 });
+    }
+
+    const profileId = await getProfileId(await checkSessionToken(token));
+    if (!profileId) {
+        return NextResponse.json({ error: "Invalid token", code: "error-invalid-session-token" }, { status: 403 });
+    }
+
+    await connectDB();
+
+    const deleteResult = await available_positions.deleteOne({
+        _id: ObjectId.createFromHexString(positionId),
+        issuer_id: profileId,
+    });
+
+    if (deleteResult.deletedCount === 0) {
+        return NextResponse.json({ error: "Position not found or unauthorized", code: "error-not-found" }, { status: 404 });
+    }
+
+    return NextResponse.json({ message: "Position deleted successfully" }, { status: 200 });
 }

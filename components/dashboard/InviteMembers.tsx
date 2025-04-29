@@ -4,7 +4,7 @@ import {SendOutlined} from "@ant-design/icons";
 import {Input, Button, Card} from "antd";
 import {useState} from "react";
 
-export default function InviteMembers({session, id, messages, styles}: any) {
+export default function InviteMembers({session, messages}: any) {
     const [inviteCode, setInviteCode] = useState<string | undefined>(undefined);
 
     async function generateInvite() {
