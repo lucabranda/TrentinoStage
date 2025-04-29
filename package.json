@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "test": "jest",
-    "openapi-gen": "npx next-swagger-doc-cli next-swagger-doc.json && npx openapi-generator-cli generate -g typescript-node -i public/swagger.json --skip-validate-spec"
+    "swagger-gen": "npx next-swagger-doc-cli next-swagger-doc.json"
   },
   "dependencies": {
     "@ant-design/cssinjs": "^1.21.1",
@@ -36,7 +36,6 @@
     "uuid": "^11.0.2"
   },
   "devDependencies": {
-    "@openapitools/openapi-generator-cli": "^2.16.2",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.2.0",

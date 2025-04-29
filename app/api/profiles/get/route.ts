@@ -92,8 +92,6 @@ export async function GET(req: NextRequest) {
     await connectDB()
 
     const profile = await profiles.findOne({ _id: ObjectId.createFromHexString(profileId) })
- 
-    console.log(profile)
 
     if (profile === null) {
         return new NextResponse("Profile not found", { status: 404 })
