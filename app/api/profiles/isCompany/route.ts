@@ -61,6 +61,6 @@ export async function GET(req: NextRequest) {
         accountId = await checkSessionToken(sessionToken)
         if (accountId == null) return NextResponse.json({ error: "Invalid session token", code: "error-invalid-session" }, { status: 401 })
     }
-    console.log("AccountID: " + accountId)
+
     return NextResponse.json({ isCompany: await isCompany(accountId) }, { status: 200 })
 }

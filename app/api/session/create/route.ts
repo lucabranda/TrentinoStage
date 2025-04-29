@@ -77,7 +77,6 @@ export async function POST(req: NextRequest) {
 
   const user = await accounts.findOne({email: email})
 
-  console.log(user)
   // Check if the password is correct
 
   if (!user || !await bcrypt.compare(password as string, user.password as string)) {

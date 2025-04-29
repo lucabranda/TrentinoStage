@@ -103,8 +103,6 @@ describe('Is company api testing', () => {
 
         const jsonResponse = await response.json()
 
-        console.log(response)
-    
         expect(jsonResponse['isCompany']).toBe(true)
     })
 })

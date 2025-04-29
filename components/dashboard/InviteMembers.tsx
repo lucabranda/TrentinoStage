@@ -1,7 +1,7 @@
 "use client"
 
 import {SendOutlined} from "@ant-design/icons";
-import {Input, Button, Card} from "antd";
+import {Button, Card} from "antd";
 import {useState} from "react";
 
 export default function InviteMembers({session, messages}: any) {
