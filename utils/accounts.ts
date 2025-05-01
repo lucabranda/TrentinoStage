@@ -1,7 +1,7 @@
 import { ObjectId } from "mongodb"
 import { getProfileInfo } from "./profiles"
 
-import connectDB from "./db"
+import { connectDB } from "./db"
 import accounts from "./model/accounts"
 
 // Functions to help manage the accounts

@@ -2,7 +2,7 @@ import { NextResponse, NextRequest } from "next/server"
 import { createSessionToken } from "@/utils/session"
 import bcrypt from "bcrypt"
 
-import connectDB from "@/utils/db"
+import { connectDB } from "@/utils/db"
 import accounts from "@/utils/model/accounts"
 
 
@@ -77,7 +77,6 @@ export async function POST(req: NextRequest) {
 
   const user = await accounts.findOne({email: email})
 
-  console.log(user)
   // Check if the password is correct
 
   if (!user || !await bcrypt.compare(password as string, user.password as string)) {

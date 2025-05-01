@@ -55,10 +55,10 @@ const EditOfferModal: React.FC<EditOfferModalProps> = ({offer, session, onUpdate
 
     const handleEdit = async (values: Offer) => {
         try {
-            const response = await fetch(`/api/applications/modify`, {
-                method: 'POST',
+            const response = await fetch(`/api/positions`, {
+                method: 'PUT',
                 headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({...values, id: offer.id, token: session, country: "-", region: "-"}),
+                body: JSON.stringify({...values, weeklyHours: values.weekly_hours, positionId: offer.id, token: session, country: "-", region: "-"}),
             });
 
             if (response.ok) {
@@ -190,6 +190,8 @@ const OfferSectionCompany: React.FC<OfferSectionProps> = ({session, id, messages
     const [isCreating, setIsCreating] = useState(false);
     const [isAccordionOpen, setIsAccordionOpen] = useState("1");
     const [form] = Form.useForm();
+    const [deleteModalVisible, setDeleteModalVisible] = useState(false);
+    const [offerToDelete, setOfferToDelete] = useState<string | null>(null);
 
     let _offers: FormValues[] = [];
 
@@ -197,8 +199,42 @@ const OfferSectionCompany: React.FC<OfferSectionProps> = ({session, id, messages
         setIsLoading(true);
     }
 
+    const handleDeleteOffer = async () => {
+        if (!offerToDelete) return;
+
+        try {
+            const response = await fetch("/api/positions", {
+                method: "DELETE",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ token: session, positionId: offerToDelete }),
+            });
+
+            if (response.ok) {
+                message.success(messages["dashboard-offer-delete-success"] || "Offer deleted successfully!");
+                refresh(); // Aggiorna la lista delle offerte
+            } else {
+                throw new Error(messages["dashboard-offer-delete-error"] || "Failed to delete offer.");
+            }
+        } catch (error) {
+            message.error((error as any).message);
+        } finally {
+            setDeleteModalVisible(false);
+            setOfferToDelete(null);
+        }
+    };
+
+    const showDeleteModal = (offerId: string) => {
+        setOfferToDelete(offerId);
+        setDeleteModalVisible(true);
+    };
+
+    const handleCancelDelete = () => {
+        setDeleteModalVisible(false);
+        setOfferToDelete(null);
+    };
+
     if (isLoading) {
-        fetch(`/api/applications/list?token=${session}&profileId=${id}`, {
+        fetch(`/api/positions?token=${session}&profileId=${id}`, {
             method: "GET"
         })
             .then(response => {
@@ -229,14 +265,13 @@ const OfferSectionCompany: React.FC<OfferSectionProps> = ({session, id, messages
             });
     }
 
-
     const handleAddOffer = async (values: FormValues) => {
         try {
             setIsCreating(true);
-            const response = await fetch("/api/applications/create", {
+            const response = await fetch("/api/positions", {
                 method: "POST",
                 headers: {"Content-Type": "application/json"},
-                body: JSON.stringify({...values, token: session, region: "a", country: "a"}),
+                body: JSON.stringify({...values, weeklyHours: values.weekly_hours, token: session, region: "a", country: "a"}),
             });
 
             if (response.ok) {
@@ -344,7 +379,11 @@ const OfferSectionCompany: React.FC<OfferSectionProps> = ({session, id, messages
                     <List.Item
                         actions={[
                             <>
-                                <Button danger={true} icon={<DeleteFilled/>}/>
+                                <Button
+                                    danger={true}
+                                    icon={<DeleteFilled />}
+                                    onClick={() => showDeleteModal(item.id ?? "")}
+                                />
                                 &nbsp;
                                 <EditOfferModal offer={{
                                     city: item.city,
@@ -359,8 +398,18 @@ const OfferSectionCompany: React.FC<OfferSectionProps> = ({session, id, messages
                                     refresh()
                                 }}/>
                                 &nbsp;
-                                <DashedButton><SnippetsFilled/> {item.applied_users?.length ?? 0}</DashedButton>
-                            </>
+                                <Button
+                                    type={"dashed"}
+                                    disabled={(item.applied_users?.length ?? 0) === 0}
+                                    onClick={() => {
+                                        window.location.hash = "applications";
+                                        const url = new URL(window.location.href);
+                                        url.searchParams.set("offerId", item.id ?? "");
+                                        window.history.pushState({}, "", url.toString());
+                                    }}
+                                >
+                                    <SnippetsFilled /> {item.applied_users?.length ?? 0}
+                                </Button>                            </>
 
                         ]}
                     >
@@ -373,6 +422,17 @@ const OfferSectionCompany: React.FC<OfferSectionProps> = ({session, id, messages
                     </List.Item>
                 )}
             />
+            <Modal
+                title={<span>{messages["dashboard-offer-delete-confirm"] || "Confirm Delete"}</span>}
+                visible={deleteModalVisible}
+                onOk={handleDeleteOffer}
+                onCancel={handleCancelDelete}
+                okText={messages["dashboard-delete"] || "Delete"}
+                cancelText={messages["dashboard-cancel"] || "Cancel"}
+                okButtonProps={{ danger: true }}
+            >
+                <p>{messages["dashboard-offer-delete-message"] || "Are you sure you want to delete this offer?"}</p>
+            </Modal>
         </Card>
     );
 };
@@ -384,7 +444,7 @@ const OfferSectionUser: React.FC<OfferSectionProps> = ({session, id, messages}) 
 
     if (isLoading) {
 
-        fetch(`/api/applications/list?token=${session}&profileId=${id}`, {
+        fetch(`/api/positions?token=${session}&profileId=${id}`, {
             method: "GET"
         })
             .then(response => {

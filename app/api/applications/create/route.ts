@@ -2,7 +2,7 @@ import { checkSessionToken } from "@/utils/session"
 import { NextRequest, NextResponse } from "next/server"
 import { getProfileId, isCompany } from "@/utils/accounts"
 
-import connectDB from "@/utils/db"
+import { connectDB } from "@/utils/db"
 import available_positions from "@/utils/model/available_positions"
 
 /**
@@ -135,8 +135,6 @@ export async function POST(req: NextRequest) {
     } catch (error) {
         return NextResponse.json({error: "Internal server error", code: "error-internal-server"}, { status: 500 })
     }
-
-    console.log("Data: " + data)
 
     return NextResponse.json({message: "Application created successfully", data}, { status: 200 })
 

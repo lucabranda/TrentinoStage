@@ -1,7 +1,7 @@
 import { checkSessionToken } from '@/utils/session'
 import { NextRequest, NextResponse } from 'next/server'
 
-import connectDB from '@/utils/db'
+import { connectDB } from '@/utils/db'
 import available_positions from '@/utils/model/available_positions'
 import { ObjectId } from 'mongodb'
 import { getProfileId } from '@/utils/accounts'
@@ -138,8 +138,9 @@ export async function POST(req: NextRequest) {
     const city = formData.get("city") as string
     const weekly_hours = parseInt(formData.get("weekly_hours") as string)
     const chosen_user = formData.get("chosen_user") as string
+    const applicationId = formData.get("id") as string
 
-    if (!token || !title || !description || !sector || !country || !region || !city || !weekly_hours) {
+    if (!token || !title || !description || !sector || !country || !region || !city || !weekly_hours || !applicationId) {
         return new NextResponse("Missing required fields", { status: 401 })
     }
 
@@ -147,8 +148,6 @@ export async function POST(req: NextRequest) {
     if (!profileId) {
         return NextResponse.json({error: "Invalid token", code: "error-invalid-session-token"}, { status: 403 })
     }
-
-    console.log(profileId)
 
     let edit: { 
         [key: string]: string | null | { [key: string]: string | null } | string[] | number
@@ -168,13 +167,13 @@ export async function POST(req: NextRequest) {
             edit['sector'] = sector
         }
         if (country) {
-            edit['country'] = country
+            edit['location.country'] = country
         }
         if (region) {
-            edit['region'] = region
+            edit['location.region'] = region
         }
         if (city) {
-            edit['city'] = city
+            edit['location.city'] = city
         }
         if (weekly_hours) {
             edit['weekly_hours'] = weekly_hours
@@ -183,9 +182,7 @@ export async function POST(req: NextRequest) {
 
     await connectDB()
 
-    const update = await available_positions.updateOne({ _id: ObjectId.createFromHexString(profileId) }, edit,{
-        new: true,
-        upsert: true,
+    const update = await available_positions.updateOne({ _id: ObjectId.createFromHexString(applicationId), issuer_id: ObjectId.createFromHexString(profileId) }, edit,{
         // Return additional properties about the operation, not just the document
         includeResultMetadata: true
     })

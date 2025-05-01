@@ -1,12 +1,18 @@
 import styles from "@/app/(pages)/[lang]/profile/[profile_id]/profile.module.css";
 import ProfileCard, {ProfileCompanyData, ProfileUserData} from "@/components/dashboard/ProfileCard";
-import {ProfilesApi} from "@/api/profilesApi";
-
 
 export default async function ViewProfileCard({token, profile_id, messages, isACompany}: any) {
-    const profilesApi = new ProfilesApi();
-    var _profileData = await profilesApi.apiProfilesGetGet(token, profile_id);
-    var profileData = _profileData.body;
+    const queryParams = new URLSearchParams({ token, profileId: profile_id });
+    const response = await fetch(`/api/profiles?${queryParams.toString()}`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+        },
+    });
+    if (!response.ok) {
+        throw new Error(`Errore nella richiesta: ${response.statusText}`);
+    }
+    const profileData = await response.json();
 
     const values = (isACompany ? {
         name: profileData!.name,

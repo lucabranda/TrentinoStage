@@ -38,7 +38,7 @@ export default function LogInForm({ messages }: LogInFormProps) {
       setLoading(true);
 
       // Send POST request to /api/session/create
-      const response = await fetch("/api/session/create", {
+      const response = await fetch("/api/session", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),

@@ -4,6 +4,7 @@ const profiles = new mongoose.Schema({
     name: String,
     surname: String,
     birth_date: mongoose.Schema.Types.Date,
+    profile_image: String,
     address: {
         country: String,
         region: String,

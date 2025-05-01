@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { checkSessionToken } from '@/utils/session'
 import { getProfileId } from '@/utils/accounts'
 import profiles from '@/utils/model/profiles'
-import connectDB from '@/utils/db'
+import { connectDB } from '@/utils/db'
 import { sanitize } from 'string-sanitizer'
 import { isProfileCompany } from '@/utils/profiles'
 import { ObjectId } from "mongodb"
@@ -173,7 +173,6 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({error: "Cannot review a profile of the same type", code: "error-invalid-review"}, { status: 405 })
     }
 
-    console.log(reviewedProfile)
     // Check if the profile has already reviewed the other profile
     const profile = await profiles.findOne({ _id: ObjectId.createFromHexString(reviewedProfile), reviews: { $elemMatch: { reviewer_id: profileId } } })
 

@@ -5,7 +5,7 @@ import { isProfileOwner } from "@/utils/profiles"
 import { getAccountInfo } from "@/utils/accounts"
 
 import { ObjectId } from "mongodb"
-import connectDB from "@/utils/db"
+import { connectDB } from "@/utils/db"
 import profiles from "@/utils/model/profiles"
 
 // Given the profile ID and the authentication token returns the profile information
@@ -92,8 +92,6 @@ export async function GET(req: NextRequest) {
     await connectDB()
 
     const profile = await profiles.findOne({ _id: ObjectId.createFromHexString(profileId) })
- 
-    console.log(profile)
 
     if (profile === null) {
         return new NextResponse("Profile not found", { status: 404 })
