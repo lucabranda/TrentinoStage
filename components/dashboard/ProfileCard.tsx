@@ -67,20 +67,10 @@ export interface CardProps {
     isCompany: boolean;
     isOwner: boolean;
     profileData: ProfileUserData | ProfileCompanyData;
+    closeButton: any
 }
 
-/*
-
-finisce la modifica profilo. 
-include: caricamento immagine e cv (appena luca fa gli endpont), 
-sistemare il form. 
-attenzione ai dettagli: mentre sta caricando voglio vedere il bottone settato a loading=true 
-e dopodichè voglio vedere un toast che mostri il successo (vedi login o registrazione). 
-inoltre voglio che dopo l update la pagina sia effettivamente aggiornata anche visivamente
-
-*/
-
-export default function ProfileCard({session, id, messages, isCompany, isOwner = true, profileData}: CardProps) {
+export default function ProfileCard({session, id, messages, isCompany, isOwner = true, profileData, closeButton}: CardProps) {
     const [showEdit, setShowEdit] = useState(false);
     const [isEditing, setIsEditing] = useState<Record<string, boolean>>({});
 
@@ -101,10 +91,7 @@ export default function ProfileCard({session, id, messages, isCompany, isOwner =
         setCity((document.getElementById("city") as HTMLSelectElement)?.value as string);
     }, []);
 
-    const isUserData = (data: ProfileUserData | ProfileCompanyData): data is ProfileUserData => {
-        return (data as ProfileUserData).surname !== undefined;
-    };
-
+    
     const handleEditClick = (field: string, b: boolean) => {
         setIsEditing((prev) => ({...prev, [field]: b}));
     };
@@ -364,7 +351,13 @@ export default function ProfileCard({session, id, messages, isCompany, isOwner =
 
     return (
         <Card
-            title={<Title level={4}>{formData.name || "User Profile"}</Title>}
+            title={
+            <Space direction="horizontal" size="large" style={{width: "100%", justifyContent: "space-between"}}>
+            
+            <Title level={4}>{formData.name || "User Profile"}</Title>
+            {closeButton}
+        </Space>
+        }
             extra={isOwner && (
                 showEdit ?
                     (
@@ -387,15 +380,15 @@ export default function ProfileCard({session, id, messages, isCompany, isOwner =
             style={{maxWidth: 700, margin: "auto"}}
         >
             <Space direction="vertical" size="large" style={{width: "100%", maxHeight: 600, overflowY: "scroll"}}>
-                <Avatar size={64} icon={<UserOutlined/>} style={{marginBottom: 16}}/>
 
+            <Avatar size={64} icon={<UserOutlined/>} style={{marginBottom: 16}}/>
                 {!isCompany ? (
                     <>
                         {renderField(messages["user-card-name-label"], "name")}
-                        {isUserData(formData) && renderField(messages["user-card-surname-label"], "surname")}
-                        {isUserData(formData) && renderField(messages["user-card-bio-label"], "bio",)}
+                        {!isCompany && renderField(messages["user-card-surname-label"], "surname")}
+                        {!isCompany && renderField(messages["user-card-bio-label"], "bio",)}
                         {renderField(messages["user-card-sector-label"], "sector")}
-                        {isUserData(formData) && renderField(messages["user-card-birth-date-label"], "birth_date")}
+                        {!isCompany && renderField(messages["user-card-birth-date-label"], "birth_date")}
 
                         <Row align="middle" style={{
                             marginBottom: 16,

@@ -46,7 +46,6 @@ interface DashboardLayoutProps {
     website: string;
     sector: string;
     partitaIva: string;
-    applicationsList: any;
 }
 
 
@@ -72,7 +71,6 @@ export default function DashboardLayout({
                                             sector,
                                             website,
                                             partitaIva,
-                                            applicationsList
                                         }: DashboardLayoutProps) {
 
     const [collapsed, setCollapsed] = useState(false);
