@@ -22,6 +22,7 @@ import {ApplicationSectionCompany, ApplicationSectionUser} from "../dashboard/Ap
 import {removeSessionToken} from "@/utils/cookie";
 import InviteMembers from "@/components/dashboard/InviteMembers";
 import {DashedButton, LinkButton} from "@/components/buttons/Buttons";
+import ReviewSection from '../dashboard/ReviewSection';
 
 
 interface DashboardLayoutProps {
@@ -46,6 +47,8 @@ interface DashboardLayoutProps {
     website: string;
     sector: string;
     partitaIva: string;
+    identifier: string;
+    profile_image: string;
 }
 
 
@@ -71,6 +74,8 @@ export default function DashboardLayout({
                                             sector,
                                             website,
                                             partitaIva,
+                                            identifier,
+                                            profile_image
                                         }: DashboardLayoutProps) {
 
     const [collapsed, setCollapsed] = useState(false);
@@ -186,7 +191,8 @@ export default function DashboardLayout({
                                         address,
                                         sector,
                                         website,
-                                        partitaIva
+                                        partitaIva,
+                                        profile_image
                                     } as ProfileCompanyData : {
                                         name,
                                         surname,
@@ -194,10 +200,14 @@ export default function DashboardLayout({
                                         birth_date,
                                         address,
                                         sector,
+                                        identifier,
+                                        profile_image,
                                         website,
                                     }) as ProfileUserData | ProfileCompanyData}
                                     closeButton={<></>}/>
-                                    
+                                    <div className={styles.reviewSectionContainer} id="reviews">
+                                        <ReviewSection isCompany={isACompany} session={token} id={profileId} messages={messages} />
+                                    </div>
                                 </section>
                             )}
                             {activeKey === TabKeys.Offers && (
@@ -212,9 +222,9 @@ export default function DashboardLayout({
                             {activeKey === TabKeys.Applications && (
                                 <section key="applications">
                                     {isACompany ? (
-                                        <ApplicationSectionCompany session={token} id={profileId} messages={messages}/>
+                                        <ApplicationSectionCompany session={token} user_company_id={profileId} messages={messages}/>
                                     ) : (
-                                        <ApplicationSectionUser session={token} id={profileId} messages={messages}/>
+                                        <ApplicationSectionUser session={token} user_company_id={profileId} messages={messages}/>
                                     )}
                                 </section>
                             )}

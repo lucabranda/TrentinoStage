@@ -39,7 +39,7 @@ export default async function Home({params}: any) {
     const isACompany = role.includes("company-");
 
     // Ottieni dati profilo
-    const profileResponse = await fetch(`${baseUrl}/api/profiles?token=${encodeURIComponent(sessionToken)}&profileId=${encodeURIComponent(profileId)}`, {
+    const profileResponse = await fetch(`${baseUrl}/api/profiles/get?token=${encodeURIComponent(sessionToken)}&profileId=${encodeURIComponent(profileId)}`, {
         method: "GET",
     });
 
@@ -48,7 +48,7 @@ export default async function Home({params}: any) {
             return (<NewProfileForm token={sessionToken} msgs={messages} styles={styles} isCompany={isACompany}/>);
     }
     const profileData = await profileResponse.json();
-
+    console.log(profileData);
     return (
         <>
             <DashboardLayout
@@ -65,7 +65,9 @@ export default async function Home({params}: any) {
                 bio={profileData.bio}
                 sector={profileData.sector}
                 website={profileData.website}
-                partitaIva={profileData.identifier}
+                partitaIva={profileData.partitaIva}
+                identifier={profileData.identifier}
+                profile_image={profileData.profile_image}
             />
         </>
     );

@@ -24,6 +24,7 @@ import {
 import {DashedButton, LinkButton} from "../buttons/Buttons";
 import {sectors, regions, countries, cities} from "@/utils/enums";
 import dayjs from 'dayjs';
+import { isDeepStrictEqual } from "util";
 const {Title, Text} = Typography;
 const {Option} = Select;
 
@@ -41,6 +42,8 @@ export interface ProfileUserData {
     birth_date: string;
     bio: string;
     sector: string;
+    profile_image: string;
+    identifier: string;
 }
 
 export interface ProfileCompanyData {
@@ -58,6 +61,7 @@ export interface ProfileCompanyData {
     website: string;
     birth_date: string;
     bio: string;
+    profile_image: string;
 }
 
 export interface CardProps {
@@ -119,8 +123,10 @@ export default function ProfileCard({session, id, messages, isCompany, isOwner =
                     street: formData.address?.street,
                     sector: [formData.sector].join(","),
                     ...(isCompany ? {website: (formData as ProfileCompanyData).website} : {surname: (formData as ProfileUserData).surname}),
-                    ...(isCompany ? {identifier: (formData as ProfileCompanyData).partitaIva} : {birthDate: (formData as ProfileUserData).birth_date}),
-                    bio: formData.bio
+                    ...(!isCompany && {birthDate: (formData as ProfileUserData).birth_date}),
+                    ...(isCompany ? {identifier: (formData as ProfileCompanyData).partitaIva} : {identifier: (formData as ProfileUserData).identifier}),
+                    bio: formData.bio,
+                    profile_image: formData.profile_image
                 }),
             });
             if (!res.ok) {
@@ -323,7 +329,7 @@ export default function ProfileCard({session, id, messages, isCompany, isOwner =
                            
                                <Text id={field}>
                                 { field === "birth_date" ?
-                                    (formData[field as keyof (ProfileUserData | ProfileCompanyData)] as string)?.substring(0, 10)
+                                    (formData["birth_date"] as string)?.substring(0, 10)
                                     : field === "sector" ?
                                     messages[`enum-sector-${formData[field as keyof (ProfileUserData | ProfileCompanyData)]}`] 
                                     : (formData[field as keyof (ProfileUserData | ProfileCompanyData)] as string) || ""
@@ -353,10 +359,9 @@ export default function ProfileCard({session, id, messages, isCompany, isOwner =
         <Card
             title={
             <Space direction="horizontal" size="large" style={{width: "100%", justifyContent: "space-between"}}>
-            
-            <Title level={4}>{formData.name || "User Profile"}</Title>
-            {closeButton}
-        </Space>
+                <Title level={4}>{formData.name || "User Profile"}</Title>
+                {closeButton}
+            </Space>
         }
             extra={isOwner && (
                 showEdit ?
@@ -380,12 +385,41 @@ export default function ProfileCard({session, id, messages, isCompany, isOwner =
             style={{maxWidth: 700, margin: "auto"}}
         >
             <Space direction="vertical" size="large" style={{width: "100%", maxHeight: 600, overflowY: "scroll"}}>
-
-            <Avatar size={64} icon={<UserOutlined/>} style={{marginBottom: 16}}/>
+                <Row align="middle" style={{
+                    marginBottom: 16,
+                    width: "100%",
+                    justifyContent: "space-between",
+                    paddingInlineEnd: 16
+                }} key={"profile_image"}>
+                    {(isOwner && showEdit) ? (
+                        <Col>
+                            <Input
+                                type="file"
+                                onChange={(e) => {
+                                    const file = e.target.files?.[0];
+                                    if (file) {
+                                        const reader = new FileReader();
+                                        reader.onload = (e) => {
+                                            const imageData = e.target?.result as string;
+                                            setFormData({...formData, profile_image: imageData});
+                                        };
+                                        reader.readAsDataURL(file);
+                                    }
+                                }}
+                            />
+                        </Col>
+                    ) : (
+                        <Col>
+                            <Avatar size={64} icon={formData.profile_image ? <img src={formData.profile_image} alt="Profile Image" /> : <UserOutlined/>} style={{marginBottom: 16}}/>
+                        </Col>
+                    )}
+                </Row>
+    
                 {!isCompany ? (
                     <>
                         {renderField(messages["user-card-name-label"], "name")}
                         {!isCompany && renderField(messages["user-card-surname-label"], "surname")}
+                        {renderField(messages["user-card-identifier-label"], "identifier")}
                         {!isCompany && renderField(messages["user-card-bio-label"], "bio",)}
                         {renderField(messages["user-card-sector-label"], "sector")}
                         {!isCompany && renderField(messages["user-card-birth-date-label"], "birth_date")}
