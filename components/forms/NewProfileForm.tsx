@@ -28,10 +28,10 @@ export default function NewProfileForm({token, msgs, styles, isCompany}: NewProf
             const sector = values.sector;
             const bio = values.bio;
             const birth_date = values?.birth_date || undefined;
+            const identifier = values?.identifier;
             const profilePicture = values.profilePicture.file.thumbUrl;
 
             const website = (isCompany) && values?.website;
-            const partitaIva = (isCompany) && values?.partitaIva;
             const surname = (!isCompany) && values?.surname;
 
             const res = await fetch("/api/profiles/new", {
@@ -51,8 +51,8 @@ export default function NewProfileForm({token, msgs, styles, isCompany}: NewProf
                     bio: bio,
                     birthDate: birth_date,
                     profile_image: profilePicture,
+                    identifier: identifier,
                     ...(isCompany && {website: website}),
-                    ...(isCompany && {identifier: partitaIva}),
                     ...(!isCompany && {surname: surname})
                 }),
             });
@@ -150,6 +150,11 @@ export default function NewProfileForm({token, msgs, styles, isCompany}: NewProf
             label: <span className={styles.formLabel}>{msgs["user-card-surname-label"]}</span>,
             name: "surname",
             rules: [{required: true, message: msgs["error-surname-not-provided"]}]
+        },
+        {
+            label: <span className={styles.formLabel}>{msgs["user-card-identifier-label"]}</span>,
+            name: "identifier",
+            rules: [{required: true, message: msgs["error-identifier-not-provided"]}]
         },
         {
             label: <span className={styles.formLabel}>{msgs["user-card-bio-label"]}</span>,

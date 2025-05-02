@@ -101,6 +101,7 @@
     "user-card-postal_code-label": "CAP",
     "user-card-address-label": "Indirizzo",
     "user-card-street-label": "Via",
+    "user-card-identifier-label": "Codice Fiscale",
 
     "enum-country-ITALY": "Italia",
     "enum-country-GERMANY": "Germania",

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Card, List, Button, Space, Typography, Select, InputNumber, Avatar, Spin } from 'antd';
-import { CheckCircleOutlined, CheckOutlined, CloseCircleOutlined, CloseOutlined, DeleteOutlined, LoadingOutlined, MinusCircleOutlined } from '@ant-design/icons';
+import { Card, List, Button, Space, Typography, Select, InputNumber, Avatar, Spin, Input, Form, Empty } from 'antd';
+import { CheckCircleOutlined, CheckOutlined, CloseCircleOutlined, CloseOutlined, DeleteOutlined, LoadingOutlined, MinusCircleOutlined, PlusOutlined, SaveOutlined, StarOutlined } from '@ant-design/icons';
 import { DashedButton, LinkButton, PrimaryButton } from '../buttons/Buttons';
 import { Paragraph, Title } from '../Typography';
 import ProfileCard, {ProfileCompanyData, ProfileUserData} from "@/components/dashboard/ProfileCard";
@@ -9,12 +9,13 @@ const { Text } = Typography;
 
 interface ApplicationSectionProps {
     session: string;
-    id: string;
+    user_company_id: string;
     messages: any;
 }
 
-interface Application {
+interface ApplicationCardProps { 
     item: {
+        _id: string,
         title: string,
         description: string,
         sector: string,
@@ -25,7 +26,6 @@ interface Application {
             region: string,
             city: string,
         },
-        _id: string,
         issuer_id: string,
         weekly_hours: number,
         applied_users: {
@@ -39,18 +39,88 @@ interface Application {
     messages: any;
     isCompany: boolean;
     token: string;
-    id: string;
+    user_company_id: string;
 }
 
-const handleAccept = async (session: string, company_id: string, _id: string, issuer_id: string ) => {
-
+const handleAccept = async (session: string, applicationId: string, userId: string, application: any ) => {
+    const res = await fetch(`/api/applications/modify`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${session}`,
+        },
+        body: JSON.stringify({
+            token: session,
+            id: applicationId,
+            title: application.title,
+            description: application.description,
+            sector: application.sector,
+            country: application.location.country,
+            region: application.location.region,
+            city: application.location.city,
+            weekly_hours: application.weekly_hours,
+            chosen_user: userId
+        }),
+    });
+    if ((await res).ok) {
+        console.log("Application accepted successfully");
+    } else {
+        console.log("An error occurred while accepting application");
+    }
 }
 
-const handleReject = async (session: string, company_id: string, _id: string, issuer_id: string ) => {
-
+const handleReject = async (session: string, applicationId: string, userId: string, application: any ) => {
+    const res = await fetch(`/api/applications/modify`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${session}`,
+        },
+        body: JSON.stringify({
+            token: session,
+            id: applicationId,
+            title: application.title,
+            description: application.description,
+            sector: application.sector,
+            country: application.location.country,
+            region: application.location.region,
+            city: application.location.city,
+            weekly_hours: application.weekly_hours,
+            chosen_user: application.chosen_user
+        }),
+    });
+    if ((await res).ok) {
+        console.log("Application rejected successfully");
+    } else {
+        console.log("An error occurred while rejecting application");
+    }
 }
-const handleDelete = (session: string, id: string ) => {
-
+const handleDelete = async (session: string, applicationId: string, userId: string, applied_users: any, application: any ) => {
+    const res = await fetch(`/api/applications/modify`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${session}`,
+        },
+        body: JSON.stringify({
+            token: session,
+            id: applicationId,
+            title: application.title,
+            description: application.description,
+            sector: application.sector,
+            country: application.location.country,
+            region: application.location.region,
+            city: application.location.city,
+            weekly_hours: application.weekly_hours,
+            chosen_user: application.chosen_user,
+            applied_users: applied_users.filter((user: any) => user.user_id !== userId)
+        }),
+    });
+    if ((await res).ok) {
+        console.log("Application deleted successfully");
+    } else {
+        console.log("An error occurred while deleting application");
+    }
 }
 
 function useUserProfileData(token: string, id: string, isACompany: boolean) {
@@ -78,12 +148,13 @@ function useUserProfileData(token: string, id: string, isACompany: boolean) {
                     city: data.city,
                     region: data.region,
                     country: data.country,
-                    postal_code: data.postal_code,
+                    postalCode: data.postal_code,
                     street: data.street
                 },
                 sector: data.sector,
                 website: data.website,
-                partitaIva: data.partitaIva
+                identifier: data.identifier,
+                profile_image: data.profile_image
             } : {
                 name: data.name,
                 surname: data.surname,
@@ -94,11 +165,13 @@ function useUserProfileData(token: string, id: string, isACompany: boolean) {
                     city: data.city,
                     region: data.region,
                     country: data.country,
-                    postal_code: data.postal_code,
+                    postalCode: data.postal_code,
                     street: data.street
                 },
                 sector: data.sector,
-                website: data.website
+                website: data.website,
+                profile_image: data.profile_image,
+                identifier: data.identifier
             });
             setValues(values as ProfileCompanyData | ProfileUserData);
         };
@@ -112,7 +185,7 @@ function useUserProfileData(token: string, id: string, isACompany: boolean) {
 
 }
 
-const UserDetailsRow = ({user, token, messages, itemId, issuerId}: {
+const UserDetailsRow = ({user, token, messages, applicationId, companyId, application}: {
     user: {
         _id: string;
         application_time: string;
@@ -120,19 +193,21 @@ const UserDetailsRow = ({user, token, messages, itemId, issuerId}: {
     };
     token: string;
     messages: any;
-    itemId: string;
-    issuerId: string;
-
+    applicationId: string;
+    companyId: string;
+    application: any;
 }) => {
 
     const [showProfileCard, setShowProfileCard] = useState(false);
     const profile_data = useUserProfileData(token, user.user_id, false) as ProfileUserData;
     return (
         <>
-            <Item style={{display: 'flex', gap: 24, justifyContent: 'space-between'}} id={itemId}>
+        {(application.chosen_user === "" || application.chosen_user === user._id) && (
+            <>
+            <Item style={{display: 'flex', gap: 24, justifyContent: 'space-between', ...(application.chosen_user === user._id ? {backgroundColor: 'lightgreen', padding: '16px', borderRadius: '25px'} : {})}} id={applicationId}>
                 <List.Item.Meta
                     key={user._id}
-                    title={<Avatar src={user._id}
+                    title={<Avatar src={profile_data?.profile_image}
                                    onClick={() => setShowProfileCard(!showProfileCard)}/>}
                     description={
                         <Space direction="vertical" style={{
@@ -142,29 +217,35 @@ const UserDetailsRow = ({user, token, messages, itemId, issuerId}: {
                             justifyContent: 'space-between'
                         }}>
                             <Text strong>{profile_data?.name}</Text>
-                            {/*
-                  <Text strong>{user.message}</Text>
-                  */}
+                            
+                            {/*user?.message && <Text strong>{user?.message}</Text>*/}
+                  
                             <div style={{display: 'flex', gap: 8}}>
-                                <LinkButton
-                                    onClick={() => handleAccept(token, issuerId, itemId, user.user_id)}
-                                    style={{
-                                        border: '1px solid green',
-                                        borderColor: 'green',
-                                        color: 'green'
-                                    }}><CheckOutlined/></LinkButton>
-                                <LinkButton
-                                    onClick={() => handleReject(token, issuerId, itemId, user.user_id)}
-                                    style={{
-                                        borderColor: 'red',
-                                        border:'1px solid red',
-                                        color: 'red'
-                                    }}><CloseOutlined/></LinkButton>
-                                <PrimaryButton
-                                    onClick={()=>setShowProfileCard(!showProfileCard)}
-                                >
-                                    {messages["dashboard-application-show-user-profile"] || "Show user profile"}
-                                </PrimaryButton>
+                                {(application.chosen_user === user._id) ? (
+                                    <Text strong>{messages["dashboard-application-chosen-user"] || "Chosen User"}</Text>
+                                ):(
+                                    <>
+                                        <LinkButton
+                                            onClick={() => handleAccept(token, applicationId, user._id, application)}
+                                            style={{
+                                                border: '1px solid green',
+                                                borderColor: 'green',
+                                                color: 'green'
+                                            }}><CheckOutlined/></LinkButton>
+                                        <LinkButton
+                                            onClick={() => handleReject(token, applicationId, user._id, application)}
+                                            style={{
+                                                borderColor: 'red',
+                                                border:'1px solid red',
+                                                color: 'red'
+                                            }}><CloseOutlined/></LinkButton>
+                                        <PrimaryButton
+                                            onClick={()=>setShowProfileCard(!showProfileCard)}
+                                        >
+                                            {messages["dashboard-application-show-user-profile"] || "Show user profile"}
+                                        </PrimaryButton>
+                                </>
+                                )}
 
                             </div>
                         </Space>
@@ -187,17 +268,127 @@ const UserDetailsRow = ({user, token, messages, itemId, issuerId}: {
                 }}
                 >
 
-                    <ProfileCard session={token} messages={messages} isCompany={false} isOwner={false} profileData={profile_data} id={user.user_id} closeButton={ (<Button onClick={() => setShowProfileCard(false)}
+                    <ProfileCard session={token} messages={messages} isCompany={false} isOwner={false} profileData={profile_data} id={user._id} closeButton={ (<Button onClick={() => setShowProfileCard(false)}
                                                                                                                                                                            style={{border: 'none'}}><CloseCircleOutlined/></Button>)}/>
                 </div>
             )}
+            </>
+        )}
         </>
     );
 };
 
+interface WriteReviewModalProps {
+    token: string;
+    user_id: string;
+    applicationId: string;
+    onClose: () => void;
+    messages: any;
+    reviewedProfile: string;
+}
 
-const ApplicationCard = ({ item, token, id, messages, isCompany }: Application) => {
+const WriteReviewModal = ({ token, user_id, applicationId, onClose, messages, reviewedProfile }: WriteReviewModalProps) => {
+    const [review, setReview] = useState({} as any);
+    const [form] = Form.useForm();
+  
+
+    const handleSaveReview = async () => {
+        form.validateFields()
+            .then(async (values) => {
+                const review = {
+                    token: token,
+                    reviewedProfile: reviewedProfile,
+                    reviewer_id: user_id,
+                    review: values.review,
+                    title: values.title,
+                    rating: values.rating
+                };
+                const res = await fetch(`/api/reviews/review`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`,
+                    },
+                    body: JSON.stringify(review),
+                });
+                console.log(res.body)
+                if ((await res).ok) {
+                    console.log(messages["success"] || "Review updated successfully");
+                    onClose();
+                } else {
+                    console.log(messages["error"] || "An error occurred while updating review");
+                }
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    };
+
+    return (
+        <div style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100vw',
+            height: '100vh',
+            backgroundColor: 'rgba(0,0,0,0.5)',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            zIndex: 1000,
+        }}>
+            <Card style={{width:'80%'}} title={
+                    <div  style={{display: 'flex', justifyContent: 'space-between', width: '100%'}}>
+                       {messages["dashboard-write-review"] || "Write review"}
+                        <Button onClick={onClose}><CloseOutlined /></Button>
+                    </div>
+                }
+            >
+                <Form
+                    form={form}
+                    name="write-review"
+                    layout="vertical"
+                >
+                    <Form.Item
+                        label={messages["dashboard-write-review-title"] || "Title"}
+                        name="title"
+                    >
+                        <Input />
+                    </Form.Item>
+
+                    <Form.Item
+                        label={messages["dashboard-write-review-review"] || "Review"}
+                        name="review"
+                    >
+                        <Input.TextArea />
+                    </Form.Item>
+
+                    <Form.Item
+                        label={<>{messages["dashboard-write-review-rating"] || "Rating " } <StarOutlined color='gold' style={{marginRight: 8}}/></>}
+                        name="rating"
+                    >
+                        <InputNumber
+                            min={1}
+                            max={5}
+                            defaultValue={1}
+                            placeholder="1"
+                        />
+                       
+                    </Form.Item>
+                </Form>
+                
+                <PrimaryButton onClick={handleSaveReview} style={{alignSelf: 'flex-end'}}>{messages["dashboard-save"] || "Save"} <SaveOutlined /></PrimaryButton>
+            </Card>
+        </div>
+    );
+};
+
+const ApplicationCard = ({ item, token, user_company_id, messages, isCompany }: ApplicationCardProps) => {
     const [showCompleteCard, setShowCompleteCard] = useState(false);
+    const [showWriteReview, setShowWriteReview] = useState(false);
+    const handleWriteReview = (token: string, issuerId: string, applicationId: string) => {
+        setShowWriteReview(true);
+    };
     return (
         <>
             {(isCompany) ? (
@@ -206,7 +397,7 @@ const ApplicationCard = ({ item, token, id, messages, isCompany }: Application) 
                       <Title level={4}> {item.title}</Title>
                       <Text type="secondary">{item.applied_users.length} {messages["dashboard-applications"]}</Text>
                   </Item>
-                  {item.applied_users.map((user) => (<UserDetailsRow user={user} token={token} messages={messages} itemId={item._id} issuerId={id}  /> ))}
+                  {item.applied_users.map((user) => (<UserDetailsRow user={user} token={token} messages={messages} applicationId={item._id} companyId={user_company_id}  application={item}/>))}
               </>
                 ) : (
                     <>
@@ -214,7 +405,7 @@ const ApplicationCard = ({ item, token, id, messages, isCompany }: Application) 
 
                         {(item.chosen_user === undefined) ? (
                             <MinusCircleOutlined style={{color: 'gold'}}/>
-                        ) : item.chosen_user === item.issuer_id ? (
+                        ) : item.chosen_user === user_company_id ? (
                             <CheckCircleOutlined style={{color: 'green'}}/>
                         ) : (
                             <CloseCircleOutlined style={{color: 'red'}}/>
@@ -249,7 +440,7 @@ const ApplicationCard = ({ item, token, id, messages, isCompany }: Application) 
 
                                     <div style={{display: 'flex', gap: 8}}>
                                         <DashedButton onClick={() => {
-                                            handleDelete(token, id)
+                                            handleDelete(token, item._id,user_company_id, item.applied_users, item)
                                         }} style={{
                                             borderColor: 'red',
                                             color: 'red',
@@ -257,12 +448,26 @@ const ApplicationCard = ({ item, token, id, messages, isCompany }: Application) 
                                         }}><DeleteOutlined style={{color: 'red'}}/></DashedButton>
                                         <PrimaryButton
                                             onClick={() => setShowCompleteCard(!showCompleteCard)}>{messages["dashboard-show-details"] || "Show details"}</PrimaryButton>
+                                        {item.chosen_user === user_company_id && (
+                                            <LinkButton 
+                                                onClick={() => (handleWriteReview(token, user_company_id, item._id))}>{messages["dashboard-write-review"] || "Write review"} <PlusOutlined /></LinkButton>
+                                        )}
                                     </div>
                                 </Space>
                             }
                         />
 
                     </Item>
+                    {showWriteReview && (
+                        <WriteReviewModal
+                            token={token}
+                            user_id={user_company_id}
+                            applicationId={item._id}
+                            onClose={() => setShowWriteReview(false)}
+                            messages={messages}
+                            reviewedProfile={item.issuer_id}
+                        />
+                    )}
                 </>
             )}
 
@@ -334,7 +539,7 @@ const ApplicationCard = ({ item, token, id, messages, isCompany }: Application) 
     );
 }
 
-const useApplications = (session: string, id: string) => {
+const useApplications = (session: string, id: string, isACompany: boolean) => {
     const [applications, setApplications] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -342,8 +547,12 @@ const useApplications = (session: string, id: string) => {
     useEffect(() => {
         const fetchApplications = async () => {
             try {
-                const res = await fetch("/api/applications/list?token=" + session + "&companyProfile=" + id);
+                const str = "&companyProfile=" + id;
+                const res = await fetch("/api/applications/list?token=" + session + str,{
+                    method: "GET"
+                });
                 const data = await res.json();
+                console.log(data);
                 setApplications(data);
             } catch (err) {
                 setError(err instanceof Error ? err.message : 'Failed to fetch applications');
@@ -358,9 +567,10 @@ const useApplications = (session: string, id: string) => {
     return { applications, loading, error };
 };
 
-function ApplicationSectionCompany({ session, id, messages }: ApplicationSectionProps) {
-     let { applications, loading, error } = useApplications(session, id);
+function ApplicationSectionCompany({ session, user_company_id, messages }: ApplicationSectionProps) {
+    let { applications, loading, error } = useApplications(session, user_company_id, true);
     applications = applications.filter((application:{
+        _id: string,
         sector: string,
         maxTime: number,
         minTime: number,
@@ -392,27 +602,9 @@ function ApplicationSectionCompany({ session, id, messages }: ApplicationSection
     return(
         <Card title={messages["dashboard-company-appliactions"] || "Company Applications"}>
             <List
-                dataSource={applications.filter((application: {
-                    sector: string,
-                    maxTime: number,
-                    minTime: number,
-                    location: {
-                        country: string,
-                        region: string,
-                        city: string,
-                    },
-                    weekly_hours: number,
-                    applied_users: {
-                        _id: string,
-                        application_time: string;
-                        user_id: string;
-                    }[],
-                    chosen_user: string,
-                    creation_time: string
-                }) => {
-                   return applications
-                })}
+                dataSource={applications}
                 renderItem={(item: {
+                    _id: string,
                     title: string,
                     description: string,
                     sector: string,
@@ -423,7 +615,6 @@ function ApplicationSectionCompany({ session, id, messages }: ApplicationSection
                         region: string,
                         city: string,
                     },
-                    _id: string,
                     issuer_id: string,
                     weekly_hours: number,
                     applied_users: {
@@ -434,7 +625,7 @@ function ApplicationSectionCompany({ session, id, messages }: ApplicationSection
                     chosen_user: string,
                     creation_time: string
                 }) => (
-                    <ApplicationCard item={item} messages={messages} isCompany={true} token={session} id={id}/>
+                    <ApplicationCard item={item} messages={messages} isCompany={true} token={session} user_company_id={user_company_id}/>
                 )}
             />
         </Card>
@@ -442,10 +633,15 @@ function ApplicationSectionCompany({ session, id, messages }: ApplicationSection
 }
 
 
-function ApplicationSectionUser({ session, id, messages }: ApplicationSectionProps) {
+function ApplicationSectionUser({ session, user_company_id, messages }: ApplicationSectionProps) {
     const [status, setStatus] = useState('-');
 
-    let { applications, loading, error } = useApplications(session, id);
+    let { applications, loading, error } = useApplications(session, user_company_id, false);
+
+    if(applications.length === 0) return <Card title={messages["dashboard-user-appliactions"] || "User Applications"}>
+                <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+            </Card>;
+
 
     if (loading) return (
         <Card title={messages["dashboard-user-appliactions"] || "User Applications"}>
@@ -459,6 +655,8 @@ function ApplicationSectionUser({ session, id, messages }: ApplicationSectionPro
         <Card title={messages["dashboard-user-appliactions"] || "User Applications"}>
             <Text type="secondary">{error}</Text>
         </Card>);
+    
+
 
     return(
         <Card title={messages["dashboard-user-appliactions"] || "User Applications"}>
@@ -495,9 +693,9 @@ function ApplicationSectionUser({ session, id, messages }: ApplicationSectionPro
                     if(status === 'pending')
                         return application.chosen_user === undefined;
                     if(status === 'accepted')
-                        return application.chosen_user === id;
+                        return application.chosen_user === user_company_id;
                     if(status === 'rejected')
-                        return application.chosen_user !== id;
+                        return application.chosen_user !== user_company_id;
                 })}
                 renderItem={(item: {
                     title: string,
@@ -521,7 +719,7 @@ function ApplicationSectionUser({ session, id, messages }: ApplicationSectionPro
                     chosen_user: string,
                     creation_time: string
                 }) => (
-                    <ApplicationCard item={item} messages={messages} isCompany={false} token={session} id={id}/>
+                    <ApplicationCard item={item} messages={messages} isCompany={false} token={session} user_company_id={user_company_id}/>
                 )}
             />
         </Card>

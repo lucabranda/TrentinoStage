@@ -139,6 +139,7 @@
   "user-card-postal_code-label": "Postal Code",
   "user-card-address-label": "Address",
   "user-card-street-label": "Street",
+  "user-card-identifier-label": "Tax Code",
   "enum-country-ITALY": "Italy",
   "enum-country-GERMANY": "Germany",
   "enum-country-UNITED_KINGDOM": "United Kingdom",
