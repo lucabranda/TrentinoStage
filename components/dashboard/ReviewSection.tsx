@@ -130,7 +130,7 @@ const ReviewCard = ({review, messages, isCompany, session}: {review: {
         >
             <div className="flex items-center">
                 {userProfileData && (
-                    <Avatar onClick={() => setShowProfileCard(!showProfileCard)} size={40} src={userProfileData?.profile_image || ""} />
+                    <Avatar onClick={()=>setShowProfileCard(!showProfileCard)} size={64} icon={userProfileData.profile_image ? <img src={userProfileData.profile_image} alt="Profile Image" /> : <UserOutlined/>}/>
                 )}
                 <Text>{review.review}</Text>
             </div>
@@ -226,7 +226,7 @@ const useUserProfileData = (token: string, id: string, isACompany: boolean) => {
                     city: data.city,
                     region: data.region,
                     country: data.country,
-                    postal_code: data.postal_code,
+                    postalCode: data.postal_code,
                     street: data.street
                 },
                 sector: data.sector,
@@ -240,7 +240,7 @@ const useUserProfileData = (token: string, id: string, isACompany: boolean) => {
                     city: data.city,
                     region: data.region,
                     country: data.country,
-                    postal_code: data.postal_code,
+                    postalCode: data.postal_code,
                     street: data.street
                 },
                 sector: data.sector,

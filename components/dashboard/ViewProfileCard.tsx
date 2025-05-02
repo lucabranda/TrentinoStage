@@ -22,7 +22,7 @@ export default async function ViewProfileCard({token, profile_id, messages, isAC
             city: profileData!.address?.city,
             region: profileData!.address?.region,
             country: profileData!.address?.country,
-            postal_code: profileData!.address?.postalCode,
+            postalCode: profileData!.address?.postalCode,
             street: profileData!.address?.street
         },
         sector: profileData!.sector,
@@ -39,7 +39,7 @@ export default async function ViewProfileCard({token, profile_id, messages, isAC
             city: profileData!.address?.city,
             region: profileData!.address?.region,
             country: profileData!.address?.country,
-            postal_code: profileData!.address?.postalCode,
+            postalCode: profileData!.address?.postalCode,
             street: profileData!.address?.street
         },
         sector: profileData!.sector,

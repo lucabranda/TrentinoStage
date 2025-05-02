@@ -118,7 +118,7 @@ export async function POST(req: NextRequest) {
     const bio = safeSanitize(formData.get("bio"))
     const sector = safeSanitize(formData.get("sector") )
     const website = safeSanitize(formData.get("website"))
-
+    const profile_image = formData.get("profile_image") as string
     const rawBirthDate = formData.get("birthDate")
     const birth_date = typeof rawBirthDate === "string" ? rawBirthDate.trim() : null
 
@@ -180,7 +180,9 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: "Invalid birth date format", code: "error-invalid-date" }, { status: 400 })
         }
     }
-
+    if(profile_image){
+        edit['profile_image'] = profile_image
+    }
 
     await connectDB()
 
