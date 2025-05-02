@@ -39,14 +39,13 @@ interface DashboardLayoutProps {
         city: string;
         region: string;
         country: string;
-        postal_code: string;
+        postalCode: string;
         street: string;
     }
     birth_date: string;
     bio: string;
     website: string;
     sector: string;
-    partitaIva: string;
     identifier: string;
     profile_image: string;
 }
@@ -73,7 +72,6 @@ export default function DashboardLayout({
                                             bio,
                                             sector,
                                             website,
-                                            partitaIva,
                                             identifier,
                                             profile_image
                                         }: DashboardLayoutProps) {
@@ -191,7 +189,7 @@ export default function DashboardLayout({
                                         address,
                                         sector,
                                         website,
-                                        partitaIva,
+                                        identifier,
                                         profile_image
                                     } as ProfileCompanyData : {
                                         name,

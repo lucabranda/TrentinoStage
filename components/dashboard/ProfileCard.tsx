@@ -36,7 +36,7 @@ export interface ProfileUserData {
         city: string;
         region: string;
         country: string;
-        postal_code: string;
+        postalCode: string;
         street: string;
     };
     birth_date: string;
@@ -53,11 +53,11 @@ export interface ProfileCompanyData {
         city: string;
         region: string;
         country: string;
-        postal_code: string;
+        postalCode: string;
         street: string;
     };
     sector: string;
-    partitaIva: string;
+    identifier: string;
     website: string;
     birth_date: string;
     bio: string;
@@ -108,8 +108,8 @@ export default function ProfileCard({session, id, messages, isCompany, isOwner =
         }
         setLoading(true);
         try {
-            const res = await fetch("/api/profiles", {
-                method: "PUT",
+            const res = await fetch("/api/profiles/modify", {
+                method: "POST",
                 headers: {"Content-Type": "application/json"},
                 body: JSON.stringify({
                     sessionToken: session,
@@ -119,12 +119,12 @@ export default function ProfileCard({session, id, messages, isCompany, isOwner =
                     country: formData.address?.country,
                     region: formData.address?.region,
                     city: formData.address?.city,
-                    postalCode: formData.address?.postal_code,
+                    postal_code: formData.address?.postalCode,
                     street: formData.address?.street,
                     sector: [formData.sector].join(","),
                     ...(isCompany ? {website: (formData as ProfileCompanyData).website} : {surname: (formData as ProfileUserData).surname}),
-                    ...(!isCompany && {birthDate: (formData as ProfileUserData).birth_date}),
-                    ...(isCompany ? {identifier: (formData as ProfileCompanyData).partitaIva} : {identifier: (formData as ProfileUserData).identifier}),
+                    ...(!isCompany && {birth_date: (formData as ProfileUserData).birth_date}),
+                    identifier: formData.identifier,
                     bio: formData.bio,
                     profile_image: formData.profile_image
                 }),
@@ -329,7 +329,7 @@ export default function ProfileCard({session, id, messages, isCompany, isOwner =
                            
                                <Text id={field}>
                                 { field === "birth_date" ?
-                                    (formData["birth_date"] as string)?.substring(0, 10)
+                                    (formData["birth_date"] as string)?.substring(0, 10) || "Invalid"
                                     : field === "sector" ?
                                     messages[`enum-sector-${formData[field as keyof (ProfileUserData | ProfileCompanyData)]}`] 
                                     : (formData[field as keyof (ProfileUserData | ProfileCompanyData)] as string) || ""
@@ -418,11 +418,11 @@ export default function ProfileCard({session, id, messages, isCompany, isOwner =
                 {!isCompany ? (
                     <>
                         {renderField(messages["user-card-name-label"], "name")}
-                        {!isCompany && renderField(messages["user-card-surname-label"], "surname")}
+                        {renderField(messages["user-card-surname-label"], "surname")}
                         {renderField(messages["user-card-identifier-label"], "identifier")}
-                        {!isCompany && renderField(messages["user-card-bio-label"], "bio",)}
+                        {renderField(messages["user-card-bio-label"], "bio",)}
                         {renderField(messages["user-card-sector-label"], "sector")}
-                        {!isCompany && renderField(messages["user-card-birth-date-label"], "birth_date")}
+                        {renderField(messages["user-card-birth-date-label"], "birth_date")}
 
                         <Row align="middle" style={{
                             marginBottom: 16,
@@ -455,7 +455,7 @@ export default function ProfileCard({session, id, messages, isCompany, isOwner =
                 ) : (
                     <>
                         {renderField(messages["user-card-name-label"], "name")}
-                        {renderField(messages["company-card-partita-iva-label"], "partitaIva")}
+                        {renderField(messages["company-card-partita-iva-label"], "identifier")}
                         {renderField(messages["company-card-sector-label"], "sector")}
                         <Row align="middle" style={{
                             marginBottom: 16,

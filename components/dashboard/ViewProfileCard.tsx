@@ -27,7 +27,7 @@ export default async function ViewProfileCard({token, profile_id, messages, isAC
         },
         sector: profileData!.sector,
         website: profileData!.website,
-        partitaIva: profileData!.identifier,
+        identifier: profileData!.identifier,
         profile_image: profileData!.profile_image
     } as ProfileCompanyData : { 
         name: profileData!.name,

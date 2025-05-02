@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Card, List, Button, Space, Typography, Select, InputNumber, Avatar, Spin, Input, Form } from 'antd';
-import { CheckCircleOutlined, CheckOutlined, CloseCircleOutlined, CloseOutlined, DeleteOutlined, LoadingOutlined, MinusCircleOutlined, PlusOutlined, SaveOutlined } from '@ant-design/icons';
+import { Card, List, Button, Space, Typography, Select, InputNumber, Avatar, Spin, Input, Form, Empty } from 'antd';
+import { CheckCircleOutlined, CheckOutlined, CloseCircleOutlined, CloseOutlined, DeleteOutlined, LoadingOutlined, MinusCircleOutlined, PlusOutlined, SaveOutlined, StarOutlined } from '@ant-design/icons';
 import { DashedButton, LinkButton, PrimaryButton } from '../buttons/Buttons';
 import { Paragraph, Title } from '../Typography';
 import ProfileCard, {ProfileCompanyData, ProfileUserData} from "@/components/dashboard/ProfileCard";
@@ -148,12 +148,12 @@ function useUserProfileData(token: string, id: string, isACompany: boolean) {
                     city: data.city,
                     region: data.region,
                     country: data.country,
-                    postal_code: data.postal_code,
+                    postalCode: data.postal_code,
                     street: data.street
                 },
                 sector: data.sector,
                 website: data.website,
-                partitaIva: data.partitaIva,
+                identifier: data.identifier,
                 profile_image: data.profile_image
             } : {
                 name: data.name,
@@ -165,7 +165,7 @@ function useUserProfileData(token: string, id: string, isACompany: boolean) {
                     city: data.city,
                     region: data.region,
                     country: data.country,
-                    postal_code: data.postal_code,
+                    postalCode: data.postal_code,
                     street: data.street
                 },
                 sector: data.sector,
@@ -204,7 +204,7 @@ const UserDetailsRow = ({user, token, messages, applicationId, companyId, applic
         <>
         {(application.chosen_user === "" || application.chosen_user === user._id) && (
             <>
-            <Item style={{display: 'flex', gap: 24, justifyContent: 'space-between'}} id={applicationId}>
+            <Item style={{display: 'flex', gap: 24, justifyContent: 'space-between', ...(application.chosen_user === user._id ? {backgroundColor: 'lightgreen', padding: '16px', borderRadius: '25px'} : {})}} id={applicationId}>
                 <List.Item.Meta
                     key={user._id}
                     title={<Avatar src={profile_data?.profile_image}
@@ -217,9 +217,9 @@ const UserDetailsRow = ({user, token, messages, applicationId, companyId, applic
                             justifyContent: 'space-between'
                         }}>
                             <Text strong>{profile_data?.name}</Text>
-                            {/*
-                  <Text strong>{user.message}</Text>
-                  */}
+                            
+                            {/*user?.message && <Text strong>{user?.message}</Text>*/}
+                  
                             <div style={{display: 'flex', gap: 8}}>
                                 {(application.chosen_user === user._id) ? (
                                     <Text strong>{messages["dashboard-application-chosen-user"] || "Chosen User"}</Text>
@@ -284,31 +284,34 @@ interface WriteReviewModalProps {
     applicationId: string;
     onClose: () => void;
     messages: any;
+    reviewedProfile: string;
 }
 
-const WriteReviewModal = ({ token, user_id, applicationId, onClose, messages }: WriteReviewModalProps) => {
+const WriteReviewModal = ({ token, user_id, applicationId, onClose, messages, reviewedProfile }: WriteReviewModalProps) => {
     const [review, setReview] = useState({} as any);
     const [form] = Form.useForm();
-
-   
+  
 
     const handleSaveReview = async () => {
         form.validateFields()
             .then(async (values) => {
                 const review = {
+                    token: token,
+                    reviewedProfile: reviewedProfile,
                     reviewer_id: user_id,
-                    message: values.message,
+                    review: values.review,
                     title: values.title,
                     rating: values.rating
                 };
-                const res = await fetch(`/api/reviews?token=${token}&reviewedProfile=${applicationId}`, {
-                    method: "PUT",
+                const res = await fetch(`/api/reviews/review`, {
+                    method: "POST",
                     headers: {
                         "Content-Type": "application/json",
                         "Authorization": `Bearer ${token}`,
                     },
                     body: JSON.stringify(review),
                 });
+                console.log(res.body)
                 if ((await res).ok) {
                     console.log(messages["success"] || "Review updated successfully");
                     onClose();
@@ -334,8 +337,13 @@ const WriteReviewModal = ({ token, user_id, applicationId, onClose, messages }: 
             alignItems: 'center',
             zIndex: 1000,
         }}>
-            <Card title={messages["dashboard-write-review"] || "Write review"}>
-                <Button onClick={onClose}>{messages["dashboard-close"] || "Close"} <CloseOutlined /></Button>
+            <Card style={{width:'80%'}} title={
+                    <div  style={{display: 'flex', justifyContent: 'space-between', width: '100%'}}>
+                       {messages["dashboard-write-review"] || "Write review"}
+                        <Button onClick={onClose}><CloseOutlined /></Button>
+                    </div>
+                }
+            >
                 <Form
                     form={form}
                     name="write-review"
@@ -349,21 +357,27 @@ const WriteReviewModal = ({ token, user_id, applicationId, onClose, messages }: 
                     </Form.Item>
 
                     <Form.Item
-                        label={messages["dashboard-write-review-message"] || "Message"}
-                        name="message"
+                        label={messages["dashboard-write-review-review"] || "Review"}
+                        name="review"
                     >
                         <Input.TextArea />
                     </Form.Item>
 
                     <Form.Item
-                        label={messages["dashboard-write-review-rating"] || "Rating"}
+                        label={<>{messages["dashboard-write-review-rating"] || "Rating " } <StarOutlined color='gold' style={{marginRight: 8}}/></>}
                         name="rating"
                     >
-                        <InputNumber min={1} max={5} />
+                        <InputNumber
+                            min={1}
+                            max={5}
+                            defaultValue={1}
+                            placeholder="1"
+                        />
+                       
                     </Form.Item>
                 </Form>
                 
-                <Button onClick={handleSaveReview}>{messages["dashboard-save"] || "Save"} <SaveOutlined /></Button>
+                <PrimaryButton onClick={handleSaveReview} style={{alignSelf: 'flex-end'}}>{messages["dashboard-save"] || "Save"} <SaveOutlined /></PrimaryButton>
             </Card>
         </div>
     );
@@ -434,7 +448,7 @@ const ApplicationCard = ({ item, token, user_company_id, messages, isCompany }: 
                                         }}><DeleteOutlined style={{color: 'red'}}/></DashedButton>
                                         <PrimaryButton
                                             onClick={() => setShowCompleteCard(!showCompleteCard)}>{messages["dashboard-show-details"] || "Show details"}</PrimaryButton>
-                                        {item.chosen_user === item.issuer_id && (
+                                        {item.chosen_user === user_company_id && (
                                             <LinkButton 
                                                 onClick={() => (handleWriteReview(token, user_company_id, item._id))}>{messages["dashboard-write-review"] || "Write review"} <PlusOutlined /></LinkButton>
                                         )}
@@ -451,6 +465,7 @@ const ApplicationCard = ({ item, token, user_company_id, messages, isCompany }: 
                             applicationId={item._id}
                             onClose={() => setShowWriteReview(false)}
                             messages={messages}
+                            reviewedProfile={item.issuer_id}
                         />
                     )}
                 </>
@@ -524,7 +539,7 @@ const ApplicationCard = ({ item, token, user_company_id, messages, isCompany }: 
     );
 }
 
-const useApplications = (session: string, id: string) => {
+const useApplications = (session: string, id: string, isACompany: boolean) => {
     const [applications, setApplications] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -532,8 +547,12 @@ const useApplications = (session: string, id: string) => {
     useEffect(() => {
         const fetchApplications = async () => {
             try {
-                const res = await fetch("/api/applications/list?token=" + session + "&companyProfile=" + id);
+                const str = "&companyProfile=" + id;
+                const res = await fetch("/api/applications/list?token=" + session + str,{
+                    method: "GET"
+                });
                 const data = await res.json();
+                console.log(data);
                 setApplications(data);
             } catch (err) {
                 setError(err instanceof Error ? err.message : 'Failed to fetch applications');
@@ -549,7 +568,7 @@ const useApplications = (session: string, id: string) => {
 };
 
 function ApplicationSectionCompany({ session, user_company_id, messages }: ApplicationSectionProps) {
-    let { applications, loading, error } = useApplications(session, user_company_id);
+    let { applications, loading, error } = useApplications(session, user_company_id, true);
     applications = applications.filter((application:{
         _id: string,
         sector: string,
@@ -617,7 +636,12 @@ function ApplicationSectionCompany({ session, user_company_id, messages }: Appli
 function ApplicationSectionUser({ session, user_company_id, messages }: ApplicationSectionProps) {
     const [status, setStatus] = useState('-');
 
-    let { applications, loading, error } = useApplications(session, user_company_id);
+    let { applications, loading, error } = useApplications(session, user_company_id, false);
+
+    if(applications.length === 0) return <Card title={messages["dashboard-user-appliactions"] || "User Applications"}>
+                <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+            </Card>;
+
 
     if (loading) return (
         <Card title={messages["dashboard-user-appliactions"] || "User Applications"}>
@@ -631,6 +655,8 @@ function ApplicationSectionUser({ session, user_company_id, messages }: Applicat
         <Card title={messages["dashboard-user-appliactions"] || "User Applications"}>
             <Text type="secondary">{error}</Text>
         </Card>);
+    
+
 
     return(
         <Card title={messages["dashboard-user-appliactions"] || "User Applications"}>
