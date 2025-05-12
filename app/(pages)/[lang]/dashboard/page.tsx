@@ -39,7 +39,7 @@ export default async function Home({params}: any) {
     const isACompany = role.includes("company-");
 
     // Ottieni dati profilo
-    const profileResponse = await fetch(`${baseUrl}/api/profiles/get?token=${encodeURIComponent(sessionToken)}&profileId=${encodeURIComponent(profileId)}`, {
+    const profileResponse = await fetch(`${baseUrl}/api/profiles?token=${encodeURIComponent(sessionToken)}&profileId=${encodeURIComponent(profileId)}`, {
         method: "GET",
     });
 
