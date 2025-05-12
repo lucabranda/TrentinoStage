@@ -75,6 +75,8 @@ import accounts from "@/utils/model/accounts"
  *                   type: boolean
  *                 cv:
  *                   type: string
+ *                 profile_image:
+ *                   type: string
  *       400:
  *         description: Invalid profile ID or other bad request
  *       401:
@@ -247,7 +249,8 @@ export async function GET(req: NextRequest) {
             address: profile.address,
             identifier: profile.identifier,
             sector: profile.sector,
-            isCompany: profile.is_company
+            isCompany: profile.is_company,
+            profile_mage: profile.profile_image
         }, { status: 200 })
     } else if ((await accountInfo).role === "company-manager" || (await accountInfo).role === "company-employee") {
         return NextResponse.json({
@@ -256,7 +259,8 @@ export async function GET(req: NextRequest) {
             bio: bio, 
             website: website,
             cv: profile.cv,
-            isCompany: profile.is_company
+            isCompany: profile.is_company,
+            profile_image: profile.profileImage
         }, { status: 200 })
     } else if ((await accountInfo).role === "admin") {
         return NextResponse.json({
@@ -269,7 +273,8 @@ export async function GET(req: NextRequest) {
             identifier: profile.identifier,
             sector: profile.sector,
             cv: profile.cv,
-            isCompany: profile.is_company
+            isCompany: profile.is_company,
+            profile_image: profile.profileImage
         }, { status: 200 })
     } else {
         return NextResponse.json({
@@ -277,7 +282,8 @@ export async function GET(req: NextRequest) {
             surname: surname, 
             bio: bio, 
             website: website,
-            isCompany: profile.is_company
+            isCompany: profile.is_company,
+            profile_image: profile.profileImage
         }, { status: 200 })
     }
 

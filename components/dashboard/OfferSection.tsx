@@ -1,6 +1,6 @@
 "use client"
 import React, {useState} from 'react';
-import {Card, List, Button, Input, Space, Typography, Form, Collapse, Tag, Modal} from 'antd';
+import {Card, List, Button, Input, Space, Typography, Form, Collapse, Tag, Modal, Avatar} from 'antd';
 import {message} from 'antd';
 import {
     ClockCircleOutlined,
@@ -8,9 +8,10 @@ import {
     EditFilled,
     EyeFilled, LoadingOutlined,
     PushpinOutlined,
-    SnippetsFilled
+    SnippetsFilled, UserOutlined
 } from '@ant-design/icons';
 import {DashedButton, PrimaryButton} from '../buttons/Buttons';
+import ProfileCard from "@/components/dashboard/ProfileCard";
 
 const {Item} = List;
 const {Text} = Typography;
@@ -182,6 +183,10 @@ interface FormValues {
     creation_time?: string;
     id?: string;
     applied_users?: any[];
+    company_name?: string;
+    company_image?: string;
+    issuer_id?: string;
+    location?: any;
 }
 
 const OfferSectionCompany: React.FC<OfferSectionProps> = ({session, id, messages}) => {
@@ -437,59 +442,207 @@ const OfferSectionCompany: React.FC<OfferSectionProps> = ({session, id, messages
     );
 };
 
-const OfferSectionUser: React.FC<OfferSectionProps> = ({session, id, messages}) => {
+const OfferSectionUser: React.FC<OfferSectionProps> = ({ session, id, messages }) => {
     const [offers, setOffers] = useState<FormValues[]>([]);
     const [isLoading, setIsLoading] = useState(true);
-    let _offers: FormValues[] = [];
+    const [appliedOffers, setAppliedOffers] = useState<string[]>([]);
+    const [filter, setFilter] = useState<string>("");
+    const [isModalVisible, setIsModalVisible] = useState(false);
+    const [selectedOffer, setSelectedOffer] = useState<FormValues | null>(null);
+    const [isProfileModalVisible, setIsProfileModalVisible] = useState(false);
+    const [selectedProfileId, setSelectedProfileId] = useState<string | null>(null);
+    const [profileData, setProfileData] = useState<any | null>(null);
 
-    if (isLoading) {
+    const fetchOffers = async () => {
+        try {
+            const response = await fetch(`/api/positions?token=${session}`, { method: "GET" });
+            if (!response.ok) throw new Error("Error fetching offers");
+            const data = await response.json();
 
-        fetch(`/api/positions?token=${session}&profileId=${id}`, {
-            method: "GET"
-        })
-            .then(response => {
-                if (!response.ok) throw new Error("Errore nella fetch");
-                return response.json();
-            })
-            .then(data => {
-                data.forEach((item: any) => {
-                    _offers.push({
-                        city: item.location.city,
-                        country: item.location.country,
-                        title: item.title,
-                        description: item.description,
-                        region: item.location.region,
-                        sector: item.sector,
-                        weekly_hours: item.weekly_hours,
-                        creation_time: item.creation_time,
-                        id: item._id
-                    });
+            const profilesMap = new Map();
+            await Promise.all(
+                data.map(async (item: any) => {
+                    if (!profilesMap.has(item.issuer_id)) {
+                        const profileResponse = await fetch(`/api/profiles?profileId=${item.issuer_id}&token=${session}`, { method: "GET" });
+                        if (!profileResponse.ok) throw new Error("Error fetching profile");
+                        const profileData = await profileResponse.json();
+                        profilesMap.set(item.issuer_id, profileData);
+                    }
                 })
+            );
 
-                setOffers(_offers);
-                setIsLoading(false);
-            })
-            .catch(err => {
-                console.error("Errore:", err);
+            const offersWithProfiles = data.map((item: any) => {
+                const profileData = profilesMap.get(item.issuer_id);
+                return {
+                    ...item,
+                    id: item._id,
+                    company_name: profileData?.name,
+                    company_image: profileData?.profile_image,
+                    location: `${item.location.city}, ${item.location.country}`,
+                    weekly_hours: item.weekly_hours,
+                };
             });
-    }
+
+            const appliedResponse = await fetch(`/api/applications?token=${session}`, { method: "GET" });
+            if (!appliedResponse.ok) throw new Error("Error fetching applications");
+            const appliedData = await appliedResponse.json();
+
+            setOffers(offersWithProfiles);
+            setAppliedOffers(appliedData.map((app: any) => app._id));
+        } catch (error) {
+            console.error("Error:", error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const fetchProfileData = async (profileId: string) => {
+        try {
+            const response = await fetch(`/api/profiles?profileId=${profileId}&token=${session}`, { method: "GET" });
+            if (!response.ok) throw new Error("Error fetching profile data");
+            const data = await response.json();
+            setProfileData(data);
+        } catch (error) {
+            console.error("Error fetching profile data:", error);
+        }
+    };
+
+    useState(() => {
+        fetchOffers();
+    });
+
+    const handleApply = async () => {
+        if (!selectedOffer) return;
+        try {
+            const response = await fetch("/api/applications", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ token: session, positionId: selectedOffer.id }),
+            });
+            if (response.ok) {
+                message.success(messages["dashboard-apply-success"] || "Application sent successfully!");
+                setAppliedOffers([...appliedOffers, selectedOffer.id as string]);
+                setIsModalVisible(false);
+            } else {
+                throw new Error(messages["dashboard-apply-error"] || "Failed to send application.");
+            }
+        } catch (error) {
+            message.error((error as any).message);
+        }
+    };
+
+    const filteredOffers = offers.filter((offer) =>
+        offer.title.toLowerCase().includes(filter.toLowerCase()) ||
+        offer.description.toLowerCase().includes(filter.toLowerCase())
+    );
 
     return (
-        <>
-            <Card title={messages["dashboard-user-offers"] || "User Offers"}>
-                <List
-                    loading={isLoading}
-                    dataSource={offers}
-                    renderItem={(item) => (
-                        <OfferCard title={item.title} description={item.description} city={item.city}
-                                   weekly_hours={item.weekly_hours} messages={messages} isCompany={false}
-                                   id={item.id ?? ""} session={session ?? ""} sector={item.sector}/>
-                    )}
-                />
-            </Card>
-        </>
+        <Card title={messages["dashboard-user-offers"] || "User Offers"}>
+            <Input
+                placeholder={messages["dashboard-filter-placeholder"] || "Filter offers..."}
+                value={filter}
+                onChange={(e) => setFilter(e.target.value)}
+                style={{ marginBottom: 16 }}
+            />
+            <List
+                loading={isLoading}
+                dataSource={filteredOffers}
+                renderItem={(item) => (
+                    <List.Item
+                        actions={[
+                            appliedOffers.includes(item.id as string) ? (
+                                <Tag color="green">{messages["dashboard-applied"] || "Applied"}</Tag>
+                            ) : (
+                                <Button
+                                    type="primary"
+                                    onClick={() => {
+                                        setSelectedOffer(item);
+                                        setIsModalVisible(true);
+                                    }}
+                                >
+                                    {messages["dashboard-apply"] || "Apply"}
+                                </Button>
+                            ),
+                            <Button
+                                onClick={() => {
+                                    setSelectedProfileId(item.issuer_id as string);
+                                    fetchProfileData(item.issuer_id as string);
+                                    setIsProfileModalVisible(true);
+                                }}
+                            >
+                                {messages["dashboard-view-profile"] || "View Profile"}
+                            </Button>,
+                        ]}
+                    >
+                        <List.Item.Meta
+                            avatar={
+                                <Avatar
+                                    icon={
+                                        item.company_image ? (
+                                            <img
+                                                src={item.company_image}
+                                                alt={item.company_name}
+                                                style={{ width: 50, height: 50, borderRadius: "50%" }}
+                                            />
+                                        ) : (
+                                            <UserOutlined />
+                                        )
+                                    }
+                                />
+                            }
+                            title={
+                                <>
+                                    <Text strong>{item.title}</Text>
+                                    <Tag color="geekblue">{item.company_name}</Tag>
+                                </>
+                            }
+                            description={
+                                <>
+                                    <Text type="secondary">{item.description}</Text>
+                                    <br />
+                                    <Text>{messages["dashboard-location"] || "Location"}: {item.location}</Text>
+                                    <br />
+                                    <Text>{messages["dashboard-weekly-hours"] || "Weekly Hours"}: {item.weekly_hours}</Text>
+                                </>
+                            }
+                        />
+                    </List.Item>
+                )}
+            />
+            <Modal
+                title={messages["dashboard-apply-modal-title"] || "Apply to Offer"}
+                visible={isModalVisible}
+                onOk={handleApply}
+                onCancel={() => setIsModalVisible(false)}
+                okText={messages["dashboard-apply"] || "Apply"}
+                cancelText={messages["dashboard-cancel"] || "Cancel"}
+            >
+                <p>{messages["dashboard-apply-modal-message"] || "Are you sure you want to apply to this offer?"}</p>
+            </Modal>
+            <Modal
+                title={messages["dashboard-profile-modal-title"] || "Company Profile"}
+                visible={isProfileModalVisible}
+                onCancel={() => setIsProfileModalVisible(false)}
+                footer={null}
+            >
+                {profileData && (
+                    <ProfileCard
+                        id={selectedProfileId as string}
+                        session={session}
+                        isOwner={false}
+                        profileData={profileData}
+                        messages={messages}
+                        closeButton={
+                            <Button onClick={() => setIsProfileModalVisible(false)} style={{ border: "none" }}>
+                                {messages["dashboard-close"] || "Close"}
+                            </Button>
+                        }
+                        isCompany={true}
+                    />
+                )}
+            </Modal>
+        </Card>
     );
-}
-
+};
 
 export {OfferSectionUser, OfferSectionCompany};
