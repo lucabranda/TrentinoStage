@@ -236,8 +236,7 @@ export async function GET(req: NextRequest) {
     const surname = profile.surname
     const bio = profile.bio
     const website = profile.website
-    const address = profile.address
-
+    
     if (await isOwner) {
         return NextResponse.json({
             name: name, 
@@ -245,10 +244,9 @@ export async function GET(req: NextRequest) {
             bio: bio, 
             website: website,
             birth_date: profile.birth_date,
-            address: address,
+            address: profile.address,
             identifier: profile.identifier,
             sector: profile.sector,
-            profile_image: profile.profile_image,
             isCompany: profile.is_company
         }, { status: 200 })
     } else if ((await accountInfo).role === "company-manager" || (await accountInfo).role === "company-employee") {
@@ -455,24 +453,12 @@ export async function PUT(req: NextRequest) {
 
     const name = formData.get("name") as string ?? null
     const surname = formData.get("surname") as string ?? null
-    const address = formData.get("address") as {
-        address: string
-        city: string
-        region: string
-        country: string
-        postal_code: string
-        street: string
-    } | null ?? null
-  
-    /*
-    const region = address?.region as string ?? null
-    const city = address?.city as string ?? null
-    const postalCode = address?.postal_code as string ?? null
-    const street = address?.street as string ?? null
-    const country = address?.country as string ?? null
-    */
-    const birthDate = formData.get("birth_date") as string ?? null
-    const profileImage = formData.get("profile_image") as string ?? null
+    const country = formData.get("address") as string ?? null
+    const region = formData.get("region") as string ?? null
+    const city = formData.get("city") as string ?? null
+    const postalCode = formData.get("postalCode") as string ?? null
+    const street = formData.get("street") as string ?? null
+    const address = formData.get("address") as string ?? null
 
     const bio = formData.get("bio") as string ?? null
     const sector = formData.get("sector") as string ?? null
@@ -491,15 +477,7 @@ export async function PUT(req: NextRequest) {
     let addressObj: { 
         [key: string]: string | null 
     } = {}
-    if (address) {
-        addressObj['address'] = address.address
-        addressObj['city'] = address.city
-        addressObj['region'] = address.region
-        addressObj['country'] = address.country
-        addressObj['postal_code'] = address.postal_code
-        addressObj['street'] = address.street
-    }
-    /*
+
     if (country) {
         addressObj['country'] = country
     }
@@ -517,17 +495,6 @@ export async function PUT(req: NextRequest) {
     }
     if (address) {
         addressObj['address'] = address
-    }
-        */
-    if( birthDate) {
-        edit['birth_date'] = birthDate  
-    }
-if (profileImage) {
-        // Check if the profileImage is in a valid format
-        if ( !isValidBase64Image(profileImage) || !isSizeOk(profileImage) ) {
-            return NextResponse.json({error: "Profile image is not in a valid format or is too large"}, { status: 400 })
-        }
-        edit['profile_image'] = profileImage
     }
 
     if (Object.keys(addressObj).length > 0) {
