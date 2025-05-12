@@ -22,7 +22,7 @@ export default async function ViewProfileCard({token, profile_id, messages, isAC
             city: profileData!.address?.city,
             region: profileData!.address?.region,
             country: profileData!.address?.country,
-            postalCode: profileData!.address?.postalCode,
+            postal_code: profileData!.address?.postal_code,
             street: profileData!.address?.street
         },
         sector: profileData!.sector,
@@ -39,7 +39,7 @@ export default async function ViewProfileCard({token, profile_id, messages, isAC
             city: profileData!.address?.city,
             region: profileData!.address?.region,
             country: profileData!.address?.country,
-            postalCode: profileData!.address?.postalCode,
+            postal_code: profileData!.address?.postal_code,
             street: profileData!.address?.street
         },
         sector: profileData!.sector,
@@ -52,7 +52,7 @@ export default async function ViewProfileCard({token, profile_id, messages, isAC
         <>
             <div className={styles.profileCardContainer}>
                 <ProfileCard isCompany={isACompany} profileData={(values) as ProfileUserData | ProfileCompanyData}
-                             session={token} id={profile_id} messages={messages} isOwner={false} closeButton={<></>}></ProfileCard>
+                             session={token} id={profile_id} messages={messages} isOwner={false} ></ProfileCard>
             </div>
             
         </>

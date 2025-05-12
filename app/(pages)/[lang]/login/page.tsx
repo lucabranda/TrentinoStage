@@ -6,20 +6,10 @@ import Image from "next/image";
 import logo from "@/public/logo.svg";
 import styles from "./login.module.css";
 import LogInForm from "@/components/forms/LoginForm";
-//import {SessionApi} from "@/api/sessionApi"; 
-import { isLoggedIn } from "@/utils/session";
 
 export default async function LogIn({ params }: any) {
   const msgs = await getMessages((await params).lang);
 
-  /*if (await isLoggedIn()) {
-    const sessionApi = new SessionApi();
-    const res = await sessionApi.apiSessionDestroyPost();
-    if(res.response.statusCode == 200)
-      alert("You are logged out");
-    else
-      alert("Error logging out, please try again later");
-  } */ 
   return (
     <Layout className={styles.layout}>
       <Skeleton active loading={msgs["control"] == "control"}>

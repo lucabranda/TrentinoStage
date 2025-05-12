@@ -36,7 +36,7 @@ export interface ProfileUserData {
         city: string;
         region: string;
         country: string;
-        postalCode: string;
+        postal_code: string;
         street: string;
     };
     birth_date: string;
@@ -53,7 +53,7 @@ export interface ProfileCompanyData {
         city: string;
         region: string;
         country: string;
-        postalCode: string;
+        postal_code: string;
         street: string;
     };
     sector: string;
@@ -71,10 +71,10 @@ export interface CardProps {
     isCompany: boolean;
     isOwner: boolean;
     profileData: ProfileUserData | ProfileCompanyData;
-    closeButton: any
+
 }
 
-export default function ProfileCard({session, id, messages, isCompany, isOwner = true, profileData, closeButton}: CardProps) {
+export default function ProfileCard({session, id, messages, isCompany, isOwner = true, profileData}: CardProps) {
     const [showEdit, setShowEdit] = useState(false);
     const [isEditing, setIsEditing] = useState<Record<string, boolean>>({});
 
@@ -108,18 +108,22 @@ export default function ProfileCard({session, id, messages, isCompany, isOwner =
         }
         setLoading(true);
         try {
-            const res = await fetch("/api/profiles/modify", {
-                method: "POST",
+            const address = {
+                address: formData.address?.address,
+                city: formData.address?.city,
+                region: formData.address?.region,
+                country: formData.address?.country,
+                postal_code: formData.address?.postal_code,
+                street: formData.address?.street
+            }
+            const res = await fetch("/api/profiles", {
+                method: "PUT",
                 headers: {"Content-Type": "application/json"},
                 body: JSON.stringify({
                     sessionToken: session,
                     isCompany: isCompany,
                     name: formData.name,
-                    address: formData.address?.address,
-                    country: formData.address?.country,
-                    region: formData.address?.region,
-                    city: formData.address?.city,
-                    postal_code: formData.address?.postalCode,
+                    address: address,
                     street: formData.address?.street,
                     sector: [formData.sector].join(","),
                     ...(isCompany ? {website: (formData as ProfileCompanyData).website} : {surname: (formData as ProfileUserData).surname}),
@@ -329,7 +333,7 @@ export default function ProfileCard({session, id, messages, isCompany, isOwner =
                            
                                <Text id={field}>
                                 { field === "birth_date" ?
-                                    (formData["birth_date"] as string)?.substring(0, 10) || "Invalid"
+                                    (new Date(formData["birth_date"] as string)).toLocaleDateString() || "Invalid"
                                     : field === "sector" ?
                                     messages[`enum-sector-${formData[field as keyof (ProfileUserData | ProfileCompanyData)]}`] 
                                     : (formData[field as keyof (ProfileUserData | ProfileCompanyData)] as string) || ""
@@ -360,9 +364,10 @@ export default function ProfileCard({session, id, messages, isCompany, isOwner =
             title={
             <Space direction="horizontal" size="large" style={{width: "100%", justifyContent: "space-between"}}>
                 <Title level={4}>{formData.name || "User Profile"}</Title>
-                {closeButton}
+
             </Space>
         }
+
             extra={isOwner && (
                 showEdit ?
                     (
@@ -382,7 +387,7 @@ export default function ProfileCard({session, id, messages, isCompany, isOwner =
                         </Button>
                     )
             )}
-            style={{maxWidth: 700, margin: "auto"}}
+            style={{ margin: "auto"}}
         >
             <Space direction="vertical" size="large" style={{width: "100%", maxHeight: 600, overflowY: "scroll"}}>
                 <Row align="middle" style={{
@@ -410,7 +415,7 @@ export default function ProfileCard({session, id, messages, isCompany, isOwner =
                         </Col>
                     ) : (
                         <Col>
-                            <Avatar size={64} icon={formData.profile_image ? <img src={formData.profile_image} alt="Profile Image" /> : <UserOutlined/>} style={{marginBottom: 16}}/>
+                            <Avatar size={64} icon={formData.profile_image ? <img src={formData.profile_image} alt="Profile Image" /> : <UserOutlined/>} className="avatar-logo" style={{marginBottom: 16}}/>
                         </Col>
                     )}
                 </Row>

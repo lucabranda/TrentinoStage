@@ -126,6 +126,13 @@
 }
 
 
+:hover .avatar-logo{
+    cursor: pointer !important;
+}
+.avatar-logo{
+    cursor: pointer !important;
+}
+
 @media (max-width: 768px) {
    .layout{
     display: flex;

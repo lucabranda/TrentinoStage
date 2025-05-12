@@ -21,7 +21,7 @@ import {OfferSectionCompany, OfferSectionUser} from "../dashboard/OfferSection";
 import {ApplicationSectionCompany, ApplicationSectionUser} from "../dashboard/ApplicationSection";
 import {removeSessionToken} from "@/utils/cookie";
 import InviteMembers from "@/components/dashboard/InviteMembers";
-import {DashedButton, LinkButton} from "@/components/buttons/Buttons";
+import {LinkButton} from "@/components/buttons/Buttons";
 import ReviewSection from '../dashboard/ReviewSection';
 
 
@@ -185,13 +185,15 @@ export default function DashboardLayout({
                                     <ProfileCard session={token} id={profileId} messages={messages}
                                                  isOwner={true}
                                                  isCompany={isACompany} profileData={(isACompany ? {
-                                        name,
-                                        address,
-                                        sector,
-                                        website,
-                                        identifier,
-                                        profile_image
-                                    } as ProfileCompanyData : {
+                                                     name,
+                                                     address,
+                                                     sector,
+                                                     website,
+                                                     identifier,
+                                                     bio,
+                                                     birth_date,
+                                                     profile_image,
+                                                 } as unknown as ProfileCompanyData : {
                                         name,
                                         surname,
                                         bio,
@@ -202,8 +204,8 @@ export default function DashboardLayout({
                                         profile_image,
                                         website,
                                     }) as ProfileUserData | ProfileCompanyData}
-                                    closeButton={<></>}/>
-                                    <div className={styles.reviewSectionContainer} id="reviews">
+                                    />
+                                    <div /*className={styles.reviewSectionContainer}*/  id="reviews">
                                         <ReviewSection isCompany={isACompany} session={token} id={profileId} messages={messages} />
                                     </div>
                                 </section>
