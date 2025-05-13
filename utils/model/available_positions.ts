@@ -13,7 +13,8 @@ const available_positions = new mongoose.Schema({
     weekly_hours: Number,
     applied_users: [{
         user_id: String,
-        application_time: Date
+        application_time: Date,
+        message: String
     }],
     chosen_user: String,
     creation_time: Date

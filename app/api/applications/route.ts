@@ -25,6 +25,9 @@ import { connectDB } from "@/utils/db";
  *               positionId:
  *                 type: string
  *                 description: The ID of the position to apply for.
+ *               message:
+ *                 type: string
+ *                 description: Optional message to include with the application.
  *         application/json:
  *           schema:
  *             type: object
@@ -167,18 +170,19 @@ export async function POST(req: NextRequest) {
     }
     
     const token = formData.get("token") as string
+    const message = formData.get("message") as string ?? ""
 
     const userId = await checkSessionToken(token)
     const profileId = await getProfileId(userId)
     const company = isCompany(userId)
 
     if (!userId) {
-        return NextResponse.json({error: "Invalid token", code: "error-invalid-token"}, { status: 403 })
+        return NextResponse.json({error: "Invalid token", code: "error-invalid-token"}, { status: 401 })
     }
 
     const appId = formData.get("positionId") as string
     if (!appId) {
-        return NextResponse.json({error: "positionId is a required parameter", code: "error-invalid-request"}, { status: 405 })
+        return NextResponse.json({error: "positionId is a required parameter", code: "error-invalid-request"}, { status: 400 })
     }
 
     if (await company) {
@@ -187,9 +191,17 @@ export async function POST(req: NextRequest) {
 
     await connectDB()
 
+    // Chech if the user is already applied to the position
+    const alreadyApplied = await available_positions.findOne({ _id: appId, "applied_users.user_id": profileId })
+
+    if (alreadyApplied) {
+        return NextResponse.json({error: "You have already applied to this position", code: "error-already-applied"}, { status: 403 })
+    }
+
     const application = {
         user_id: profileId,
-        application_time: new Date().toISOString()
+        application_time: new Date().toISOString(),
+        message: message
     }
 
     const res = await available_positions.findOneAndUpdate({ _id: appId }, { $addToSet: { applied_users: application } })
@@ -203,33 +215,6 @@ export async function POST(req: NextRequest) {
 }
 
 
-// Endpoint to get the status of an application
-/*export async function GET(req: NextRequest) {
-    const token = req.nextUrl.searchParams.get("token") as string
-    const applicationId = req.nextUrl.searchParams.get("applicationId") as string
-    
-    if (!token || !applicationId) {
-        return new Response(JSON.stringify({error: "Missing required fields"}), { status: 401 })
-    }
-
-    const accountId = await checkSessionToken(token)
-    const profileId = await getProfileId(accountId)
-
-    if (!profileId) {
-        return NextResponse.json({error:"Invalid session token", code:"error-invalid-session"}, { status: 401 })
-    }
-
-    await connectDB()
-
-    const application = await available_positions.findOne({ _id: applicationId, issuer_id: profileId })
-
-    if (!application) {
-        return NextResponse.json({error: "Application not found", code: "error-application-not-found"}, { status: 404 })
-    }
-
-    return NextResponse.json(application, { status: 200 })
-
-}*/
 
 // Get the positions to which a user is applied to
 export async function GET(req: NextRequest) {
