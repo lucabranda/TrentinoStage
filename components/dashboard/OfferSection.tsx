@@ -502,6 +502,15 @@ const OfferSectionUser: React.FC<OfferSectionProps> = ({ session, id, messages }
             if (!response.ok) throw new Error("Error fetching profile data");
             const data = await response.json();
             setProfileData(data);
+            console.log(profileData, profileId, session);
+            profileData.address = {
+                address: profileData.address,
+                city: profileData.city,
+                region: profileData.region,
+                country: profileData.country,
+                postal_code: profileData.postal_code,
+                street: profileData.street,
+            }
         } catch (error) {
             console.error("Error fetching profile data:", error);
         }
@@ -626,17 +635,13 @@ const OfferSectionUser: React.FC<OfferSectionProps> = ({ session, id, messages }
                 footer={null}
             >
                 {profileData && (
+
                     <ProfileCard
                         id={selectedProfileId as string}
                         session={session}
                         isOwner={false}
                         profileData={profileData}
                         messages={messages}
-                        closeButton={
-                            <Button onClick={() => setIsProfileModalVisible(false)} style={{ border: "none" }}>
-                                {messages["dashboard-close"] || "Close"}
-                            </Button>
-                        }
                         isCompany={true}
                     />
                 )}
