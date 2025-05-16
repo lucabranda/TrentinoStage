@@ -260,6 +260,11 @@ export async function GET(req: NextRequest) {
         query = { ...query, weekly_hours: { $gte: parseInt(minTime) } }
     }
 
+    // If the user accessing the positions is the company that created them retrieve all data
+    if (await company) {
+        query = { ...query, issuer_id: await profileId }
+    }
+
     const openPositions = await available_positions.find(query)
 
     if (!openPositions) {

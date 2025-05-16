@@ -73,7 +73,7 @@ import accounts from "@/utils/model/accounts"
  *                     type: string
  *                 isCompany:
  *                   type: boolean
- *                 cv:
+ *                 profile_image:
  *                   type: string
  *       400:
  *         description: Invalid profile ID or other bad request
@@ -243,11 +243,12 @@ export async function GET(req: NextRequest) {
             surname: surname, 
             bio: bio, 
             website: website,
-            birth_date: profile.birth_date,
+            birthDate: profile.birth_date,
             address: profile.address,
             identifier: profile.identifier,
             sector: profile.sector,
-            isCompany: profile.is_company
+            isCompany: profile.is_company,
+            profile_image: profile.profile_image
         }, { status: 200 })
     } else if ((await accountInfo).role === "company-manager" || (await accountInfo).role === "company-employee") {
         return NextResponse.json({
@@ -255,8 +256,12 @@ export async function GET(req: NextRequest) {
             surname: surname, 
             bio: bio, 
             website: website,
-            cv: profile.cv,
-            isCompany: profile.is_company
+            birthDate: profile.birth_date,
+            address: profile.address,
+            identifier: profile.identifier,
+            sector: profile.sector,
+            isCompany: profile.is_company,
+            profile_image: profile.profile_image
         }, { status: 200 })
     } else if ((await accountInfo).role === "admin") {
         return NextResponse.json({
@@ -264,12 +269,13 @@ export async function GET(req: NextRequest) {
             surname: surname, 
             bio: bio, 
             website: website,
-            birth_date: profile.birth_date,
+            birthDate: profile.birth_date,
             address: profile.address,
             identifier: profile.identifier,
             sector: profile.sector,
             cv: profile.cv,
-            isCompany: profile.is_company
+            isCompany: profile.is_company,
+            profile_image: profile.profile_image
         }, { status: 200 })
     } else {
         return NextResponse.json({
@@ -277,7 +283,8 @@ export async function GET(req: NextRequest) {
             surname: surname, 
             bio: bio, 
             website: website,
-            isCompany: profile.is_company
+            isCompany: profile.is_company,
+            profile_image: profile.profile_image
         }, { status: 200 })
     }
 
@@ -463,6 +470,12 @@ export async function PUT(req: NextRequest) {
     const bio = formData.get("bio") as string ?? null
     const sector = formData.get("sector") as string ?? null
     const website = formData.get("website") as string ?? null
+    const profileImage = formData.get("profileImage") as string ?? null
+
+    // Check if the profileImage is in a valid format
+    if (profileImage && ( !isValidBase64Image(profileImage) || !isSizeOk(profileImage) )) {
+        return NextResponse.json({error: "Profile image is not in a valid format or is too large"}, { status: 400 })
+    }
 
     let edit: { 
         [key: string]: string | null | { [key: string]: string | null } | string[]
@@ -495,6 +508,9 @@ export async function PUT(req: NextRequest) {
     }
     if (address) {
         addressObj['address'] = address
+    }
+    if (profileImage) {
+        edit['profile_image'] = profileImage
     }
 
     if (Object.keys(addressObj).length > 0) {
