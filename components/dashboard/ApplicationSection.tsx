@@ -75,6 +75,7 @@ interface ApplicationCardProps {
         applied_users: {
             _id: string;
             application_time: string;
+            message:string;
             user_id: string;
         }[],
         chosen_user: string,
@@ -87,81 +88,81 @@ interface ApplicationCardProps {
 }
 
 const handleAccept = async (session: string, applicationId: string, userId: string, application: any) => {
-    const res = await fetch(`/api/applications`, {
+    const data = {
+        token: session,
+        positionId: applicationId,
+        title: application?.title,
+        description: application?.description,
+        sector: application?.sector,
+        country: application?.location.country,
+        region: application?.location.region,
+        city: application?.location.city,
+        weeklyHours: application?.weekly_hours,
+        chosenUser: userId,
+    };
+
+     
+
+    const res = await fetch(`/api/positions`, {
         method: "PUT",
         headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${session}`,
         },
-        body: JSON.stringify({
-            token: session,
-            id: applicationId,
-            title: application.title,
-            description: application.description,
-            sector: application.sector,
-            country: application.location.country,
-            region: application.location.region,
-            city: application.location.city,
-            weekly_hours: application.weekly_hours,
-            chosen_user: userId
-        }),
+        body: JSON.stringify(data),
     });
     if ((await res).ok) {
         console.log("Application accepted successfully");
+        window.location.reload();
     } else {
         console.log("An error occurred while accepting application");
     }
 }
 
 const handleReject = async (session: string, applicationId: string, userId: string, application: any) => {
-    const res = await fetch(`/api/applications`, {
+    const data = {
+        token: session,
+        positionId: applicationId,
+        title: application.title,
+        description: application.description,
+        sector: application.sector,
+        country: application.location.country,
+        region: application.location.region,
+        city: application.location.city,
+        weeklyHours: application.weekly_hours,
+        chosenUser: "",
+    }
+
+    const res = await fetch(`/api/positions`, {
         method: "PUT",
         headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${session}`,
         },
-        body: JSON.stringify({
-            token: session,
-            id: applicationId,
-            title: application.title,
-            description: application.description,
-            sector: application.sector,
-            country: application.location.country,
-            region: application.location.region,
-            city: application.location.city,
-            weekly_hours: application.weekly_hours,
-            chosen_user: application.chosen_user
-        }),
+        body: JSON.stringify(data), 
     });
     if ((await res).ok) {
         console.log("Application rejected successfully");
+        window.location.reload();
     } else {
         console.log("An error occurred while rejecting application");
     }
 }
 const handleDelete = async (session: string, applicationId: string, userId: string, applied_users: any, application: any) => {
-    const res = await fetch(`/api/applications`, {
-        method: "PUT",
+    const data = {
+        token: session,
+        positionId: applicationId,
+        
+    }
+
+    const res = await fetch(`/api/positions`, {
+        method: "DELETE",
         headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${session}`,
         },
-        body: JSON.stringify({
-            token: session,
-            id: applicationId,
-            title: application.title,
-            description: application.description,
-            sector: application.sector,
-            country: application.location.country,
-            region: application.location.region,
-            city: application.location.city,
-            weekly_hours: application.weekly_hours,
-            chosen_user: application.chosen_user,
-            applied_users: applied_users.filter((user: any) => user.user_id !== userId)
-        }),
+        body: JSON.stringify(data), 
     });
     if ((await res).ok) {
         console.log("Application deleted successfully");
+        window.location.reload();
     } else {
         console.log("An error occurred while deleting application");
     }
@@ -188,12 +189,12 @@ function useUserProfileData(token: string, id: string, isACompany: boolean) {
             const values = (isACompany ? {
                 name: data.name,
                 address: {
-                    address: data.address,
-                    city: data.city,
-                    region: data.region,
-                    country: data.country,
-                    postal_code: data.postal_code,
-                    street: data.street
+                    address: data.address?.address,
+                    city: data.address?.city,
+                    region: data.address?.region,
+                    country: data.address?.country,
+                    postal_code: data.address?.postal_code,
+                    street: data.address?.street
                 },
                 sector: data.sector,
                 website: data.website,
@@ -205,12 +206,12 @@ function useUserProfileData(token: string, id: string, isACompany: boolean) {
                 bio: data.bio,
                 birth_date: data.birth_date,
                 address: {
-                    address: data.address,
-                    city: data.city,
-                    region: data.region,
-                    country: data.country,
-                    postal_code: data.postal_code,
-                    street: data.street
+                    address: data.address?.address,
+                    city: data.address?.city,
+                    region: data.address?.region,
+                    country: data.address?.country,
+                    postal_code: data.address?.postal_code,
+                    street: data.address?.street
                 },
                 sector: data.sector,
                 website: data.website,
@@ -241,28 +242,51 @@ const UserDetailsRow = ({
     user: {
         _id: string;
         application_time: string;
+        message: string;
         user_id: string;
     };
     token: string;
     messages: any;
     applicationId: string;
     companyId: string;
-    application: any;
+    application: {
+        _id: string;
+        title: string;
+        description: string;
+        sector: string;
+        maxTime: number;
+        minTime: number;
+        location: {
+            country: string;
+            region: string;
+            city: string;
+        };
+        issuer_id: string;
+        weekly_hours: number;
+        applied_users: {
+            _id: string;
+            application_time: string;
+            message:string;
+            user_id: string;
+        }[];
+        chosen_user: string;
+        creation_time: string
+    };
 }) => {
     const [showProfileCard, setShowProfileCard] = useState(false);
     const profile_data = useUserProfileData(token, user.user_id, false) as ProfileUserData | null;
     const isLoading = !profile_data;
-
+    //console.log(`Utente scelto:${application.chosen_user} e id:${user.user_id} e ${profile_data?.name}`)
     return (
         <>
-            {(application.chosen_user === '' || application.chosen_user === user._id) && (
+            {(
                 <>
                     <Item
                         style={{
                             display: 'flex',
                             gap: 24,
                             justifyContent: 'space-between',
-                            ...(application.chosen_user === user._id
+                            ...((application.chosen_user === user.user_id  && application.chosen_user!== undefined)
                                 ? {
                                     backgroundColor: 'lightgreen',
                                     padding: '16px',
@@ -273,7 +297,7 @@ const UserDetailsRow = ({
                         id={applicationId}
                     >
                         <List.Item.Meta
-                            key={user._id}
+                            key={user.user_id}
                             title={
                                 <Skeleton loading={isLoading} avatar active paragraph={false}>
                                     <Space style={{display: 'flex', justifyContent: 'start'}}>
@@ -299,20 +323,28 @@ const UserDetailsRow = ({
                                     }}
                                 >
                                     <div>
-                                        <Text>messaggio utente</Text>
-                                        {/* Uncomment and update this if user.message is available:
-                                            user?.message && <Text strong>{user?.message}</Text> */}
+                                        {user?.message && <Text strong>{user?.message}</Text>}
                                     </div>
                                     <div style={{display: 'flex', gap: 8}}>
-                                        {application.chosen_user === user._id ? (
-                                            <Text strong>
-                                                {messages['dashboard-application-chosen-user'] || 'Chosen User'}
-                                            </Text>
+                                        {(application.chosen_user === user.user_id && application.chosen_user!== undefined) ? (
+                                            <>
+                                                                                            <LinkButton
+                                                                                            onClick={() =>
+                                                                                                handleReject(token, applicationId, user.user_id, application)
+                                                                                            }
+                                                                                            style={{
+                                                                                                border: '1px solid red',
+                                                                                                color: 'red',
+                                                                                            }}
+                                                                                        >
+                                                                                            <CloseOutlined/>
+                                                                                        </LinkButton>
+                                                                                        </>
                                         ) : (
                                             <>
-                                                <LinkButton
+                                            <LinkButton
                                                     onClick={() =>
-                                                        handleAccept(token, applicationId, user._id, application)
+                                                        handleAccept(token, applicationId, user.user_id, application)
                                                     }
                                                     style={{
                                                         border: '1px solid green',
@@ -321,23 +353,13 @@ const UserDetailsRow = ({
                                                 >
                                                     <CheckOutlined/>
                                                 </LinkButton>
-                                                <LinkButton
-                                                    onClick={() =>
-                                                        handleReject(token, applicationId, user._id, application)
-                                                    }
-                                                    style={{
-                                                        border: '1px solid red',
-                                                        color: 'red',
-                                                    }}
-                                                >
-                                                    <CloseOutlined/>
-                                                </LinkButton>
-                                                <PrimaryButton onClick={() => setShowProfileCard(!showProfileCard)}>
-                                                    {messages['dashboard-application-show-user-profile'] ||
-                                                        'Show user profile'}
-                                                </PrimaryButton>
+                                         
                                             </>
                                         )}
+                                         <PrimaryButton onClick={() => setShowProfileCard(!showProfileCard)}>
+                                                {messages['dashboard-application-show-user-profile'] ||
+                                                    'Show user profile'}
+                                            </PrimaryButton>
                                     </div>
                                 </Space>
                             }
@@ -495,7 +517,6 @@ const ApplicationCard = ({item, token, user_company_id, messages, isCompany}: Ap
     const handleWriteReview = (token: string, issuerId: string, applicationId: string) => {
         setShowWriteReview(true);
     };
-
     return (
         <>
             {(isCompany) ? (
@@ -647,7 +668,6 @@ const ApplicationCard = ({item, token, user_company_id, messages, isCompany}: Ap
     );
 }
 
-// Refactored useApplications hook
 const useApplications = (session: string, id: string, isACompany: boolean) => {
     const [applications, setApplications] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
@@ -656,13 +676,34 @@ const useApplications = (session: string, id: string, isACompany: boolean) => {
     useEffect(() => {
         const fetchApplications = async () => {
             try {
-                const query = `&companyProfile=${id}`;
-                const res = await fetch(`/api/applications?token=${session}${query}`, {
+                const url = isACompany ? `/api/positions?token=${session}&profileId=${id}` : `/api/applications?token=${session}&profileId=${id}`;
+                const res = await fetch(url, {
                     method: "GET"
                 });
+                
                 if (!res.ok) throw new Error('Failed to fetch applications');
                 const data = await res.json();
-                setApplications(data);
+                
+                // Transform the data to match the expected format
+                const transformedApplications = data.map((application: any) => ({
+                    _id: application._id,
+                    title: application.title,
+                    description: application.description,
+                    sector: application.sector,
+                    weekly_hours: application.weekly_hours,
+                    location: {
+                        city: application.location.city,
+                        region: application.location.region,
+                        country: application.location.country
+                    },
+                    issuer_id: application.issuerId,
+                    applied_users: application.applied_users || [],
+                    chosen_user: isACompany ? application.chosen_user : application.chosenUser,
+                    creation_time: application.creationTime,
+                    isOpen: application.isOpen
+                }));
+                
+                setApplications(transformedApplications);
             } catch (err) {
                 setError(err instanceof Error ? err.message : 'Failed to fetch applications');
             } finally {
@@ -732,7 +773,7 @@ function ApplicationSectionUser({session, user_company_id, messages}: Applicatio
 
     const filteredApplications = applications.filter((application) => {
         if (status === '-') return true;
-        if (status === 'pending') return application.chosen_user === undefined;
+        if (status === 'pending') return application.isOpen;
         if (status === 'accepted') return application.chosen_user === user_company_id;
         if (status === 'rejected') return application.chosen_user !== user_company_id;
         return false;

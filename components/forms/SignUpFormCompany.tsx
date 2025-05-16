@@ -32,15 +32,23 @@ export default function  SignUpFormCompany ({messages}: { messages: any }) {
             formData.append("email", email); // Map email to expected server field
             formData.append("password", password);
            if(token !== undefined){
-                formData.append("token", token)
+                formData.append("token", token);
                 formData.append("role", "company-employee");
             }else{
                 formData.append("role", "company-manager")
             }
             // Send POST request to /api/accounts/register
-            const response = await fetch("/api/accounts/register", {
+            const response = await fetch("/api/accounts", {
                 method: "POST",
-                body: formData, // Use FormData
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    email: email,
+                    password: password,
+                    token: token,
+                    role: (token === undefined || token === null || token === "") ? "company-manager" : "company-employee"
+                })
             });
 
             if (!response.ok) {

@@ -164,12 +164,10 @@ export async function POST(req: NextRequest) {
     } else {
         return new NextResponse(JSON.stringify({error: "Unsupported content type"}), { status: 405 })
     }
-
     const email = formData.get("email") as string ?? null
     const password = formData.get("password") as string ?? null
-    const token = req.nextUrl.searchParams.get('token') ?? null
+    const token = formData.get('token') ?? null
     const role = formData.get("role") as string ?? null
-
     // Check if the email is valid and not already in use
     if (!validatEmail(email)) {
         return new NextResponse(JSON.stringify({error: "Email is invalid", code: "error-invalid-email"}), { status: 401 })

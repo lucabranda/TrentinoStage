@@ -392,8 +392,8 @@ export async function PUT(req: NextRequest) {
     const city = formData.get("city") as string
     const weekly_hours = parseInt(formData.get("weeklyHours") as string)
     const chosen_user = formData.get("chosenUser") as string
-
-    if (!token || !title || !description || !sector || !country || !region || !city || !weekly_hours) {
+    const positionId = formData.get("positionId") as string
+    if (!token || !title || !description || !sector || !country || !region || !city || !weekly_hours || !positionId) {
         return new NextResponse("Missing required fields", { status: 401 })
     }
 
@@ -406,10 +406,10 @@ export async function PUT(req: NextRequest) {
         [key: string]: string | null | { [key: string]: string | null } | string[] | number
     } = {}
 
-    if (chosen_user) {
+   //if (chosen_user) {
         // If modify is used to set a chosen user ignore all the other fields
         edit['chosen_user'] = chosen_user
-    } else {
+  //  } else {
         if (title) {
             edit['title'] = title
         }
@@ -431,12 +431,12 @@ export async function PUT(req: NextRequest) {
         if (weekly_hours) {
             edit['weekly_hours'] = weekly_hours
         }
-    }
+   //d }
 
     await connectDB();
 
     const update = await available_positions.updateOne(
-        { _id: ObjectId.createFromHexString(formData.get("positionId") as string) },
+        { _id: ObjectId.createFromHexString(positionId) },
         { $set: edit },
         {
             new: true,

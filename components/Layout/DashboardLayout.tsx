@@ -32,22 +32,7 @@ interface DashboardLayoutProps {
     isACompany: boolean;
     profileId: string;
     styles: any;
-    name: string;
-    surname: string;
-    address: {
-        address: string;
-        city: string;
-        region: string;
-        country: string;
-        postalCode: string;
-        street: string;
-    }
-    birth_date: string;
-    bio: string;
-    website: string;
-    sector: string;
-    identifier: string;
-    profile_image: string;
+    profileData: ProfileCompanyData | ProfileUserData;
 }
 
 
@@ -65,15 +50,7 @@ export default function DashboardLayout({
                                             isACompany,
                                             profileId,
                                             styles,
-                                            name,
-                                            surname,
-                                            address,
-                                            birth_date,
-                                            bio,
-                                            sector,
-                                            website,
-                                            identifier,
-                                            profile_image
+                                            profileData
                                         }: DashboardLayoutProps) {
 
     const [collapsed, setCollapsed] = useState(false);
@@ -184,26 +161,7 @@ export default function DashboardLayout({
                                 <section key="profile">
                                     <ProfileCard session={token} id={profileId} messages={messages}
                                                  isOwner={true}
-                                                 isCompany={isACompany} profileData={(isACompany ? {
-                                                     name,
-                                                     address,
-                                                     sector,
-                                                     website,
-                                                     identifier,
-                                                     bio,
-                                                     birth_date,
-                                                     profile_image,
-                                                 } as unknown as ProfileCompanyData : {
-                                        name,
-                                        surname,
-                                        bio,
-                                        birth_date,
-                                        address,
-                                        sector,
-                                        identifier,
-                                        profile_image,
-                                        website,
-                                    }) as ProfileUserData | ProfileCompanyData}
+                                                 isCompany={isACompany} profileData={profileData}
                                     />
                                     <div /*className={styles.reviewSectionContainer}*/  id="reviews">
                                         <ReviewSection isCompany={isACompany} session={token} id={profileId} messages={messages} />

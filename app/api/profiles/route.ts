@@ -115,16 +115,16 @@ import accounts from "@/utils/model/accounts"
  *                 type: string
  *               city:
  *                 type: string
- *               postalCode:
+ *               postal_code:
  *                 type: string
  *               street:
  *                 type: string
  *               address:
  *                 type: string
- *               birthDate:
+ *               birth_date:
  *                 type: string
  *                 format: date
- *               profileImage:
+ *               profile_image:
  *                 type: string
  *                 format: binary
  *               bio:
@@ -172,7 +172,7 @@ import accounts from "@/utils/model/accounts"
  *                 type: string
  *               city:
  *                 type: string
- *               postalCode:
+ *               postal_code:
  *                 type: string
  *               street:
  *                 type: string
@@ -246,7 +246,7 @@ export async function GET(req: NextRequest) {
             surname: surname, 
             bio: bio, 
             website: website,
-            birthDate: profile.birth_date,
+            birth_date: profile.birth_date,
             address: profile.address,
             identifier: profile.identifier,
             sector: profile.sector,
@@ -259,7 +259,7 @@ export async function GET(req: NextRequest) {
             surname: surname, 
             bio: bio, 
             website: website,
-            birthDate: profile.birth_date,
+            birth_date: profile.birth_date,
             address: profile.address,
             identifier: profile.identifier,
             sector: profile.sector,
@@ -272,7 +272,7 @@ export async function GET(req: NextRequest) {
             surname: surname, 
             bio: bio, 
             website: website,
-            birthDate: profile.birth_date,
+            birth_date: profile.birth_date,
             address: profile.address,
             identifier: profile.identifier,
             sector: profile.sector,
@@ -316,11 +316,11 @@ export async function POST(req: NextRequest) {
     const country = formData.get("country") as string
     const region = formData.get("region") as string
     const city = formData.get("city") as string
-    const postalCode = formData.get("postalCode") as string
+    const postal_code = formData.get("postal_code") as string
     const street = formData.get("street") as string
     const address = formData.get("address") as string
-    let birthDate = formData.get("birthDate") as string
-    const profileImage = formData.get("profileImage") as string ?? null
+    let birth_date = formData.get("birth_date") as string
+    const profile_image = formData.get("profile_image") as string ?? null
 
     const bio = formData.get("bio") as string ?? null
     const identifier = formData.get("identifier") as string
@@ -338,8 +338,8 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({error: "User already has a profile", code: "error-profile-already-exists"}, { status: 401 })
     }
 
-    // Check if the profileImage is in a valid format
-    if (profileImage && ( !isValidBase64Image(profileImage) || !isSizeOk(profileImage) )) {
+    // Check if the profile_image is in a valid format
+    if (profile_image && ( !isValidBase64Image(profile_image) || !isSizeOk(profile_image) )) {
         return NextResponse.json({error: "Profile image is not in a valid format or is too large"}, { status: 400 })
     }
 
@@ -369,7 +369,7 @@ export async function POST(req: NextRequest) {
         if (city === null) {
             return NextResponse.json({error: "City is required", code: "error-city-required"}, { status: 401 })
         }
-        if (postalCode === null) {
+        if (postal_code === null) {
             return NextResponse.json({error: "Postal code is required", code: "error-postal-code-required"}, { status: 401 })
         }
         if (street === null) {
@@ -378,13 +378,13 @@ export async function POST(req: NextRequest) {
         if (address === null) {
             return NextResponse.json({error: "Address is required", code: "error-address-required"}, { status: 401 })
         }
-        birthDate = new Date().toUTCString()
+        birth_date = new Date().toUTCString()
         // TODO: Check the correctness of the P.iva
     } else {
         if (surname === null) {
             return NextResponse.json({error: "Surname is required", code: "error-surname-required"}, { status: 401 })
         }
-        if (birthDate === undefined) {
+        if (birth_date === undefined) {
             return NextResponse.json({error: "Please provide a date of birth", code: "error-birth-date-required"}, { status: 401 })
         }
         // TODO: Check the correctness of the fiscal code
@@ -404,13 +404,13 @@ export async function POST(req: NextRequest) {
         const result = await profiles.create({
             name: name,
             surname: surname,
-            birth_date: birthDate,
-            profile_image: profileImage,
+            birth_date: birth_date,
+            profile_image: profile_image,
             address: {
                 country: country,
                 region: region,
                 city: city,
-                postal_code: postalCode,
+                postal_code: postal_code,
                 street: street,
                 address: address,
             },
@@ -471,23 +471,16 @@ export async function PUT(req: NextRequest) {
         postal_code: string
         street: string
     } | null ?? null
-  
-    /*
-    const region = address?.region as string ?? null
-    const city = address?.city as string ?? null
-    const postalCode = address?.postal_code as string ?? null
-    const street = address?.street as string ?? null
-    const country = address?.country as string ?? null
-    */
-    const birthDate = formData.get("birth_date") as string ?? null
-    const profileImage = formData.get("profile_image") as string ?? null
+
+    const birth_date = formData.get("birth_date") as string ?? null
+    const profile_image = formData.get("profile_image") as string ?? null
 
     const bio = formData.get("bio") as string ?? null
     const sector = formData.get("sector") as string ?? null
     const website = formData.get("website") as string ?? null
 
-    // Check if the profileImage is in a valid format
-    if (profileImage && ( !isValidBase64Image(profileImage) || !isSizeOk(profileImage) )) {
+    // Check if the profile_image is in a valid format
+    if (profile_image && ( !isValidBase64Image(profile_image) || !isSizeOk(profile_image) )) {
         return NextResponse.json({error: "Profile image is not in a valid format or is too large"}, { status: 400 })
     }
 
@@ -522,8 +515,8 @@ export async function PUT(req: NextRequest) {
     if (city) {
         addressObj['city'] = city
     }
-    if (postalCode) {
-        addressObj['postalCode'] = postalCode
+    if (postal_code) {
+        addressObj['postal_code'] = postal_code
     }
     if (street) {
         addressObj['street'] = street
@@ -531,11 +524,11 @@ export async function PUT(req: NextRequest) {
     if (address) {
         addressObj['address'] = address
     }*/
-    if (birthDate) {
-        edit['birth_date'] = birthDate
+    if (birth_date) {
+        edit['birth_date'] = birth_date
     }
-    if (profileImage) {
-        edit['profile_image'] = profileImage
+    if (profile_image) {
+        edit['profile_image'] = profile_image
     }
 
     if (Object.keys(addressObj).length > 0) {

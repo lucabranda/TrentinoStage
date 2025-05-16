@@ -13,7 +13,7 @@ export default async function ProfileCardView({params}: any) {
     const cookieStore = await cookies();
     const token = await cookieStore.get('trentino-stage-session')?.value || "";
 
-    const response = await fetch(`/api/profiles/isCompany?token=${token}&profileId=${profile_id}`, {
+    const response = await fetch(`/api/profiles?token=${token}&profileId=${profile_id}`, {
         method: "GET",
         headers: {
             "Content-Type": "application/json",

@@ -81,7 +81,6 @@ export default function ProfileCard({session, id, messages, isCompany, isOwner =
     const [formData, setFormData] = useState<ProfileUserData | ProfileCompanyData>(profileData);
     const [loading, setLoading] = useState(false);
 
-
     const [country, setCountry] = useState("ITALY");
     useEffect(() => {
         setCountry((document.getElementById("country") as HTMLSelectElement)?.value as string);
@@ -121,7 +120,7 @@ export default function ProfileCard({session, id, messages, isCompany, isOwner =
                 headers: {"Content-Type": "application/json"},
                 body: JSON.stringify({
                     sessionToken: session,
-                    isCompany: isCompany,
+                    is_company: isCompany,
                     name: formData.name,
                     address: address,
                     street: formData.address?.street,
@@ -170,6 +169,7 @@ export default function ProfileCard({session, id, messages, isCompany, isOwner =
 
     const renderField = (label: string, field: string) => {
         if (field === "address") {
+
             return ["country", "region", "city", "postal_code", "street", "address"].map((subField) => (
                 <Row align="middle" style={{
                     marginBottom: 16,
@@ -265,12 +265,11 @@ export default function ProfileCard({session, id, messages, isCompany, isOwner =
                                 )
                             ) : (
                                 <Text id={subField}>
-                                    {(subField === "country" || subField === "region") ?
-                                            messages[`enum-${subField}-${formData.address?.[subField as keyof typeof formData.address]}`]
-                                        : (subField === "city" &&  formData.address.region === "TRENTINOALTOADIGE") ?
-                                                cities[(formData.address?.[subField as keyof typeof formData.address]) as keyof typeof cities] as string
-                                        : formData.address?.[subField as keyof typeof formData.address] || ""
-                                    }
+                                    {subField === "country" || subField === "region"
+                                        ? messages[`enum-${subField}-${formData.address?.[subField as keyof typeof formData.address]}`]
+                                        : subField === "city" && formData.address?.region === "TRENTINOALTOADIGE"
+                                            ? cities[formData.address?.[subField as keyof typeof formData.address] as keyof typeof cities] as string
+                                            : formData.address?.[subField as keyof typeof formData.address]?.toString() || ""}
                                 </Text>
                             )
                             }

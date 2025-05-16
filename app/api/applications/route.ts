@@ -244,7 +244,9 @@ export async function GET(req: NextRequest) {
             weeklyHours: pos.weekly_hours,
             location: pos.location,
             creationTime: pos.creation_time,
-            isOpen: (pos.chosen_user == "")
+            isOpen: (pos.chosen_user == ""),
+            chosenUser: pos.chosen_user,
+            applied_users: pos.applied_users
         }
     })
 

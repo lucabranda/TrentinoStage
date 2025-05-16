@@ -58,6 +58,8 @@ export default async function Home({params}: any) {
                 token={sessionToken}
                 isACompany={isACompany}
                 profileId={profileId}
+                profileData={profileData}
+                /*
                 name={profileData.name}
                 surname={profileData.surname}
                 address={profileData.address}
@@ -67,6 +69,8 @@ export default async function Home({params}: any) {
                 website={profileData.website}
                 identifier={profileData.identifier}
                 profile_image={profileData.profile_image}
+
+                 */
             />
         </>
     );

@@ -20,7 +20,7 @@ export default function NewProfileForm({token, msgs, styles, isCompany}: NewProf
             const name = values.name;
             const address = values.address;
             const city = values.city;
-            const postalCode = values.postalCode;
+            const postal_code = values.postal_code;
             const street = values.street;
             const region = values.region;
             const country = values.country;
@@ -29,7 +29,7 @@ export default function NewProfileForm({token, msgs, styles, isCompany}: NewProf
             const bio = values.bio;
             const birth_date = values?.birth_date || undefined;
             const identifier = values?.identifier;
-            const profilePicture = values.profilePicture.file.thumbUrl;
+            const profile_picture = values.profile_picture.file.thumbUrl;
 
             const website = (isCompany) && values?.website;
             const surname = (!isCompany) && values?.surname;
@@ -43,14 +43,14 @@ export default function NewProfileForm({token, msgs, styles, isCompany}: NewProf
                     name: name,
                     address: address,
                     city: city,
-                    postalCode: postalCode,
+                    postal_code: postal_code,
                     region: region,
                     country: country,
                     sector: sector,
                     street: street,
                     bio: bio,
-                    birthDate: birth_date,
-                    profile_image: profilePicture,
+                    birth_date: birth_date,
+                    profile_image: profile_picture,
                     identifier: identifier,
                     ...(isCompany && {website: website}),
                     ...(!isCompany && {surname: surname})
@@ -101,9 +101,9 @@ export default function NewProfileForm({token, msgs, styles, isCompany}: NewProf
             rules: [{required: true, message: msgs["error-street-not-provided"]}]
         },
         {
-            label: <span className={styles.formLabel}>{msgs["company-card-postalCode-label"]}</span>,
-            name: "postalCode",
-            rules: [{required: true, message: msgs["error-postalCode-not-provided"]}]
+            label: <span className={styles.formLabel}>{msgs["company-card-postal_code-label"]}</span>,
+            name: "postal_code",
+            rules: [{required: true, message: msgs["error-postal_code-not-provided"]}]
         },
         {
             label: <span className={styles.formLabel}>{msgs["company-card-address-label"]}</span>,
@@ -117,7 +117,7 @@ export default function NewProfileForm({token, msgs, styles, isCompany}: NewProf
         },
         {
             label: <span className={styles.formLabel}>{msgs["company-card-profile-picture-label"]}</span>,
-            name: "profilePicture",
+            name: "profile_picture",
             rules: [{required: false, message: msgs["error-profile-picture-not-provided"]}]
         },
         {
@@ -182,9 +182,9 @@ export default function NewProfileForm({token, msgs, styles, isCompany}: NewProf
             rules: [{required: true, message: msgs["error-street-not-provided"]}]
         },
         {
-            label: <span className={styles.formLabel}>{msgs["company-card-postalCode-label"]}</span>,
-            name: "postalCode",
-            rules: [{required: true, message: msgs["error-postalCode-not-provided"]}]
+            label: <span className={styles.formLabel}>{msgs["company-card-postal_code-label"]}</span>,
+            name: "postal_code",
+            rules: [{required: true, message: msgs["error-postal_code-not-provided"]}]
         },
         {
             label: <span className={styles.formLabel}>{msgs["company-card-address-label"]}</span>,
@@ -193,7 +193,7 @@ export default function NewProfileForm({token, msgs, styles, isCompany}: NewProf
         },
         {
             label: <span className={styles.formLabel}>{msgs["user-card-profile-picture-label"]}</span>,
-            name: "profilePicture",
+            name: "profile_picture",
             rules: [{required: false, message: msgs["error-profile-picture-not-provided"]}]
         },
         {
@@ -255,7 +255,7 @@ export default function NewProfileForm({token, msgs, styles, isCompany}: NewProf
                             rules={field.rules}
                             className={styles.formItem}
                         >
-                            {field.name === "profilePicture" || field.name === "cv" ? (
+                            {field.name === "profile_picture" || field.name === "cv" ? (
                                 <Upload
                                     name={field.name}
                                     listType="picture"
