@@ -485,7 +485,6 @@ export async function PUT(req: NextRequest) {
     const bio = formData.get("bio") as string ?? null
     const sector = formData.get("sector") as string ?? null
     const website = formData.get("website") as string ?? null
-    const profileImage = formData.get("profileImage") as string ?? null
 
     // Check if the profileImage is in a valid format
     if (profileImage && ( !isValidBase64Image(profileImage) || !isSizeOk(profileImage) )) {
@@ -531,6 +530,9 @@ export async function PUT(req: NextRequest) {
     }
     if (address) {
         addressObj['address'] = address
+    }*/
+    if (birthDate) {
+        edit['birth_date'] = birthDate
     }
     if (profileImage) {
         edit['profile_image'] = profileImage
