@@ -260,6 +260,11 @@ export async function GET(req: NextRequest) {
         query = { ...query, weekly_hours: { $gte: parseInt(minTime) } }
     }
 
+    // If the user accessing the positions is the company that created them retrieve all data
+    if (await company) {
+        query = { ...query, issuer_id: await profileId }
+    }
+
     const openPositions = await available_positions.find(query)
 
     if (!openPositions) {
@@ -273,8 +278,9 @@ export async function GET(req: NextRequest) {
     } else {
         // If the user is not the company that created the positions remove the applied_users and chosen_user fields
         const filteredPositions = openPositions.map((position) => {
-            const { issuer_id, title, description, sector, location, weekly_hours, creation_time } = position.toObject()
+            const { _id, issuer_id, title, description, sector, location, weekly_hours, creation_time } = position.toObject()
             return {
+                _id,
                 issuer_id,
                 title,
                 description,
