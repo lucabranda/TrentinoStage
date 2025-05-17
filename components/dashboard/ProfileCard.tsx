@@ -19,12 +19,14 @@ import {
     DeleteOutlined,
     EditOutlined,
     SaveOutlined,
+    UploadOutlined,
     UserOutlined
 } from "@ant-design/icons";
 import {DashedButton, LinkButton} from "../buttons/Buttons";
 import {sectors, regions, countries, cities} from "@/utils/enums";
 import dayjs from 'dayjs';
 import { isDeepStrictEqual } from "util";
+import Upload from "antd/es/upload/Upload";
 const {Title, Text} = Typography;
 const {Option} = Select;
 
@@ -396,21 +398,35 @@ export default function ProfileCard({session, id, messages, isCompany, isOwner =
                     paddingInlineEnd: 16
                 }} key={"profile_image"}>
                     {(isOwner && showEdit) ? (
-                        <Col>
-                            <Input
-                                type="file"
-                                onChange={(e) => {
-                                    const file = e.target.files?.[0];
-                                    if (file) {
-                                        const reader = new FileReader();
-                                        reader.onload = (e) => {
-                                            const imageData = e.target?.result as string;
-                                            setFormData({...formData, profile_image: imageData});
-                                        };
-                                        reader.readAsDataURL(file);
-                                    }
+                        <Col> {formData.profile_image && (
+                                <Avatar
+                                    size={64}
+                                    src={formData.profile_image}
+                                    alt="Profile Image"
+                                    style={{ marginTop: 16 }}
+                                />
+                            )}
+                            <Upload
+                                name="profile_image"
+                                listType="picture"
+                                maxCount={1}
+                                showUploadList={false}
+                                beforeUpload={file => {
+                                    const reader = new FileReader();
+                                    reader.onload = (e) => {
+                                        const imageData = e.target?.result as string;
+                                        setFormData({...formData, profile_image: imageData});
+                                    };
+                                    reader.readAsDataURL(file);
+                                    // Prevent upload
+                                    return false;
                                 }}
-                            />
+                            >
+                                <Button icon={<UploadOutlined />} style={{ width: "100%" }}>
+                                    Upload
+                                </Button>
+                            </Upload>
+                           
                         </Col>
                     ) : (
                         <Col>

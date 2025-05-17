@@ -212,5 +212,17 @@
     "dashboard-no-reviews": "Nessuna recensione disponibile",
     "dashboard-edit": "Modifica",
     "dashboard-success": "Operazione completata con successo",
-    "dashboard-error": "Si è verificato un errore"
+    "dashboard-error": "Si è verificato un errore",
+    "dashboard-accept-application-title": "Conferma accettazione",
+    "dashboard-accept-application-content": "Sei sicuro di voler accettare questa candidatura?",
+    "dashboard-accept-application-ok": "Accetta",
+    "dashboard-accept-application-cancel": "Annulla",
+    "dashboard-reject-application-title": "Conferma rifiuto",
+    "dashboard-reject-application-content": "Sei sicuro di voler rifiutare questa candidatura?",
+    "dashboard-reject-application-ok": "Rifiuta",
+    "dashboard-reject-application-cancel": "Annulla",
+    "dashboard-delete-application-title": "Conferma eliminazione",
+    "dashboard-delete-application-content": "Sei sicuro di voler eliminare questa candidatura?",
+    "dashboard-delete-application-ok": "Elimina",
+    "dashboard-delete-application-cancel": "Annulla"
 }

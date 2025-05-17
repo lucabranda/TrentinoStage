@@ -13,7 +13,7 @@ import {
     Input,
     Form,
     Empty,
-    Skeleton, Modal
+    Skeleton, Modal, message
 } from 'antd';
 import {
     CheckCircleOutlined,
@@ -31,6 +31,8 @@ import {
 import {DashedButton, LinkButton, PrimaryButton} from '../buttons/Buttons';
 import {Paragraph, Title} from '../Typography';
 import ProfileCard, {ProfileCompanyData, ProfileUserData} from "@/components/dashboard/ProfileCard";
+import { set } from 'mongoose';
+import { on } from 'events';
 
 const {Item} = List;
 const {Text} = Typography;
@@ -87,86 +89,111 @@ interface ApplicationCardProps {
     user_company_id: string;
 }
 
-const handleAccept = async (session: string, applicationId: string, userId: string, application: any) => {
-    const data = {
-        token: session,
-        positionId: applicationId,
-        title: application?.title,
-        description: application?.description,
-        sector: application?.sector,
-        country: application?.location.country,
-        region: application?.location.region,
-        city: application?.location.city,
-        weeklyHours: application?.weekly_hours,
-        chosenUser: userId,
-    };
-
-     
-
-    const res = await fetch(`/api/positions`, {
-        method: "PUT",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
+const handleAccept = (session: string, applicationId: string, userId: string, application: any, onFinish: Function, messages: any)  => {
+    Modal.confirm({
+        title: messages["dashboard-accept-application-title"] || "Conferma accettazione",
+        content: messages["dashboard-accept-application-content"] || 'Sei sicuro di voler accettare questa candidatura?',
+        okText: messages["dashboard-accept-application-ok"] || 'Accetta',
+        cancelText: messages["dashboard-accept-application-cancel"] || 'Annulla',
+        onOk: async () => {
+            const data = {
+                token: session,
+                positionId: applicationId,
+                title: application?.title,
+                description: application?.description,
+                sector: application?.sector,
+                country: application?.location.country,
+                region: application?.location.region,
+                city: application?.location.city,
+                weeklyHours: application?.weekly_hours,
+                chosenUser: userId,
+            };
+            try {
+                const res = await fetch(`/api/positions`, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(data),
+                });
+                if (res.ok) {
+                    message.success('Candidatura accettata con successo');
+                   onFinish();
+                } else {
+                    message.error('Errore durante l\'accettazione della candidatura');
+                }
+            } catch {
+                message.error('Errore di rete');
+            }
+        }
     });
-    if ((await res).ok) {
-        console.log("Application accepted successfully");
-        window.location.reload();
-    } else {
-        console.log("An error occurred while accepting application");
-    }
-}
+};
 
-const handleReject = async (session: string, applicationId: string, userId: string, application: any) => {
-    const data = {
-        token: session,
-        positionId: applicationId,
-        title: application.title,
-        description: application.description,
-        sector: application.sector,
-        country: application.location.country,
-        region: application.location.region,
-        city: application.location.city,
-        weeklyHours: application.weekly_hours,
-        chosenUser: "",
-    }
-
-    const res = await fetch(`/api/positions`, {
-        method: "PUT",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data), 
+const handleReject = (session: string, applicationId: string, userId: string, application: any, onFinish: Function, messages: any) => {
+    Modal.confirm({
+        title: messages["dashboard-reject-application-title"] || "Conferma rifiuto",
+        content: messages["dashboard-reject-application-content"] || 'Sei sicuro di voler rifiutare questa candidatura?',
+        okText: messages["dashboard-reject-application-ok"] || 'Rifiuta',
+        cancelText: messages["dashboard-reject-application-cancel"] || 'Annulla',
+        onOk: async () => {
+            const data = {
+                token: session,
+                positionId: applicationId,
+                title: application.title,
+                description: application.description,
+                sector: application.sector,
+                country: application.location.country,
+                region: application.location.region,
+                city: application.location.city,
+                weeklyHours: application.weekly_hours,
+                chosenUser: "",
+            };
+            try {
+                const res = await fetch(`/api/positions`, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(data),
+                });
+                if (res.ok) {
+                    message.success('Candidatura rifiutata');
+                    onFinish();
+                } else {
+                    message.error('Errore durante il rifiuto della candidatura');
+                }
+            } catch {
+                message.error('Errore di rete');
+            }
+        }
     });
-    if ((await res).ok) {
-        console.log("Application rejected successfully");
-        window.location.reload();
-    } else {
-        console.log("An error occurred while rejecting application");
-    }
-}
-const handleDelete = async (session: string, applicationId: string, userId: string, applied_users: any, application: any) => {
-    const data = {
-        token: session,
-        positionId: applicationId,
-        
-    }
+};
 
-    const res = await fetch(`/api/positions`, {
-        method: "DELETE",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data), 
+const handleDelete = (session: string, applicationId: string, userId: string, applied_users: any, application: any, messages: any) => {
+    Modal.confirm({
+        title: messages["dashboard-delete-application-title"] || "Conferma eliminazione",
+        content: messages["dashboard-delete-application-content"] || 'Sei sicuro di voler eliminare questa candidatura?',
+        okText: messages["dashboard-delete-application-ok"] || 'Elimina',
+        cancelText: messages["dashboard-delete-application-cancel"] || 'Annulla',
+        onOk: async () => {
+            const data = {
+                token: session,
+                positionId: applicationId,
+            };
+            try {
+                const res = await fetch(`/api/positions`, {
+                    method: "DELETE",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(data),
+                });
+                if (res.ok) {
+                    message.success('Candidatura eliminata');
+                    
+                } else {
+                    message.error('Errore durante l\'eliminazione della candidatura');
+                }
+            } catch {
+                message.error('Errore di rete');
+            }
+        }
     });
-    if ((await res).ok) {
-        console.log("Application deleted successfully");
-        window.location.reload();
-    } else {
-        console.log("An error occurred while deleting application");
-    }
-}
+};
 
 function useUserProfileData(token: string, id: string, isACompany: boolean) {
     const [values, setValues] = useState<ProfileUserData | ProfileCompanyData>()
@@ -276,6 +303,11 @@ const UserDetailsRow = ({
     const [showProfileCard, setShowProfileCard] = useState(false);
     const profile_data = useUserProfileData(token, user.user_id, false) as ProfileUserData | null;
     const isLoading = !profile_data;
+    const [isChosen, setIsChosen] = useState(false);
+
+useEffect(() => {
+    setIsChosen(application.chosen_user === user.user_id && application.chosen_user !== undefined);
+}, [application.chosen_user, user.user_id]);
     //console.log(`Utente scelto:${application.chosen_user} e id:${user.user_id} e ${profile_data?.name}`)
     return (
         <>
@@ -286,7 +318,7 @@ const UserDetailsRow = ({
                             display: 'flex',
                             gap: 24,
                             justifyContent: 'space-between',
-                            ...((application.chosen_user === user.user_id  && application.chosen_user!== undefined)
+                            ...((isChosen)
                                 ? {
                                     backgroundColor: 'lightgreen',
                                     padding: '16px',
@@ -326,25 +358,28 @@ const UserDetailsRow = ({
                                         {user?.message && <Text strong>{user?.message}</Text>}
                                     </div>
                                     <div style={{display: 'flex', gap: 8}}>
-                                        {(application.chosen_user === user.user_id && application.chosen_user!== undefined) ? (
+                                        {(isChosen) ? (
                                             <>
-                                                                                            <LinkButton
-                                                                                            onClick={() =>
-                                                                                                handleReject(token, applicationId, user.user_id, application)
-                                                                                            }
-                                                                                            style={{
-                                                                                                border: '1px solid red',
-                                                                                                color: 'red',
-                                                                                            }}
-                                                                                        >
-                                                                                            <CloseOutlined/>
-                                                                                        </LinkButton>
-                                                                                        </>
-                                        ) : (
+                                                <LinkButton
+                                                onClick={() => {
+                                                    handleReject(token, applicationId, user.user_id, application, () => setIsChosen(false), messages);
+                                                    
+                                                }}
+
+                                                style={{
+                                                    border: '1px solid red',
+                                                    color: 'red',
+                                                }}
+                                            >
+                                                <CloseOutlined/>
+                                            </LinkButton>
+                                            </>
+                                            ) : (
                                             <>
                                             <LinkButton
-                                                    onClick={() =>
-                                                        handleAccept(token, applicationId, user.user_id, application)
+                                                    onClick={() =>{
+                                                        handleAccept(token, applicationId, user.user_id, application,() => setIsChosen(true),messages);
+                                                    }
                                                     }
                                                     style={{
                                                         border: '1px solid green',
@@ -535,7 +570,7 @@ const ApplicationCard = ({item, token, user_company_id, messages, isCompany}: Ap
                 <>
                     <Item style={{display: 'flex', gap: 24, justifyContent: 'space-between'}} id={item._id}>
 
-                        {(item.chosen_user === undefined) ? (
+                        {(item.chosen_user === undefined || item.chosen_user === null || item.chosen_user === '') ? (
                             <MinusCircleOutlined style={{color: 'gold'}}/>
                         ) : item.chosen_user === user_company_id ? (
                             <CheckCircleOutlined style={{color: 'green'}}/>
@@ -572,7 +607,7 @@ const ApplicationCard = ({item, token, user_company_id, messages, isCompany}: Ap
                                         </Paragraph>
                                     <div style={{display: 'flex', gap: 8}}>
                                         <DashedButton onClick={() => {
-                                            handleDelete(token, item._id, user_company_id, item.applied_users, item)
+                                            handleDelete(token, item._id, user_company_id, item.applied_users, item, messages)
                                         }} style={{
                                             borderColor: 'red',
                                             color: 'red',
@@ -636,19 +671,19 @@ const ApplicationCard = ({item, token, user_company_id, messages, isCompany}: Ap
                                     icon={<CloseCircleOutlined style={{ fontSize: '1.2rem', color: 'gray' }} />} 
                                 />
                             </Space>
-                            <Paragraph style={{ fontSize: '1rem', color: '#555' }}>{item.description}</Paragraph>
+                            <Paragraph style={{ fontSize: '1rem', color: '#555' }}>{item?.description}</Paragraph>
                             <List
                                 dataSource={[
-                                    { label: messages["dashboard-application-sector"] || 'Sector', value: item.sector },
+                                    { label: messages["dashboard-application-sector"] || 'Sector', value: item?.sector },
                                     {
                                         label: messages["dashboard-application-location"] || 'Location',
-                                        value: `${item.location?.city}, ${item.location?.region}, ${item.location?.country}`
+                                        value: `${item?.location?.city}, ${item?.location?.region}, ${item?.location?.country}`
                                     },
-                                    { label: messages["dashboard-application-time"] || 'Time', value: `${item.minTime} - ${item.maxTime} hours` },
-                                    { label: messages["dashboard-application-weekly-hours"] || 'Weekly Hours', value: `${item.weekly_hours} hours` },
-                                    { label: messages["dashboard-application-creation-time"] || 'Created On', value: new Date(item.creation_time).toLocaleDateString() },
-                                    { label: messages["dashboard-application-applied-users"] || 'Applied Users', value: item.applied_users },
-                                    { label: messages["dashboard-application-chosen-user"] || 'Chosen User', value: item.chosen_user || '-' },
+                                    { label: messages["dashboard-application-time"] || 'Time', value: `${item?.minTime} - ${item?.maxTime} hours` },
+                                    { label: messages["dashboard-application-weekly-hours"] || 'Weekly Hours', value: `${item?.weekly_hours} hours` },
+                                    { label: messages["dashboard-application-creation-time"] || 'Created On', value: new Date(item?.creation_time).toLocaleDateString() },
+                                    { label: messages["dashboard-application-applied-users"] || 'Applied Users', value: item?.applied_users.length },
+                                    { label: messages["dashboard-application-chosen-user"] || 'Chosen User', value: item?.chosen_user || '-' },
                                 ]}
                                 renderItem={(detail) => (
                                     <List.Item style={{ padding: '8px 0', borderBottom: '1px solid #f0f0f0' }}>
