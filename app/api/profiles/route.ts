@@ -241,7 +241,7 @@ export async function GET(req: NextRequest) {
     const address = profile.address
 
     // Get the email address
-    const email = (await accounts.findOne({ _id: ObjectId.createFromHexString(accountId) }))?.email
+    const email = (await accounts.findOne({ profile_id: profileId }))?.email
 
     if (await isOwner) {
         return NextResponse.json({
