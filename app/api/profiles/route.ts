@@ -240,6 +240,9 @@ export async function GET(req: NextRequest) {
     const website = profile.website
     const address = profile.address
 
+    // Get the email address
+    const email = (await accounts.findOne({ _id: ObjectId.createFromHexString(accountId) }))?.email
+
     if (await isOwner) {
         return NextResponse.json({
             name: name, 
@@ -251,6 +254,7 @@ export async function GET(req: NextRequest) {
             identifier: profile.identifier,
             sector: profile.sector,
             isCompany: profile.is_company,
+            email: email,
             profile_image: profile.profile_image
         }, { status: 200 })
     } else if ((await accountInfo).role === "company-manager" || (await accountInfo).role === "company-employee") {
@@ -264,6 +268,7 @@ export async function GET(req: NextRequest) {
             identifier: profile.identifier,
             sector: profile.sector,
             isCompany: profile.is_company,
+            email: email,
             profile_image: profile.profile_image
         }, { status: 200 })
     } else if ((await accountInfo).role === "admin") {
@@ -278,6 +283,7 @@ export async function GET(req: NextRequest) {
             sector: profile.sector,
             cv: profile.cv,
             isCompany: profile.is_company,
+            email: email,
             profile_image: profile.profile_image
         }, { status: 200 })
     } else {
