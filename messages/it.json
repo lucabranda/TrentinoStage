@@ -224,5 +224,11 @@
     "dashboard-delete-application-title": "Conferma eliminazione",
     "dashboard-delete-application-content": "Sei sicuro di voler eliminare questa candidatura?",
     "dashboard-delete-application-ok": "Elimina",
-    "dashboard-delete-application-cancel": "Annulla"
+    "dashboard-delete-application-cancel": "Annulla",
+    "cv-upload": "Carica CV (PDF)",
+    "cv-upload-success": "CV caricato con successo",
+    "cv-upload-fail": "Caricamento fallito",
+    "cv-download": "Scarica CV",
+    "cv-download-fail": "Download fallito",
+    "cv-uploaded": "CV caricato"
 }

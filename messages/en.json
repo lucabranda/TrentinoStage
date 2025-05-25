@@ -165,6 +165,12 @@
   "user-card-address-label": "Address",
   "user-card-street-label": "Street",
   "user-card-identifier-label": "Tax Code",
+  "cv-upload": "Upload CV (PDF)",
+  "cv-upload-success": "CV uploaded successfully",
+  "cv-upload-fail": "Upload failed",
+  "cv-download": "Download CV",
+  "cv-download-fail": "Download failed",
+  "cv-uploaded": "CV uploaded",
   "enum-country-ITALY": "Italy",
   "enum-country-GERMANY": "Germany",
   "enum-country-UNITED_KINGDOM": "United Kingdom",
@@ -217,5 +223,11 @@
   "error-city-required": "Please provide a city.",
   "error-postal-code-required": "Please provide a postal code.",
   "error-street-required": "Please provide a street.",
-  "error-address-required": "Please provide an address."
+  "error-address-required": "Please provide an address.",  
+  "cv-upload": "Upload CV (PDF)",
+    "cv-upload-success": "CV uploaded successfully",
+    "cv-upload-fail": "Upload failed",
+    "cv-download": "Download CV",
+    "cv-download-fail": "Download failed",
+    "cv-uploaded": "CV uploaded"
 }

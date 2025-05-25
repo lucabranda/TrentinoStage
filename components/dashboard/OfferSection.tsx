@@ -643,6 +643,7 @@ const OfferSectionUser: React.FC<OfferSectionProps> = ({ session, id, messages }
                         profileData={profileData}
                         messages={messages}
                         isCompany={true}
+                        profile_id_for_cv={selectedProfileId ?? ""}
                     />
                 )}
             </Modal>

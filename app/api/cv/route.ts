@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
     }
 
     const token = formData.get("token") as string
-    const file = formData.get("file");
+    const file = formData.get('file') as File;
 
     try {
 
@@ -37,9 +37,10 @@ export async function POST(req: NextRequest) {
           return NextResponse.json({ error: "No file uploaded" }, { status: 400 });
         }
     
-        if (!(file instanceof File)) {
+        if (!file || typeof file !== "object" || !("arrayBuffer" in file)) {
             return NextResponse.json({ error: "Invalid file type" }, { status: 400 });
         }
+        
 
         const buffer = Buffer.from(await file.arrayBuffer());
         

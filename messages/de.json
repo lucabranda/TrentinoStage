@@ -204,5 +204,12 @@
   "error-city-required": "Bitte geben Sie eine Stadt an.",
   "error-postal-code-required": "Bitte geben Sie eine Postleitzahl an.",
   "error-street-required": "Bitte geben Sie eine Straße an.",
-  "error-address-required": "Bitte geben Sie eine Adresse an."
+  "error-address-required": "Bitte geben Sie eine Adresse an.",
+  "cv-upload": "Lebenslauf hochladen (PDF)",
+  "cv-upload-success": "Lebenslauf erfolgreich hochgeladen",
+  "cv-upload-fail": "Hochladen fehlgeschlagen",
+  "cv-download": "Lebenslauf herunterladen",
+  "cv-download-fail": "Download fehlgeschlagen",
+  "cv-uploaded": "Lebenslauf hochgeladen"
 }
+

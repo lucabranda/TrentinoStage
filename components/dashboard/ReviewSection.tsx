@@ -248,6 +248,7 @@ const ReviewCard = ({ review, messages, isCompany, session }: {
                         isOwner={false}
                         profileData={userProfileData as ProfileUserData}
                         id={review.reviewer_id}
+                        profile_id_for_cv={review.reviewer_id}
                     />
                 )}
             </Modal>
