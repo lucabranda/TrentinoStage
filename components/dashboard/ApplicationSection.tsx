@@ -226,7 +226,8 @@ function useUserProfileData(token: string, id: string, isACompany: boolean) {
                 sector: data.sector,
                 website: data.website,
                 identifier: data.identifier,
-                profile_image: data.profile_image
+                profile_image: data.profile_image,
+                email: data.email,
             } : {
                 name: data.name,
                 surname: data.surname,
@@ -243,7 +244,8 @@ function useUserProfileData(token: string, id: string, isACompany: boolean) {
                 sector: data.sector,
                 website: data.website,
                 profile_image: data.profile_image,
-                identifier: data.identifier
+                identifier: data.identifier,
+                email: data.email,
             });
             setValues(values as ProfileCompanyData | ProfileUserData);
         };
@@ -355,7 +357,7 @@ useEffect(() => {
                                     }}
                                 >
                                     <div>
-                                        {user?.message && <Text strong>{user?.message}</Text>}
+                                        {(isChosen) &&<Text>{profile_data?.email} </Text>}
                                     </div>
                                     <div style={{display: 'flex', gap: 8}}>
                                         {(isChosen) ? (
@@ -416,10 +418,11 @@ useEffect(() => {
                             <ProfileCard
                                 session={token}
                                 messages={messages}
-                                isCompany={false}
+                                isCompany={true}
                                 isOwner={false}
                                 profileData={profile_data}
                                 id={user._id}
+                                profile_id_for_cv={user.user_id}
 
                             />
                         </div>
@@ -455,21 +458,21 @@ const WriteReviewModal = ({
     const handleSaveReview = async () => {
         form.validateFields()
             .then(async (values) => {
-                const review = {
-                    token: token,
-                    reviewedProfile: reviewedProfile,
-                    reviewer_id: user_id,
-                    review: values.review,
-                    title: values.title,
-                    rating: values.rating
-                };
+               
                 const res = await fetch(`/api/reviews`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
                         "Authorization": `Bearer ${token}`,
                     },
-                    body: JSON.stringify(review),
+                    body: JSON.stringify({
+                        token: token,
+                        reviewedProfile: reviewedProfile,
+                        reviewer_id: user_id,
+                        review: values.review,
+                        title: values.title,
+                        rating: values.rating
+                    }),
                 });
                 console.log(res.body)
                 if ((await res).ok) {

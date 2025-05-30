@@ -12,6 +12,7 @@ import {
     message,
     Select,
     DatePicker,
+    Upload
 } from "antd";
 import {
     CloseCircleOutlined,
@@ -20,13 +21,14 @@ import {
     EditOutlined,
     SaveOutlined,
     UploadOutlined,
-    UserOutlined
+    UserOutlined,
+    DownloadOutlined
 } from "@ant-design/icons";
 import {DashedButton, LinkButton} from "../buttons/Buttons";
 import {sectors, regions, countries, cities} from "@/utils/enums";
 import dayjs from 'dayjs';
 import { isDeepStrictEqual } from "util";
-import Upload from "antd/es/upload/Upload";
+import { set } from "mongoose";
 const {Title, Text} = Typography;
 const {Option} = Select;
 
@@ -46,6 +48,7 @@ export interface ProfileUserData {
     sector: string;
     profile_image: string;
     identifier: string;
+    email: string;
 }
 
 export interface ProfileCompanyData {
@@ -64,6 +67,7 @@ export interface ProfileCompanyData {
     birth_date: string;
     bio: string;
     profile_image: string;
+    email: string;
 }
 
 export interface CardProps {
@@ -73,10 +77,10 @@ export interface CardProps {
     isCompany: boolean;
     isOwner: boolean;
     profileData: ProfileUserData | ProfileCompanyData;
-
+    profile_id_for_cv: string;
 }
 
-export default function ProfileCard({session, id, messages, isCompany, isOwner = true, profileData}: CardProps) {
+export default function ProfileCard({session, id, messages, isCompany, isOwner = true, profileData,profile_id_for_cv=''} : CardProps) {
     const [showEdit, setShowEdit] = useState(false);
     const [isEditing, setIsEditing] = useState<Record<string, boolean>>({});
 
@@ -96,7 +100,36 @@ export default function ProfileCard({session, id, messages, isCompany, isOwner =
         setCity((document.getElementById("city") as HTMLSelectElement)?.value as string);
     }, []);
 
-    
+    // State to check if a CV exists for this user
+    const [cvExists, setCvExists] = useState(false);
+    const [loadingCv, setLoadingCv] = useState(false);
+
+    // Add these states at the beginning of the component
+    const [loadingUpload, setLoadingUpload] = useState(false);
+    const [loadingDownload, setLoadingDownload] = useState(false);
+    const [loadingDelete, setLoadingDelete] = useState(false);
+
+    // Check if CV exists (for both user and company views)
+    useEffect(() => {
+        if (!isCompany) {
+            // For user, check own CV
+            fetch(`/api/cv?token=${session}&profileId=${id}`, {
+                method: 'GET',
+                headers: { Authorization: `Bearer ${session}` }
+            })
+                .then(res => setCvExists(res.ok))
+                .catch(() => setCvExists(false));
+        } else if(!isOwner){
+            console.log("Checking CV for company view");
+            fetch(`/api/cv?token=${session}&profileId=${profile_id_for_cv}`, {
+                method: 'GET',
+                headers: { Authorization: `Bearer ${session}` }
+            })
+                .then(res => {setCvExists(res.ok); setLoadingCv(false)})
+                .catch(() => {setCvExists(false) });
+        }
+    }, [id, session, isCompany]);
+
     const handleEditClick = (field: string, b: boolean) => {
         setIsEditing((prev) => ({...prev, [field]: b}));
     };
@@ -360,6 +393,80 @@ export default function ProfileCard({session, id, messages, isCompany, isOwner =
         );
     };
 
+    // Upload logic (only for users and if owner)
+    const uploadProps = {
+        name: 'cv',
+        accept: '.pdf',
+        showUploadList: false,
+        postOrPut: cvExists ? "PUT" : "POST",
+        customRequest: async (options: any) => {
+            setLoadingUpload(true);
+            const formData = new FormData();
+            formData.append('file', options.file);
+            formData.append('token', session);
+
+            try {
+                const res = await fetch('/api/cv', {
+                    method: uploadProps.postOrPut,
+                    headers: { Authorization: `Bearer ${session}` },
+                    body: formData,
+                });
+                if (res.ok) {
+                    message.success(messages['cv-upload-success'] || 'CV uploaded successfully');
+                    setCvExists(true);
+                } else {
+                    message.error(messages['cv-upload-fail'] || 'Upload failed');
+                }
+            } catch {
+                message.error(messages['cv-upload-fail'] || 'Upload failed');
+            } finally {
+                setLoadingUpload(false);
+            }
+        }
+    };
+
+    // Download logic (only for companies)
+    const handleDownload = async () => {
+        setLoadingDownload(true);
+        try {
+            const res = await fetch(`/api/cv?token=${session}&profileId=${profile_id_for_cv}`, {
+                method: 'GET',
+                headers: { Authorization: `Bearer ${session}` }
+            });
+            if (!res.ok) throw new Error();
+            const blob = await res.blob();
+            // Ensure correct MIME type for octet-stream
+            const url = window.URL.createObjectURL(new Blob([blob], { type: 'application/octet-stream' }));
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'cv.pdf';
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            window.URL.revokeObjectURL(url);
+        } catch {
+            message.error(messages['cv-download-fail'] || 'Download failed');
+        } finally {
+            setLoadingDownload(false);
+        }
+    };
+
+    const handleDelete = async () => {
+        setLoadingDelete(true);
+        try {
+            const res = await fetch(`/api/cv?token=${session}&profileId=${profile_id_for_cv}`, {
+                method: 'DELETE',
+                headers: { Authorization: `Bearer ${session}` }
+            });
+            if (!res.ok) throw new Error();
+            message.success(messages['cv-delete-success'] || 'CV deleted successfully');
+            setCvExists(false);
+        } catch {
+            message.error(messages['cv-delete-fail'] || 'Delete failed');
+        } finally {
+            setLoadingDelete(false);
+        }
+    };
     return (
         <Card
             title={
@@ -438,11 +545,11 @@ export default function ProfileCard({session, id, messages, isCompany, isOwner =
                 {!isCompany ? (
                     <>
                         {renderField(messages["user-card-name-label"], "name")}
-                        {renderField(messages["user-card-surname-label"], "surname")}
-                        {renderField(messages["user-card-identifier-label"], "identifier")}
+                        {isOwner && renderField(messages["user-card-surname-label"], "surname")}
+                        {isOwner && renderField(messages["user-card-identifier-label"], "identifier")}
                         {renderField(messages["user-card-bio-label"], "bio",)}
                         {renderField(messages["user-card-sector-label"], "sector")}
-                        {renderField(messages["user-card-birth-date-label"], "birth_date")}
+                        {isOwner && renderField(messages["user-card-birth-date-label"], "birth_date")}
 
                         <Row align="middle" style={{
                             marginBottom: 16,
@@ -505,6 +612,58 @@ export default function ProfileCard({session, id, messages, isCompany, isOwner =
 
                     </>
                 )}
+
+                {/* CV Upload/Download Section */}
+                <div style={{ marginTop: 16, display: "flex", flexDirection: "row", gap: 4 }}>
+                    {!isCompany && isOwner && (
+                        <>
+                       <Upload {...uploadProps}>
+                            <Button icon={<UploadOutlined />} loading={loadingUpload}>
+                                {messages['cv-upload'] || 'Upload CV (PDF)'}
+                            </Button>
+                        </Upload>
+                        {cvExists && (
+                            <>
+                            <Button icon={<DownloadOutlined />} loading={loadingDownload} onClick={handleDownload} style={{ borderColor: "#1890ff", color: "#1890ff"}}>
+                                {messages['cv-download'] || 'Download CV'}
+                            </Button>
+                            <Button icon={<DeleteOutlined />} loading={loadingDelete} onClick={handleDelete} disabled={!cvExists} style={{ borderColor: "red", color: "red"}}>
+                                {messages['cv-delete'] || 'Delete CV'}
+                            </Button>
+                            </>
+                        )}
+                        </>
+                    )}
+                    {isCompany && (
+                        loadingUpload || loadingDownload || loadingDelete ? (
+                            <span style={{ marginLeft: 8 }}>
+                                <span className="ant-spin-dot ant-spin-dot-spin" style={{ fontSize: 18 }}>
+                                    <i className="ant-spin-dot-item" />
+                                    <i className="ant-spin-dot-item" />
+                                    <i className="ant-spin-dot-item" />
+                                    <i className="ant-spin-dot-item" />
+                                </span>
+                                {messages['cv-loading'] || 'Loading...'}
+                            </span>
+                        ) : (
+                            cvExists && (
+                                <Button
+                                    icon={<DownloadOutlined />}
+                                    loading={loadingDownload}
+                                    onClick={handleDownload}
+                                    style={{ marginLeft: 8 }}
+                                >
+                                    {messages['cv-download'] || 'Download CV'}
+                                </Button>
+                            )
+                        )
+                    )}
+                    {!isCompany && cvExists && (
+                        <span style={{ marginLeft: 8, color: 'green' }}>
+                            {messages['cv-uploaded'] || 'CV uploaded'}
+                        </span>
+                    )}
+                </div>
             </Space>
         </Card>
     );
