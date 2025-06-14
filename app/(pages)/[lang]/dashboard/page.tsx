@@ -59,18 +59,7 @@ export default async function Home({params}: any) {
                 isACompany={isACompany}
                 profileId={profileId}
                 profileData={profileData}
-                /*
-                name={profileData.name}
-                surname={profileData.surname}
-                address={profileData.address}
-                birth_date={profileData.birth_date}
-                bio={profileData.bio}
-                sector={profileData.sector}
-                website={profileData.website}
-                identifier={profileData.identifier}
-                profile_image={profileData.profile_image}
-
-                 */
+                
             />
         </>
     );
