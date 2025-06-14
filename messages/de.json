@@ -216,7 +216,9 @@
   "dashboard-apply-error": "Bewerbung konnte nicht gesendet werden.",
   "dashboard-applied": "Beworben",
   "dashboard-profile-modal-title": "Unternehmensprofil",
-  "dashboard-apply-modal-message": "Möchten Sie sich wirklich auf dieses Angebot bewerben?"
+  "dashboard-apply-modal-message": "Möchten Sie sich wirklich auf dieses Angebot bewerben?",
+  "login-not-available": "Login nicht verfügbar",
+  "login-not-available-message": "Dieser Dienst ist derzeit nicht verfügbar."
 
 
 }

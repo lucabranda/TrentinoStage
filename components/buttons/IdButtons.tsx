@@ -1,55 +1,130 @@
-import { Button } from 'antd';
+"use client"
+import {useState} from 'react'
+import { Button, Modal } from 'antd';
 import { LoginOutlined } from '@ant-design/icons';
 import styles from './idButtons.module.css';
 import { getMessages } from '@/utils/systemMessage';
 
-const SpidButton = async ({ lang }: { lang: string }) => (
-  <Button
-    type="default"
-    icon={<LoginOutlined />}
-    className={styles.spidButton}
-    block
-    href="https://www.spid.gov.it/"
-    target="_blank"
-    rel="noopener noreferrer"
-  >
-    {(await getMessages(lang || 'it'))["login-spid"]}
-  </Button>
-);
-const CieButton = async ({ lang }: { lang: string }) => (
-  <Button
-    type="default"
-    icon={<LoginOutlined />}
-    className={styles.cieButton}
-    block
-    href="https://www.cartaidentita.interno.gov.it/"
-    target="_blank"
-    rel="noopener noreferrer"
-  >
-    {(await getMessages(lang || 'it'))["login-cie"]}
-  </Button>
-);
+const SpidButton = ({ lang }: { lang: string }) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-const EidasButton = () => (
-  <Button
-    type="default"
-    icon={<LoginOutlined />}
-    className={styles.eidasButton}
-    block
-    href="https://ec.europa.eu/digital-strategy/our-policies/eidas_en"
-    target="_blank"
-    rel="noopener noreferrer"
-  >
-    Log in with eIDAS
-  </Button>
-);
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleOk = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
+
+  return (
+    <>
+      <Button
+        type="default"
+        icon={<LoginOutlined />}
+        className={styles.spidButton}
+        block
+        onClick={showModal}
+      >
+        {getMessages(lang || 'it')["login-spid"]}
+      </Button>
+      <Modal
+        title={getMessages(lang || 'it')["login-not-available"]}
+        visible={isModalOpen}
+        onOk={handleOk}
+        onCancel={handleCancel}
+      >
+        <p>{getMessages(lang || 'it')["login-not-available-message"]}</p>
+      </Modal>
+    </>
+  );
+};
+
+const CieButton = ({ lang }: { lang: string }) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleOk = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
+
+  return (
+    <>
+      <Button
+        type="default"
+        icon={<LoginOutlined />}
+        className={styles.cieButton}
+        block
+        onClick={showModal}
+      >
+        {getMessages(lang || 'it')["login-cie"]}
+      </Button>
+      <Modal
+        title={getMessages(lang || 'it')["login-not-available"]}
+        visible={isModalOpen}
+        onOk={handleOk}
+        onCancel={handleCancel}
+      >
+        <p>{getMessages(lang || 'it')["login-not-available-message"]}</p>
+      </Modal>
+    </>
+  );
+};
+
+const EidasButton = ({ lang }: { lang: string }) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleOk = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
+
+  return (
+    <>
+      <Button
+        type="default"
+        icon={<LoginOutlined />}
+        className={styles.eidasButton}
+        block
+        onClick={showModal}
+      >
+        Log in with eIDAS
+      </Button>
+      <Modal
+        title={getMessages(lang || 'it')["login-not-available"]}
+        visible={isModalOpen}
+        onOk={handleOk}
+        onCancel={handleCancel}
+      >
+        <p>{getMessages(lang || 'it')["login-not-available-message"]}</p>
+      </Modal>
+    </>
+  );
+};
 
 const DigitalIdentityButtons = ({ lang }: { lang: string }) => {
   return (
     <>
-      <SpidButton lang={lang}/>
-      <CieButton lang={lang}/>
-      <EidasButton/>
+      <SpidButton lang={lang} />
+      <CieButton lang={lang} />
+      <EidasButton lang={lang} />
     </>
   )
 }

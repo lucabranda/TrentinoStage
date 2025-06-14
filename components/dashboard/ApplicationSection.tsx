@@ -356,9 +356,35 @@ useEffect(() => {
                                         justifyContent: 'space-between',
                                     }}
                                 >
-                                    <div>
-                                        {(isChosen) &&<Text>{profile_data?.email} </Text>}
-                                    </div>
+                                     {(isChosen) &&
+                                        <>
+                                        <Text>{profile_data?.email} </Text>
+                                        <LinkButton
+                                            onClick={() =>  setTimeout(() => Modal.info({
+                                                title: messages["dashboard-write-review"] || "Write review",
+                                                content: (
+                                                    <WriteReviewModal
+                                                        token={token}
+                                                        user_id={application.issuer_id}
+                                                        applicationId={applicationId}
+                                                        onClose={() => Modal.destroyAll()}
+                                                        messages={messages}
+                                                        reviewedProfile={user.user_id}
+                                                    />
+                                                ),
+                                                icon: null,
+                                                okButtonProps: { style: { display: 'none' } },
+                                                closable: true,
+                                                width: 700,
+                                                centered: true,
+                                                maskClosable: true,
+                                            }), 0)}
+                                        >
+                                            {messages["dashboard-write-review"] || "Write review"}
+                                            <PlusOutlined />
+                                        </LinkButton>
+                                        </>
+                                        }
                                     <div style={{display: 'flex', gap: 8}}>
                                         {(isChosen) ? (
                                             <>

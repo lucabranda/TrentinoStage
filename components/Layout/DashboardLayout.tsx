@@ -165,7 +165,7 @@ export default function DashboardLayout({
                                                  profile_id_for_cv={profileId}
                                     />
                                     <div /*className={styles.reviewSectionContainer}*/  id="reviews">
-                                        <ReviewSection isCompany={isACompany} session={token} id={profileId} messages={messages} />
+                                        <ReviewSection isCompany={isACompany} session={token} id={profileId} messages={messages}/>
                                     </div>
                                 </section>
                             )}

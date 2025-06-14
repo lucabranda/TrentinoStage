@@ -234,7 +234,8 @@
   "dashboard-apply-error": "Failed to send application.",
   "dashboard-applied": "Applied",
   "dashboard-profile-modal-title": "Company Profile",
-  "dashboard-apply-modal-message": "Are you sure you want to apply to this offer?"
-
+  "dashboard-apply-modal-message": "Are you sure you want to apply to this offer?",
+  "login-not-available": "Login not available",
+  "login-not-available-message": "This service is not available at the moment."
 
 }

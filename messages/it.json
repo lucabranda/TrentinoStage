@@ -241,6 +241,7 @@
     "dashboard-apply": "Candidati",
     "dashboard-applied": "Candidato",
     "dashboard-profile-modal-title": "Profilo azienda",
-    "dashboard-apply-modal-message": "Sei sicuro di voler candidarti a questa offerta?"
-
+    "dashboard-apply-modal-message": "Sei sicuro di voler candidarti a questa offerta?",
+    "login-not-available": "Accesso non disponibile",
+    "login-not-available-message": "Non è possibile accedere a questo servizio in questo momento."
 }
