@@ -225,9 +225,16 @@
   "error-street-required": "Please provide a street.",
   "error-address-required": "Please provide an address.",  
   "cv-upload": "Upload CV (PDF)",
-    "cv-upload-success": "CV uploaded successfully",
-    "cv-upload-fail": "Upload failed",
-    "cv-download": "Download CV",
-    "cv-download-fail": "Download failed",
-    "cv-uploaded": "CV uploaded"
+  "cv-upload-success": "CV uploaded successfully",
+  "cv-upload-fail": "Upload failed",
+  "cv-download": "Download CV",
+  "cv-download-fail": "Download failed",
+  "cv-uploaded": "CV uploaded",
+  "dashboard-apply-success": "Application sent successfully!",
+  "dashboard-apply-error": "Failed to send application.",
+  "dashboard-applied": "Applied",
+  "dashboard-profile-modal-title": "Company Profile",
+  "dashboard-apply-modal-message": "Are you sure you want to apply to this offer?"
+
+
 }

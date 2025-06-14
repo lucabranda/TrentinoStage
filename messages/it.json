@@ -225,10 +225,22 @@
     "dashboard-delete-application-content": "Sei sicuro di voler eliminare questa candidatura?",
     "dashboard-delete-application-ok": "Elimina",
     "dashboard-delete-application-cancel": "Annulla",
+
+    "dashboard-application-status-accepted": "Accettata",
+    "dashboard-application-status-rejected": "Rifiutata",
+
     "cv-upload": "Carica CV (PDF)",
     "cv-upload-success": "CV caricato con successo",
     "cv-upload-fail": "Caricamento fallito",
     "cv-download": "Scarica CV",
     "cv-download-fail": "Download fallito",
-    "cv-uploaded": "CV caricato"
+
+    "cv-uploaded": "CV caricato",
+     "dashboard-apply-success": "Candidatura inviata con successo!",
+    "dashboard-apply-error": "Invio candidatura fallito.",
+    "dashboard-apply": "Candidati",
+    "dashboard-applied": "Candidato",
+    "dashboard-profile-modal-title": "Profilo azienda",
+    "dashboard-apply-modal-message": "Sei sicuro di voler candidarti a questa offerta?"
+
 }
