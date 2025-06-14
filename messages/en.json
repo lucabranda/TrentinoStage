@@ -165,6 +165,12 @@
   "user-card-address-label": "Address",
   "user-card-street-label": "Street",
   "user-card-identifier-label": "Tax Code",
+  "cv-upload": "Upload CV (PDF)",
+  "cv-upload-success": "CV uploaded successfully",
+  "cv-upload-fail": "Upload failed",
+  "cv-download": "Download CV",
+  "cv-download-fail": "Download failed",
+  "cv-uploaded": "CV uploaded",
   "enum-country-ITALY": "Italy",
   "enum-country-GERMANY": "Germany",
   "enum-country-UNITED_KINGDOM": "United Kingdom",
@@ -229,5 +235,6 @@
   "dashboard-applied": "Applied",
   "dashboard-profile-modal-title": "Company Profile",
   "dashboard-apply-modal-message": "Are you sure you want to apply to this offer?"
+
 
 }
