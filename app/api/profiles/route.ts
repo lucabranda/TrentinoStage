@@ -75,8 +75,6 @@ import accounts from "@/utils/model/accounts"
  *                   type: boolean
  *                 profile_image:
  *                   type: string
- *                 profile_image:
- *                   type: string
  *       400:
  *         description: Invalid profile ID or other bad request
  *       401:

@@ -5,164 +5,10 @@
     "version": "1.0"
   },
   "paths": {
-    "/api/accounts/getProfileId": {
+    "/api/accounts": {
       "get": {
-        "summary": "Retrieve the profile ID for a given account ID",
-        "description": "This endpoint returns the profile ID associated with the provided account ID.",
-        "tags": [
-          "Accounts"
-        ],
-        "parameters": [
-          {
-            "in": "query",
-            "name": "accountId",
-            "required": true,
-            "description": "The ID of the account for which to retrieve the profile ID.",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successfully retrieved the profile ID.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "profileId": {
-                      "type": "string",
-                      "description": "The profile ID associated with the provided account ID."
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Missing required fields.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string",
-                      "description": "Error message indicating the missing required fields."
-                    },
-                    "code": {
-                      "type": "string",
-                      "description": "Error code indicating the missing account ID."
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/accounts/register": {
-      "post": {
-        "summary": "Register a new account",
-        "description": "Creates a new account. If an invitation token is provided, the account will be connected to the profile associated with the token. Returns a session token upon successful registration.",
-        "tags": [
-          "Accounts"
-        ],
-        "consumes": [
-          "multipart/form-data"
-        ],
-        "requestBody": {
-          "content": {
-            "multipart/form-data": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "email": {
-                    "type": "string",
-                    "description": "The email address of the new account."
-                  },
-                  "password": {
-                    "type": "string",
-                    "description": "The password for the new account."
-                  },
-                  "role": {
-                    "token": "string",
-                    "description": "The role of the account. It's mandatory if no invitation token is provided. Possible values are \"admin\", \"user\", \"company-manager\", \"company-employee\"."
-                  }
-                }
-              }
-            }
-          }
-        },
-        "parameters": [
-          {
-            "in": "query",
-            "name": "token",
-            "type": "string",
-            "required": false,
-            "description": "Invitation token to connect the account to a profile."
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Account created successfully.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "token": {
-                      "type": "string",
-                      "description": "Session token for the newly created account."
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Bad request. Possible reasons include invalid email, email already in use, invalid password, or invalid invitation token.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string",
-                      "description": "Error message explaining the reason for failure.",
-                      "example": "Email is already in use"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "405": {
-            "description": "Unsupported content type.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string",
-                      "description": "Error message explaining the reason for failure.",
-                      "example": "Unsupported content type"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/accounts/role": {
-      "get": {
-        "summary": "Retrieve the role of an account based on a session token.",
-        "description": "This endpoint retrieves the role of an account by validating the provided session token.",
+        "summary": "Retrieve account information based on session token",
+        "description": "Fetches the email, role, and profile ID of an account using a valid session token.",
         "tags": [
           "Accounts"
         ],
@@ -174,20 +20,28 @@
             "schema": {
               "type": "string"
             },
-            "description": "The session token used to identify the account."
+            "description": "The session token of the account."
           }
         ],
         "responses": {
           "200": {
-            "description": "Successfully retrieved the role of the account.",
+            "description": "Successfully retrieved account information.",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {
+                    "email": {
+                      "type": "string",
+                      "description": "The email address of the account."
+                    },
                     "role": {
                       "type": "string",
                       "description": "The role of the account."
+                    },
+                    "profileId": {
+                      "type": "string",
+                      "description": "The profile ID associated with the account."
                     }
                   }
                 }
@@ -195,7 +49,7 @@
             }
           },
           "401": {
-            "description": "Unauthorized access due to missing or invalid session token.",
+            "description": "Unauthorized or invalid session token.",
             "content": {
               "application/json": {
                 "schema": {
@@ -215,37 +69,166 @@
             }
           }
         }
-      }
-    },
-    "/api/applications/apply": {
+      },
       "post": {
-        "summary": "Apply for a new application",
-        "description": "Endpoint to allow users to apply for a specific application. Only individual accounts are allowed to apply.",
-        "consumes": [
-          "multipart/form-data",
-          "application/json"
+        "summary": "Create a new account",
+        "description": "Registers a new account with email, password, and optional invitation token or role.",
+        "tags": [
+          "Accounts"
         ],
-        "parameters": [
-          {
-            "in": "body",
-            "name": "application",
-            "description": "Application data",
-            "required": true,
-            "schema": {
-              "type": "object",
-              "properties": {
-                "token": {
-                  "type": "string",
-                  "description": "Session token of the user."
-                },
-                "applicationId": {
-                  "type": "string",
-                  "description": "ID of the application to apply for."
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "description": "The email address of the new account."
+                  },
+                  "password": {
+                    "type": "string",
+                    "description": "The password for the new account."
+                  },
+                  "role": {
+                    "type": "string",
+                    "description": "The role of the new account (required if no invitation token is provided)."
+                  },
+                  "token": {
+                    "type": "string",
+                    "description": "An optional invitation token for account creation."
+                  }
+                }
+              }
+            },
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "description": "The email address of the new account."
+                  },
+                  "password": {
+                    "type": "string",
+                    "description": "The password for the new account."
+                  },
+                  "role": {
+                    "type": "string",
+                    "description": "The role of the new account (required if no invitation token is provided)."
+                  },
+                  "token": {
+                    "type": "string",
+                    "description": "An optional invitation token for account creation."
+                  }
                 }
               }
             }
           }
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully created a new account.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "token": {
+                      "type": "string",
+                      "description": "The session token for the newly created account."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized or invalid input.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Error message."
+                    },
+                    "code": {
+                      "type": "string",
+                      "description": "Error code."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Unsupported content type.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Error message."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/applications": {
+      "post": {
+        "summary": "Apply for a position",
+        "description": "Endpoint to allow users to apply for a specific position.",
+        "tags": [
+          "Applications"
         ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "token": {
+                    "type": "string",
+                    "description": "The session token of the user."
+                  },
+                  "positionId": {
+                    "type": "string",
+                    "description": "The ID of the position to apply for."
+                  },
+                  "message": {
+                    "type": "string",
+                    "description": "Optional message to include with the application."
+                  }
+                }
+              }
+            },
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "token": {
+                    "type": "string",
+                    "description": "The session token of the user."
+                  },
+                  "positionId": {
+                    "type": "string",
+                    "description": "The ID of the position to apply for."
+                  }
+                }
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "Application created successfully.",
@@ -264,7 +247,7 @@
             }
           },
           "403": {
-            "description": "Forbidden. Invalid token or account type.",
+            "description": "Invalid token or account type. Companies cannot apply for positions.",
             "content": {
               "application/json": {
                 "schema": {
@@ -272,11 +255,11 @@
                   "properties": {
                     "error": {
                       "type": "string",
-                      "example": "Invalid token"
+                      "example": "Invalid account type. Companies can't apply"
                     },
                     "code": {
                       "type": "string",
-                      "example": "error-invalid-token"
+                      "example": "error-invalid-account-type"
                     }
                   }
                 }
@@ -284,7 +267,7 @@
             }
           },
           "404": {
-            "description": "Application not found.",
+            "description": "Application not found or position does not exist.",
             "content": {
               "application/json": {
                 "schema": {
@@ -304,7 +287,7 @@
             }
           },
           "405": {
-            "description": "Unsupported content type or missing applicationId field.",
+            "description": "Unsupported content type or missing positionId.",
             "content": {
               "application/json": {
                 "schema": {
@@ -324,96 +307,13 @@
             }
           }
         }
-      }
-    },
-    "/api/applications/create": {
-      "post": {
-        "summary": "Create a new application",
-        "description": "Endpoint to create a new application with the provided details.",
+      },
+      "get": {
+        "summary": "Get the positions to which the user is applied to",
+        "description": "Retrieve the list of positions the user has applied to.",
         "tags": [
           "Applications"
         ],
-        "consumes": [
-          "multipart/form-data"
-        ],
-        "requestBody": {
-          "content": {
-            "multipart/form-data": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "token": {
-                    "type": "string",
-                    "description": "Session token for authentication",
-                    "example": "your-session-token"
-                  },
-                  "title": {
-                    "type": "string",
-                    "description": "Title of the application",
-                    "example": "Application Title"
-                  },
-                  "description": {
-                    "type": "string",
-                    "description": "Description of the application",
-                    "example": "Application Description"
-                  },
-                  "sector": {
-                    "type": "string",
-                    "description": "Sector of the application",
-                    "example": "Technology"
-                  },
-                  "country": {
-                    "type": "string",
-                    "description": "Country of the application",
-                    "example": "USA"
-                  },
-                  "region": {
-                    "type": "string",
-                    "description": "Region of the application",
-                    "example": "California"
-                  },
-                  "city": {
-                    "type": "string",
-                    "description": "City of the application",
-                    "example": "San Francisco"
-                  },
-                  "weekly_hours": {
-                    "type": "integer",
-                    "description": "Weekly hours for the application",
-                    "example": 40
-                  }
-                },
-                "required": [
-                  "token",
-                  "title",
-                  "description",
-                  "sector",
-                  "country",
-                  "region",
-                  "city",
-                  "weekly_hours"
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Application created successfully"
-          },
-          "403": {
-            "description": "Invalid token"
-          },
-          "405": {
-            "description": "Invalid request or unsupported content type"
-          }
-        }
-      }
-    },
-    "/api/applications/list": {
-      "get": {
-        "summary": "Retrieve a list of open positions for a company.",
-        "description": "This endpoint retrieves all open positions for a specified company. \nIf the user accessing the endpoint is the company that created the positions, \nall fields are returned. Otherwise, sensitive fields such as `applied_users` \nand `chosen_user` are omitted.\n",
         "parameters": [
           {
             "in": "query",
@@ -422,21 +322,12 @@
             "schema": {
               "type": "string"
             },
-            "description": "The session token of the user making the request."
-          },
-          {
-            "in": "query",
-            "name": "profileId",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "description": "The profile ID of the company whose positions are being queried."
+            "description": "The session token of the user."
           }
         ],
         "responses": {
           "200": {
-            "description": "A list of open positions.",
+            "description": "List of positions retrieved successfully.",
             "content": {
               "application/json": {
                 "schema": {
@@ -444,9 +335,13 @@
                   "items": {
                     "type": "object",
                     "properties": {
-                      "issuer_id": {
+                      "_id": {
                         "type": "string",
-                        "description": "The ID of the company that created the position."
+                        "description": "The ID of the position."
+                      },
+                      "issuerId": {
+                        "type": "string",
+                        "description": "The ID of the issuer of the position."
                       },
                       "title": {
                         "type": "string",
@@ -454,15 +349,28 @@
                       },
                       "description": {
                         "type": "string",
-                        "description": "A description of the position."
+                        "description": "The description of the position."
                       },
                       "sector": {
                         "type": "string",
                         "description": "The sector of the position."
                       },
+                      "weeklyHours": {
+                        "type": "number",
+                        "description": "The weekly hours required for the position."
+                      },
                       "location": {
                         "type": "string",
                         "description": "The location of the position."
+                      },
+                      "creationTime": {
+                        "type": "string",
+                        "format": "date-time",
+                        "description": "The time the position was created."
+                      },
+                      "isOpen": {
+                        "type": "boolean",
+                        "description": "Whether the position is still open or not."
                       }
                     }
                   }
@@ -471,7 +379,7 @@
             }
           },
           "401": {
-            "description": "Unauthorized access due to missing or invalid session token.",
+            "description": "Missing required fields or invalid session token.",
             "content": {
               "application/json": {
                 "schema": {
@@ -479,133 +387,7 @@
                   "properties": {
                     "error": {
                       "type": "string",
-                      "description": "The error message."
-                    },
-                    "code": {
-                      "type": "string",
-                      "description": "The error code."
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error."
-          }
-        }
-      }
-    },
-    "/api/applications/modify": {
-      "post": {
-        "summary": "Modify an existing application",
-        "description": "This endpoint allows you to modify an existing application by providing the necessary fields. Can also be used to set a chosen user for the application.",
-        "consumes": [
-          "multipart/form-data"
-        ],
-        "parameters": [
-          {
-            "in": "formData",
-            "name": "token",
-            "type": "string",
-            "required": true,
-            "description": "Session token for authentication."
-          },
-          {
-            "in": "formData",
-            "name": "title",
-            "type": "string",
-            "required": true,
-            "description": "Title of the application."
-          },
-          {
-            "in": "formData",
-            "name": "description",
-            "type": "string",
-            "required": true,
-            "description": "Description of the application."
-          },
-          {
-            "in": "formData",
-            "name": "sector",
-            "type": "string",
-            "required": true,
-            "description": "Sector of the application."
-          },
-          {
-            "in": "formData",
-            "name": "country",
-            "type": "string",
-            "required": true,
-            "description": "Country of the application."
-          },
-          {
-            "in": "formData",
-            "name": "region",
-            "type": "string",
-            "required": true,
-            "description": "Region of the application."
-          },
-          {
-            "in": "formData",
-            "name": "city",
-            "type": "string",
-            "required": true,
-            "description": "City of the application."
-          },
-          {
-            "in": "formData",
-            "name": "weekly_hours",
-            "type": "integer",
-            "required": true,
-            "description": "Weekly hours for the application."
-          },
-          {
-            "in": "formData",
-            "name": "chosen_user",
-            "type": "string",
-            "required": false,
-            "description": "Chosen user for the application."
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Application modified successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "message": {
-                      "type": "string",
-                      "example": "Application modified successfully"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Missing required fields",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "string",
-                  "example": "Missing required fields"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Invalid token",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string",
-                      "example": "Invalid token"
+                      "example": "Token not valid or expired"
                     },
                     "code": {
                       "type": "string",
@@ -615,229 +397,198 @@
                 }
               }
             }
-          },
-          "405": {
-            "description": "Unsupported content type",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string",
-                      "example": "Unsupported content type"
-                    },
-                    "code": {
-                      "type": "string",
-                      "example": "error-invalid-request"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Error modifying application",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string",
-                      "example": "Error modifying application"
-                    }
-                  }
-                }
-              }
-            }
           }
         }
       }
     },
-    "/api/applications/status": {
-      "get": {
-        "summary": "Retrieve the status of a specific application",
-        "description": "Endpoint for companies to view the status of their applications.",
-        "parameters": [
-          {
-            "in": "query",
-            "name": "token",
-            "required": true,
-            "description": "Session token for authentication",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "query",
-            "name": "applicationId",
-            "required": true,
-            "description": "The ID of the application to retrieve",
-            "schema": {
-              "type": "string"
+    "/api/cv": {
+      "post": {
+        "summary": "Upload a CV file for the authenticated user",
+        "description": "Uploads a single CV file (PDF, DOC, etc.) for the authenticated user. Only one file per user is allowed.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "token": {
+                    "type": "string",
+                    "description": "Session token for authentication"
+                  },
+                  "file": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "The CV file to upload"
+                  }
+                }
+              }
+            },
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "token": {
+                    "type": "string"
+                  },
+                  "file": {
+                    "type": "string",
+                    "description": "Base64-encoded file content (not recommended)"
+                  }
+                }
+              }
             }
           }
-        ],
+        },
         "responses": {
           "200": {
-            "description": "Successfully retrieved the application status",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "_id": {
-                      "type": "string"
-                    },
-                    "issuer_id": {
-                      "type": "string"
-                    },
-                    "status": {
-                      "type": "string"
-                    },
-                    "other_fields": {
-                      "type": "object"
-                    }
-                  }
-                }
-              }
-            }
+            "description": "File uploaded successfully"
+          },
+          "400": {
+            "description": "No file uploaded or invalid file type"
           },
           "401": {
-            "description": "Missing required fields or invalid session token",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    },
-                    "code": {
-                      "type": "string"
-                    }
-                  }
-                }
-              }
-            }
+            "description": "Unauthorized"
           },
-          "404": {
-            "description": "Application not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    },
-                    "code": {
-                      "type": "string"
-                    }
-                  }
-                }
-              }
-            }
+          "403": {
+            "description": "User already uploaded a file"
+          },
+          "405": {
+            "description": "Unsupported content type"
+          },
+          "500": {
+            "description": "Internal server error"
           }
         }
-      }
-    },
-    "/api/profiles/get": {
+      },
       "get": {
-        "summary": "Retrieve profile information",
-        "description": "Given the profile ID and the authentication token, returns the profile information.",
-        "tags": [
-          "Profiles"
-        ],
+        "summary": "Download a user's CV file",
+        "description": "Returns the CV file for the specified profile if the requester is the owner or a company.",
         "parameters": [
           {
             "in": "query",
             "name": "token",
-            "required": true,
-            "description": "Session token for authentication",
             "schema": {
               "type": "string"
-            }
+            },
+            "required": true,
+            "description": "Session token for authentication"
           },
           {
             "in": "query",
             "name": "profileId",
-            "required": true,
-            "description": "ID of the profile to retrieve",
             "schema": {
               "type": "string"
-            }
+            },
+            "required": true,
+            "description": "Profile ID of the user whose CV is requested"
           }
         ],
         "responses": {
           "200": {
-            "description": "Profile information retrieved successfully",
+            "description": "File download stream",
             "content": {
-              "application/json": {
+              "application/octet-stream": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "name": {
-                      "type": "string"
-                    },
-                    "surname": {
-                      "type": "string"
-                    },
-                    "bio": {
-                      "type": "string"
-                    },
-                    "website": {
-                      "type": "string"
-                    },
-                    "birth_date": {
-                      "type": "string",
-                      "format": "date"
-                    },
-                    "address": {
-                      "type": "string"
-                    },
-                    "identifier": {
-                      "type": "string"
-                    },
-                    "sector": {
-                      "type": "string"
-                    },
-                    "cv": {
-                      "type": "string"
-                    }
-                  }
+                  "type": "string",
+                  "format": "binary"
                 }
               }
             }
           },
           "401": {
-            "description": "Invalid session token",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    },
-                    "code": {
-                      "type": "string"
-                    }
+            "description": "Unauthorized or invalid session token"
+          },
+          "404": {
+            "description": "No files found"
+          },
+          "500": {
+            "description": "Database connection error"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete the authenticated user's CV file",
+        "description": "Deletes the CV file associated with the authenticated user's profile.",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "token",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "Session token for authentication"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "File deleted successfully"
+          },
+          "401": {
+            "description": "Missing required fields or invalid session token"
+          },
+          "404": {
+            "description": "No files found for this profile"
+          },
+          "500": {
+            "description": "Failed to delete file or database connection error"
+          }
+        }
+      },
+      "put": {
+        "summary": "Replace the authenticated user's CV file",
+        "description": "Replaces the existing CV file for the authenticated user with a new one. Only one file per user is allowed.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "token": {
+                    "type": "string",
+                    "description": "Session token for authentication"
+                  },
+                  "file": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "The new CV file to upload"
+                  }
+                }
+              }
+            },
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "token": {
+                    "type": "string"
+                  },
+                  "file": {
+                    "type": "string",
+                    "description": "Base64-encoded file content (not recommended)"
                   }
                 }
               }
             }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "File uploaded successfully"
           },
-          "404": {
-            "description": "Profile not found",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
+          "400": {
+            "description": "No file uploaded or invalid file type"
+          },
+          "401": {
+            "description": "Missing required fields or invalid session token"
+          },
+          "405": {
+            "description": "Unsupported content type"
+          },
+          "500": {
+            "description": "Internal server error"
           }
         }
       }
@@ -978,44 +729,325 @@
         }
       }
     },
-    "/api/profiles/isCompany": {
+    "/api/Positions": {
       "get": {
-        "summary": "Check if the user is a company",
-        "description": "Returns whether the user associated with the provided session token or account ID is a company. At least one of the two parameters must be provided.",
+        "summary": "Retrieve a list of open positions",
+        "description": "Fetches a list of open positions based on various filters such as sector, city, weekly hours, and position ID. If the user is a company, all data is returned. Otherwise, sensitive fields are omitted.",
         "tags": [
-          "Profiles"
+          "Positions"
         ],
         "parameters": [
           {
             "in": "query",
             "name": "token",
+            "required": true,
+            "description": "Session token of the user.",
             "schema": {
               "type": "string"
-            },
-            "required": false,
-            "description": "The session token of the user"
+            }
           },
           {
             "in": "query",
-            "name": "accountId",
+            "name": "profileId",
+            "required": false,
+            "description": "Profile ID of the company issuing the positions.",
             "schema": {
               "type": "string"
-            },
+            }
+          },
+          {
+            "in": "query",
+            "name": "sector",
             "required": false,
-            "description": "The account ID of the user"
+            "description": "Filter positions by sector. Multiple sectors can be separated by a pipe (`|`).",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "city",
+            "required": false,
+            "description": "Filter positions by city.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "maxTime",
+            "required": false,
+            "description": "Maximum weekly hours for the position.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "minTime",
+            "required": false,
+            "description": "Minimum weekly hours for the position.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "positionId",
+            "required": false,
+            "description": "Filter by a specific position ID.",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
           "200": {
-            "description": "A JSON object indicating whether the user is a company",
+            "description": "A list of open positions.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "issuer_id": {
+                        "type": "string"
+                      },
+                      "title": {
+                        "type": "string"
+                      },
+                      "description": {
+                        "type": "string"
+                      },
+                      "sector": {
+                        "type": "string"
+                      },
+                      "location": {
+                        "type": "object",
+                        "properties": {
+                          "city": {
+                            "type": "string"
+                          },
+                          "region": {
+                            "type": "string"
+                          },
+                          "country": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "weekly_hours": {
+                        "type": "number"
+                      },
+                      "creation_time": {
+                        "type": "string",
+                        "format": "date-time"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid session token."
+          },
+          "500": {
+            "description": "Internal server error."
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new position",
+        "description": "Allows a company to create a new job position. Only accounts with a company profile can use this endpoint.",
+        "tags": [
+          "Positions"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "token",
+                  "title",
+                  "description",
+                  "sector",
+                  "country",
+                  "region",
+                  "city",
+                  "weeklyHours"
+                ],
+                "properties": {
+                  "token": {
+                    "type": "string",
+                    "description": "Session token of the user."
+                  },
+                  "title": {
+                    "type": "string",
+                    "description": "Title of the position."
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "Description of the position."
+                  },
+                  "sector": {
+                    "type": "string",
+                    "description": "Sector of the position."
+                  },
+                  "country": {
+                    "type": "string",
+                    "description": "Country where the position is located."
+                  },
+                  "region": {
+                    "type": "string",
+                    "description": "Region where the position is located."
+                  },
+                  "city": {
+                    "type": "string",
+                    "description": "City where the position is located."
+                  },
+                  "weeklyHours": {
+                    "type": "number",
+                    "description": "Weekly hours required for the position."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Position created successfully."
+          },
+          "403": {
+            "description": "Invalid account type or token."
+          },
+          "405": {
+            "description": "Invalid request or unsupported content type."
+          },
+          "500": {
+            "description": "Internal server error."
+          }
+        }
+      },
+      "put": {
+        "summary": "Modify an existing position",
+        "description": "Allows a company to modify an existing job position. If a chosen user is specified, other fields are ignored.",
+        "tags": [
+          "Positions"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "token"
+                ],
+                "properties": {
+                  "token": {
+                    "type": "string",
+                    "description": "Session token of the user."
+                  },
+                  "title": {
+                    "type": "string",
+                    "description": "Title of the position."
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "Description of the position."
+                  },
+                  "sector": {
+                    "type": "string",
+                    "description": "Sector of the position."
+                  },
+                  "country": {
+                    "type": "string",
+                    "description": "Country where the position is located."
+                  },
+                  "region": {
+                    "type": "string",
+                    "description": "Region where the position is located."
+                  },
+                  "city": {
+                    "type": "string",
+                    "description": "City where the position is located."
+                  },
+                  "weeklyHours": {
+                    "type": "number",
+                    "description": "Weekly hours required for the position."
+                  },
+                  "chosenUser": {
+                    "type": "string",
+                    "description": "ID of the chosen user for the position."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Position modified successfully."
+          },
+          "401": {
+            "description": "Missing required fields."
+          },
+          "403": {
+            "description": "Invalid session token."
+          },
+          "500": {
+            "description": "Error modifying the position."
+          }
+        }
+      }
+    },
+    "/api/positions": {
+      "delete": {
+        "summary": "Elimina una posizione esistente",
+        "description": "Permette a un'azienda di eliminare una posizione esistente. L'utente deve essere autenticato e autorizzato.",
+        "tags": [
+          "Positions"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "token",
+                  "positionId"
+                ],
+                "properties": {
+                  "token": {
+                    "type": "string",
+                    "description": "Token di sessione dell'utente."
+                  },
+                  "positionId": {
+                    "type": "string",
+                    "description": "ID della posizione da eliminare."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Posizione eliminata con successo.",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "isCompany": {
-                      "type": "boolean",
-                      "description": "Indicates if the user is a company"
+                    "message": {
+                      "type": "string",
+                      "example": "Position deleted successfully"
                     }
                   }
                 }
@@ -1023,403 +1055,7 @@
             }
           },
           "400": {
-            "description": "Missing session token or account ID",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string",
-                      "description": "Error message"
-                    },
-                    "code": {
-                      "type": "string",
-                      "description": "Error code"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/profiles/modify": {
-      "post": {
-        "summary": "Modify user profile",
-        "description": "Endpoint to modify user profile details.",
-        "tags": [
-          "Profiles"
-        ],
-        "consumes": [
-          "multipart/form-data"
-        ],
-        "requestBody": {
-          "content": {
-            "multipart/form-data": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "sessionToken": {
-                    "type": "string",
-                    "description": "Session token for authentication.",
-                    "example": "your-session-token"
-                  },
-                  "name": {
-                    "type": "string",
-                    "description": "User's first name.",
-                    "example": "John"
-                  },
-                  "surname": {
-                    "type": "string",
-                    "description": "User's surname.",
-                    "example": "Doe"
-                  },
-                  "country": {
-                    "type": "string",
-                    "description": "User's country.",
-                    "example": "USA"
-                  },
-                  "region": {
-                    "type": "string",
-                    "description": "User's region.",
-                    "example": "California"
-                  },
-                  "city": {
-                    "type": "string",
-                    "description": "User's city.",
-                    "example": "Los Angeles"
-                  },
-                  "postalCode": {
-                    "type": "string",
-                    "description": "User's postal code.",
-                    "example": "90001"
-                  },
-                  "street": {
-                    "type": "string",
-                    "description": "User's street.",
-                    "example": "123 Main St"
-                  },
-                  "address": {
-                    "type": "string",
-                    "description": "User's address.",
-                    "example": "123 Main St, Apt 4B"
-                  },
-                  "bio": {
-                    "type": "string",
-                    "description": "User's bio.",
-                    "example": "Software Developer"
-                  },
-                  "sector": {
-                    "type": "string",
-                    "description": "User's sector. Multiple sectors can be separated by commas.",
-                    "example": "Technology, Software"
-                  },
-                  "website": {
-                    "type": "string",
-                    "description": "User's website.",
-                    "example": "https://example.com"
-                  },
-                  "identifier": {
-                    "type": "string",
-                    "description": "Company's identifier. ",
-                    "example": 123456789100
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Profile modified successfully."
-          },
-          "401": {
-            "description": "Invalid session token."
-          },
-          "405": {
-            "description": "Unsupported content type."
-          }
-        }
-      }
-    },
-    "/api/profiles/new": {
-      "produces": [
-        "application/json"
-      ],
-      "post": {
-        "summary": "Create a new profile and link it to the user",
-        "description": "Create a new profile and link it to the user. The profile can be a company or a person",
-        "tags": [
-          "Profiles"
-        ],
-        "consumes": [
-          "multipart/form-data"
-        ],
-        "requestBody": {
-          "content": {
-            "multipart/form-data": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "sessionToken": {
-                    "type": "string",
-                    "description": "The authentication token"
-                  },
-                  "is_company": {
-                    "type": "boolean",
-                    "description": "True if the profile is a company, false if it's a person"
-                  },
-                  "name": {
-                    "type": "string",
-                    "description": "The name of the profile"
-                  },
-                  "surname": {
-                    "type": "string",
-                    "description": "The surname of the profile"
-                  },
-                  "country": {
-                    "type": "string",
-                    "description": "The country where the user/company is located"
-                  },
-                  "region": {
-                    "type": "string",
-                    "description": "The region where the user/company is located"
-                  },
-                  "city": {
-                    "type": "string",
-                    "description": "The city where the user/company is located"
-                  },
-                  "postalCode": {
-                    "type": "string",
-                    "description": "The postal code where the user/company is located"
-                  },
-                  "street": {
-                    "type": "string",
-                    "description": "The street where the user/company is located"
-                  },
-                  "address": {
-                    "type": "string",
-                    "description": "The full address where the user/company is located"
-                  },
-                  "birthDate": {
-                    "type": "string",
-                    "format": "date",
-                    "description": "The birth date of the user"
-                  },
-                  "bio": {
-                    "type": "string",
-                    "description": "A short biography of the user/company"
-                  },
-                  "identifier": {
-                    "type": "string",
-                    "description": "The fiscal code or P.iva of the user/company"
-                  },
-                  "sector": {
-                    "type": "string",
-                    "description": "The sector in which the user/company operates"
-                  },
-                  "website": {
-                    "type": "string",
-                    "description": "The website of the user/company"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Profile created successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "message": {
-                      "type": "string",
-                      "description": "Successfully created the profile"
-                    }
-                  }
-                },
-                "examples": {
-                  "application/json": {
-                    "value": {
-                      "message": "Profile created"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized or missing required fields",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string",
-                      "description": "Error message"
-                    }
-                  }
-                },
-                "examples": {
-                  "application/json": {
-                    "value": {
-                      "error": "Invalid session token"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "405": {
-            "description": "Unsupported content type",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string",
-                      "description": "Error message"
-                    }
-                  }
-                },
-                "examples": {
-                  "application/json": {
-                    "value": {
-                      "error": "Unsupported content type"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string",
-                      "description": "Error message"
-                    }
-                  }
-                },
-                "examples": {
-                  "application/json": {
-                    "value": {
-                      "error": "Internal server error"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/reviews/edit": {
-      "post": {
-        "summary": "Edit a review",
-        "description": "Updates an existing review for a user. At least one of the fields (title, review, or rating) must be provided for the update.",
-        "tags": [
-          "Reviews"
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "multipart/form-data": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "token": {
-                    "type": "string",
-                    "description": "The session token of the user.",
-                    "example": "user-session-token"
-                  },
-                  "reviewId": {
-                    "type": "string",
-                    "description": "The ID of the review to be updated.",
-                    "example": "64f1c2e5d4a3b2c1a1e5f6d7"
-                  },
-                  "title": {
-                    "type": "string",
-                    "description": "The new title of the review (optional).",
-                    "example": "Updated Review Title"
-                  },
-                  "review": {
-                    "type": "string",
-                    "description": "The new body of the review (optional).",
-                    "example": "This is the updated review content."
-                  },
-                  "rating": {
-                    "type": "integer",
-                    "description": "The new rating for the review (optional).",
-                    "example": 4
-                  }
-                }
-              }
-            },
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "token": {
-                    "type": "string",
-                    "description": "The session token of the user.",
-                    "example": "user-session-token"
-                  },
-                  "reviewId": {
-                    "type": "string",
-                    "description": "The ID of the review to be updated.",
-                    "example": "64f1c2e5d4a3b2c1a1e5f6d7"
-                  },
-                  "title": {
-                    "type": "string",
-                    "description": "The new title of the review (optional).",
-                    "example": "Updated Review Title"
-                  },
-                  "review": {
-                    "type": "string",
-                    "description": "The new body of the review (optional).",
-                    "example": "This is the updated review content."
-                  },
-                  "rating": {
-                    "type": "integer",
-                    "description": "The new rating for the review (optional).",
-                    "example": 4
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Review updated successfully.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "message": {
-                      "type": "string",
-                      "example": "Review updated successfully"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Missing required fields or invalid session token.",
+            "description": "Campi richiesti mancanti.",
             "content": {
               "application/json": {
                 "schema": {
@@ -1438,8 +1074,8 @@
               }
             }
           },
-          "404": {
-            "description": "Review not found.",
+          "403": {
+            "description": "Token non valido o non autorizzato.",
             "content": {
               "application/json": {
                 "schema": {
@@ -1447,11 +1083,31 @@
                   "properties": {
                     "error": {
                       "type": "string",
-                      "example": "Review not found"
+                      "example": "Invalid token"
                     },
                     "code": {
                       "type": "string",
-                      "example": "error-review-not-found"
+                      "example": "error-invalid-session-token"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Posizione non trovata o non autorizzata.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Position not found or unauthorized"
+                    },
+                    "code": {
+                      "type": "string",
+                      "example": "error-not-found"
                     }
                   }
                 }
@@ -1459,7 +1115,7 @@
             }
           },
           "405": {
-            "description": "Unsupported content type or no fields to update.",
+            "description": "Tipo di contenuto non supportato.",
             "content": {
               "application/json": {
                 "schema": {
@@ -1481,199 +1137,379 @@
         }
       }
     },
-    "/api/reviews/get": {
+    "/api/profiles": {
       "get": {
-        "summary": "Retrieve reviews for a specific profile",
-        "description": "Fetches a list of reviews for a given profile, with optional pagination.",
+        "summary": "Retrieve profile information",
+        "description": "Given the profile ID and the authentication token, returns the profile information. If no profile ID is provided, it retrieves the user's own profile.",
+        "tags": [
+          "Profiles"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "token",
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "description": "Session token for authentication"
+          },
+          {
+            "in": "query",
+            "name": "profileId",
+            "schema": {
+              "type": "string"
+            },
+            "required": false,
+            "description": "ID of the profile to retrieve (if not provided the profile of the user making the request is returned)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Profile information retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "surname": {
+                      "type": "string"
+                    },
+                    "bio": {
+                      "type": "string"
+                    },
+                    "website": {
+                      "type": "string"
+                    },
+                    "birth_date": {
+                      "type": "string",
+                      "format": "date"
+                    },
+                    "address": {
+                      "type": "object",
+                      "properties": {
+                        "country": {
+                          "type": "string"
+                        },
+                        "region": {
+                          "type": "string"
+                        },
+                        "city": {
+                          "type": "string"
+                        },
+                        "postal_code": {
+                          "type": "string"
+                        },
+                        "street": {
+                          "type": "string"
+                        },
+                        "address": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "identifier": {
+                      "type": "string"
+                    },
+                    "sector": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "isCompany": {
+                      "type": "boolean"
+                    },
+                    "profile_image": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid profile ID or other bad request"
+          },
+          "401": {
+            "description": "Invalid session token"
+          },
+          "404": {
+            "description": "Profile not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new profile",
+        "description": "Creates a new profile for the authenticated user. The user must not already have a profile.",
+        "tags": [
+          "Profiles"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "token": {
+                    "type": "string"
+                  },
+                  "isCompany": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "surname": {
+                    "type": "string"
+                  },
+                  "country": {
+                    "type": "string"
+                  },
+                  "region": {
+                    "type": "string"
+                  },
+                  "city": {
+                    "type": "string"
+                  },
+                  "postal_code": {
+                    "type": "string"
+                  },
+                  "street": {
+                    "type": "string"
+                  },
+                  "address": {
+                    "type": "string"
+                  },
+                  "birth_date": {
+                    "type": "string",
+                    "format": "date"
+                  },
+                  "profile_image": {
+                    "type": "string",
+                    "format": "binary"
+                  },
+                  "bio": {
+                    "type": "string"
+                  },
+                  "identifier": {
+                    "type": "string"
+                  },
+                  "sector": {
+                    "type": "string"
+                  },
+                  "website": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Profile created successfully"
+          },
+          "400": {
+            "description": "Invalid input or unsupported content type"
+          },
+          "401": {
+            "description": "Invalid session token or user already has a profile"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      },
+      "put": {
+        "summary": "Edit an existing profile",
+        "description": "Updates the profile information for the authenticated user.",
+        "tags": [
+          "Profiles"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "sessionToken": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "surname": {
+                    "type": "string"
+                  },
+                  "country": {
+                    "type": "string"
+                  },
+                  "region": {
+                    "type": "string"
+                  },
+                  "city": {
+                    "type": "string"
+                  },
+                  "postal_code": {
+                    "type": "string"
+                  },
+                  "street": {
+                    "type": "string"
+                  },
+                  "address": {
+                    "type": "string"
+                  },
+                  "bio": {
+                    "type": "string"
+                  },
+                  "sector": {
+                    "type": "string"
+                  },
+                  "website": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Profile modified successfully"
+          },
+          "400": {
+            "description": "Invalid input or unsupported content type"
+          },
+          "401": {
+            "description": "Invalid session token"
+          },
+          "404": {
+            "description": "Profile not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/api/reviews": {
+      "get": {
+        "summary": "Retrieve reviews of a profile",
+        "description": "Fetches a paginated list of reviews for a specific profile",
+        "tags": [
+          "Reviews"
+        ],
         "parameters": [
           {
             "in": "query",
             "name": "token",
             "required": true,
+            "description": "Session token of the user making the request.",
             "schema": {
               "type": "string"
-            },
-            "description": "Session token for authentication."
+            }
           },
           {
             "in": "query",
             "name": "profileId",
             "required": true,
+            "description": "ID of the profile whose reviews are being fetched.",
             "schema": {
               "type": "string"
-            },
-            "description": "The ID of the profile whose reviews are being fetched."
+            }
           },
           {
             "in": "query",
             "name": "from",
             "required": false,
+            "description": "Starting index for pagination (default is 0).",
             "schema": {
-              "type": "integer",
-              "default": 0
-            },
-            "description": "The starting index for pagination."
+              "type": "integer"
+            }
           },
           {
             "in": "query",
             "name": "to",
             "required": false,
+            "description": "Ending index for pagination (default is 10).",
             "schema": {
-              "type": "integer",
-              "default": 10
-            },
-            "description": "The ending index for pagination."
+              "type": "integer"
+            }
           }
         ],
         "responses": {
           "200": {
-            "description": "A list of reviews for the specified profile.",
+            "description": "Successfully retrieved the reviews.",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "array",
                   "items": {
-                    "type": "object",
-                    "properties": {
-                      "reviewer": {
-                        "type": "string",
-                        "description": "The ID of the reviewer."
-                      },
-                      "rating": {
-                        "type": "number",
-                        "description": "The rating given by the reviewer."
-                      },
-                      "comment": {
-                        "type": "string",
-                        "description": "The review comment."
-                      }
-                    }
+                    "type": "object"
                   }
                 }
               }
             }
           },
           "401": {
-            "description": "Missing or invalid session token.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    },
-                    "code": {
-                      "type": "string"
-                    }
-                  }
-                }
-              }
-            }
+            "description": "Missing or invalid session token or required fields."
           },
           "403": {
-            "description": "Access to the profile's reviews is forbidden.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    },
-                    "code": {
-                      "type": "string"
-                    }
-                  }
-                }
-              }
-            }
+            "description": "Access denied to the requested profile's reviews."
           },
           "404": {
-            "description": "Profile not found.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    },
-                    "code": {
-                      "type": "string"
-                    }
-                  }
-                }
-              }
-            }
+            "description": "Profile not found."
           }
         }
-      }
-    },
-    "/api/reviews/review": {
+      },
       "post": {
-        "summary": "Create a review for a profile.",
-        "description": "Allows users to create reviews for profiles. Users can only review companies, and companies can only review users.",
+        "summary": "Create a new review",
+        "description": "Allows a user to create a review for another profile. Only users can review companies and only companies can review users. Each profile can review another profile only once.",
         "tags": [
           "Reviews"
         ],
         "requestBody": {
           "required": true,
           "content": {
-            "multipart/form-data": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "token": {
-                    "type": "string",
-                    "description": "The session token of the user."
-                  },
-                  "reviewedProfile": {
-                    "type": "string",
-                    "description": "The ID of the profile being reviewed."
-                  },
-                  "title": {
-                    "type": "string",
-                    "description": "The title of the review."
-                  },
-                  "review": {
-                    "type": "string",
-                    "description": "The content of the review."
-                  },
-                  "rating": {
-                    "type": "integer",
-                    "description": "The rating for the review (1-5).",
-                    "minimum": 1,
-                    "maximum": 5
-                  }
-                }
-              }
-            },
             "application/json": {
               "schema": {
                 "type": "object",
+                "required": [
+                  "token",
+                  "reviewedProfile",
+                  "title",
+                  "review",
+                  "rating"
+                ],
                 "properties": {
                   "token": {
                     "type": "string",
-                    "description": "The session token of the user."
+                    "description": "Session token of the user creating the review."
                   },
                   "reviewedProfile": {
                     "type": "string",
-                    "description": "The ID of the profile being reviewed."
+                    "description": "ID of the profile being reviewed."
                   },
                   "title": {
                     "type": "string",
-                    "description": "The title of the review."
+                    "description": "Title of the review."
                   },
                   "review": {
                     "type": "string",
-                    "description": "The content of the review."
+                    "description": "Content of the review."
                   },
                   "rating": {
                     "type": "integer",
-                    "description": "The rating for the review (1-5).",
-                    "minimum": 1,
-                    "maximum": 5
+                    "description": "Rating for the profile (1-5)."
                   }
                 }
               }
@@ -1682,197 +1518,55 @@
         },
         "responses": {
           "200": {
-            "description": "Review created successfully.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "message": {
-                      "type": "string",
-                      "description": "Success message."
-                    },
-                    "data": {
-                      "type": "object",
-                      "description": "The created review data.",
-                      "properties": {
-                        "reviewer_id": {
-                          "type": "string",
-                          "description": "The ID of the reviewer."
-                        },
-                        "title": {
-                          "type": "string",
-                          "description": "The title of the review."
-                        },
-                        "review": {
-                          "type": "string",
-                          "description": "The content of the review."
-                        },
-                        "rating": {
-                          "type": "integer",
-                          "description": "The rating of the review."
-                        },
-                        "creation_time": {
-                          "type": "string",
-                          "format": "date-time",
-                          "description": "The creation time of the review."
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
+            "description": "Review created successfully."
           },
           "403": {
-            "description": "Invalid token.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string",
-                      "description": "Error message."
-                    },
-                    "code": {
-                      "type": "string",
-                      "description": "Error code."
-                    }
-                  }
-                }
-              }
-            }
+            "description": "Invalid session token or unauthorized review."
           },
           "404": {
-            "description": "Profile not found.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string",
-                      "description": "Error message."
-                    },
-                    "code": {
-                      "type": "string",
-                      "description": "Error code."
-                    }
-                  }
-                }
-              }
-            }
+            "description": "Profile not found."
           },
           "405": {
-            "description": "Invalid request or missing parameters.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string",
-                      "description": "Error message."
-                    },
-                    "code": {
-                      "type": "string",
-                      "description": "Error code."
-                    }
-                  }
-                }
-              }
-            }
+            "description": "Missing parameters, invalid review type, or profile has already reviewed this profile."
           }
         }
-      }
-    },
-    "/api/session/create": {
-      "post": {
-        "summary": "Authenticate user and return session token",
-        "description": "This endpoint allows a user to log in with a email and password, receiving a session token upon successful authentication.",
+      },
+      "put": {
+        "summary": "Update an existing review",
+        "description": "Allows a user to update their own review. At least one field (title, review, or rating) must be provided for the update.",
         "tags": [
-          "Session"
+          "Reviews"
         ],
         "requestBody": {
           "required": true,
           "content": {
-            "multipart/form-data": {
+            "application/json": {
               "schema": {
                 "type": "object",
-                "properties": {
-                  "email": {
-                    "type": "string",
-                    "description": "The user's email",
-                    "example": "john_doe"
-                  },
-                  "password": {
-                    "type": "string",
-                    "description": "The user's password",
-                    "format": "password",
-                    "example": "securepassword123"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Session token generated successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "token": {
-                      "type": "string",
-                      "description": "The session token",
-                      "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Invalid username or password",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string",
-                      "description": "Error message explaining the reason for failure",
-                      "example": "Invalid username or password"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/session/destroy": {
-      "post": {
-        "summary": "Destroy a session token",
-        "description": "This endpoint allows a user to destroy a session token, logging out the user.",
-        "tags": [
-          "Session"
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "multipart/form-data": {
-              "schema": {
-                "type": "object",
+                "required": [
+                  "token",
+                  "reviewId"
+                ],
                 "properties": {
                   "token": {
                     "type": "string",
-                    "description": "The session token to destroy",
-                    "example": "eyJhbGciOi..."
+                    "description": "Session token of the user updating the review."
+                  },
+                  "reviewId": {
+                    "type": "string",
+                    "description": "ID of the review to be updated."
+                  },
+                  "title": {
+                    "type": "string",
+                    "description": "New title for the review (optional)."
+                  },
+                  "review": {
+                    "type": "string",
+                    "description": "New content for the review (optional)."
+                  },
+                  "rating": {
+                    "type": "integer",
+                    "description": "New rating for the review (optional)."
                   }
                 }
               }
@@ -1881,63 +1575,24 @@
         },
         "responses": {
           "200": {
-            "description": "Session destroyed",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "result": {
-                      "type": "string",
-                      "description": "Result of the operation",
-                      "example": "Session destroyed"
-                    }
-                  }
-                }
-              }
-            }
+            "description": "Review updated successfully."
           },
           "401": {
-            "description": "Token is invalid",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string",
-                      "description": "Error message explaining the reason for failure",
-                      "example": "Token is missing"
-                    }
-                  }
-                }
-              }
-            }
+            "description": "Missing or invalid session token or required fields."
+          },
+          "404": {
+            "description": "Review not found."
           },
           "405": {
-            "description": "Unsupported content type",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string",
-                      "description": "Error message explaining the reason for failure",
-                      "example": "Unsupported content type"
-                    }
-                  }
-                }
-              }
-            }
+            "description": "No fields provided for update."
           }
         }
       }
     },
-    "/api/session/verify": {
+    "/api/session": {
       "get": {
-        "summary": "Verify session token and retrieve profile ID",
-        "description": "Verifies the session token and, if the token is valid, returns the profile ID associated with the token",
+        "summary": "Check the status of a session token",
+        "description": "Validates a session token and retrieves the associated profile ID.",
         "tags": [
           "Session"
         ],
@@ -1946,15 +1601,15 @@
             "in": "query",
             "name": "token",
             "required": true,
+            "description": "The session token to validate.",
             "schema": {
               "type": "string"
-            },
-            "description": "The session token to verify"
+            }
           }
         ],
         "responses": {
           "200": {
-            "description": "Successfully retrieved profile ID",
+            "description": "Session token is valid, profile ID returned.",
             "content": {
               "application/json": {
                 "schema": {
@@ -1962,7 +1617,7 @@
                   "properties": {
                     "profileId": {
                       "type": "string",
-                      "description": "The profile ID associated with the session token"
+                      "description": "The ID of the associated profile."
                     }
                   }
                 }
@@ -1970,15 +1625,17 @@
             }
           },
           "401": {
-            "description": "Invalid session token",
+            "description": "Invalid session token.",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {
                     "error": {
-                      "type": "string",
-                      "description": "Error message"
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
                     }
                   }
                 }
@@ -1986,15 +1643,215 @@
             }
           },
           "404": {
-            "description": "Profile not found",
+            "description": "Profile not found.",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {
                     "error": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new session token",
+        "description": "Authenticates a user using email and password, and generates a session token.",
+        "tags": [
+          "Session"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "description": "The user's email address."
+                  },
+                  "password": {
+                    "type": "string",
+                    "description": "The user's password."
+                  }
+                },
+                "required": [
+                  "email",
+                  "password"
+                ]
+              }
+            },
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "description": "The user's email address."
+                  },
+                  "password": {
+                    "type": "string",
+                    "description": "The user's password."
+                  }
+                },
+                "required": [
+                  "email",
+                  "password"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Session token created successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "token": {
                       "type": "string",
-                      "description": "Error message"
+                      "description": "The generated session token."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid username or password.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Unsupported content type.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a session token",
+        "description": "Deletes an existing session token, effectively logging the user out.",
+        "tags": [
+          "Session"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "token": {
+                    "type": "string",
+                    "description": "The session token to delete."
+                  }
+                },
+                "required": [
+                  "token"
+                ]
+              }
+            },
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "token": {
+                    "type": "string",
+                    "description": "The session token to delete."
+                  }
+                },
+                "required": [
+                  "token"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Session destroyed successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "result": {
+                      "type": "string",
+                      "description": "Confirmation message."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or missing session token.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Unsupported content type.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "string"
                     }
                   }
                 }
