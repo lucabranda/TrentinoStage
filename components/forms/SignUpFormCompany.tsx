@@ -59,7 +59,7 @@ export default function  SignUpFormCompany ({messages}: { messages: any }) {
                 return;
             }
 
-            router.push("/dashboard");
+            router.push("/");
 
         } catch (error: any) {
             messageApi.error(

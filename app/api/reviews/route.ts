@@ -143,6 +143,12 @@ import { ObjectId } from "mongodb"
 export async function GET(req: NextRequest) {
     const token = req.nextUrl.searchParams.get("token") as string
     const profileId = req.nextUrl.searchParams.get("profileId") as string
+   
+    // If reviewerId is not provided, get the reviews of the profile
+    if (!token || !profileId) {
+        return NextResponse.json({error: "Missing required fields", code: "error-missing-fields"}, { status: 401 })
+    }
+
 
     // Pagination
     const from = parseInt(req.nextUrl.searchParams.get("from") || '0')
@@ -179,6 +185,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json(reviewsList, { status: 200 })
 
 }
+
 
 
 

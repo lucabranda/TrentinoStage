@@ -1,5 +1,5 @@
 "use client";
-import { Avatar, Button, Card, Input, InputNumber, Space, Spin, Pagination, Modal, Empty } from "antd";
+import { Avatar, Button, Card, Input, InputNumber, Space, Spin, Pagination, Modal, Empty, Col } from "antd";
 import { useState, useEffect } from "react";
 import { Text } from "@/components/Typography";
 import { CloseCircleOutlined, StarFilled, UserOutlined } from "@ant-design/icons";
@@ -18,10 +18,14 @@ function useReviews(token: string, id: string, isACompany: boolean) {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
+    // if my == true, fetch the reviews I have written (as reviewer)
+    // if my == false, fetch the reviews I have received (as reviewee)
+
     useEffect(() => {
         const fetchReviews = async () => {
             try {
-                const res = await fetch(`/api/reviews?token=${token}&profileId=${id}`);
+                let url = `/api/reviews?token=${token}&profileId=${id}`;
+                const res = await fetch(url);
                 if (!res.ok) {
                     throw new Error("Failed to fetch reviews");
                 }
@@ -29,7 +33,7 @@ function useReviews(token: string, id: string, isACompany: boolean) {
                 const values = data.map((review: any) => ({
                     _id: review._id,
                     reviewer_id: review.reviewer_id,
-                    message: review.message,
+                    review: review.review,
                     title: review.title,
                     creation_time: review.creation_time,
                     edited: review.edited,
@@ -172,14 +176,20 @@ const ReviewCard = ({ review, messages, isCompany, session }: {
                 title={
                     <Space>
                         <Text>{review.title}</Text>
-                        {!isCompany && (
-                            <PrimaryButton onClick={() => setShowEdit(true)}>{messages["edit"] || "Edit"}</PrimaryButton>
-                        )}
                     </Space>
                 }
                 style={{ marginTop: "1rem" }}
                 extra={
                     <Space>
+                        {review.edited && (
+                            <Button
+                                type="text"
+                                icon={<CloseCircleOutlined />}
+                                onClick={() => setShowEdit(!showEdit)}
+                            >
+                                {showEdit ? messages["cancel"] || "Cancel" : messages["edit"] || "Edit"}
+                            </Button>
+                        )}
                         <Text type="secondary">{review.creation_time.substring(0, 10)}</Text>
                         <Text>{review.rating} <StarFilled style={{ color: "gold" }} /></Text>
                     </Space>
@@ -203,7 +213,8 @@ const ReviewCard = ({ review, messages, isCompany, session }: {
                             }
                         />
                     ) : null}
-                    <Text>{review.review}</Text>
+                        <Text style={{paddingInline: '2rem', marginInline: '2rem'}}>{review.review}</Text>
+                    
                 </div>
                 <Text type="secondary">{review.edited ? messages["edited"] || "Edited" : messages["not-edited"] || "Not Edited"}</Text>
                 {showEdit && (
@@ -248,6 +259,7 @@ const ReviewCard = ({ review, messages, isCompany, session }: {
                         isOwner={false}
                         profileData={userProfileData as ProfileUserData}
                         id={review.reviewer_id}
+                        profile_id_for_cv={review.reviewer_id}
                     />
                 )}
             </Modal>

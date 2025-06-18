@@ -204,5 +204,22 @@
   "error-city-required": "Bitte geben Sie eine Stadt an.",
   "error-postal-code-required": "Bitte geben Sie eine Postleitzahl an.",
   "error-street-required": "Bitte geben Sie eine Straße an.",
-  "error-address-required": "Bitte geben Sie eine Adresse an."
+  "error-address-required": "Bitte geben Sie eine Adresse an.",
+  "cv-upload": "Lebenslauf hochladen (PDF)",
+  "cv-upload-success": "Lebenslauf erfolgreich hochgeladen",
+  "cv-upload-fail": "Hochladen fehlgeschlagen",
+  "cv-download": "Lebenslauf herunterladen",
+  "cv-download-fail": "Download fehlgeschlagen",
+
+  "cv-uploaded": "Lebenslauf hochgeladen",
+  "dashboard-apply-success": "Bewerbung erfolgreich gesendet!",
+  "dashboard-apply-error": "Bewerbung konnte nicht gesendet werden.",
+  "dashboard-applied": "Beworben",
+  "dashboard-profile-modal-title": "Unternehmensprofil",
+  "dashboard-apply-modal-message": "Möchten Sie sich wirklich auf dieses Angebot bewerben?",
+  "login-not-available": "Login nicht verfügbar",
+  "login-not-available-message": "Dieser Dienst ist derzeit nicht verfügbar."
+
+
 }
+

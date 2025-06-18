@@ -238,6 +238,9 @@ export async function GET(req: NextRequest) {
     const website = profile.website
     const address = profile.address
 
+    // Get the email address
+    const email = (await accounts.findOne({ profile_id: profileId }))?.email
+
     if (await isOwner) {
         return NextResponse.json({
             name: name, 
@@ -249,6 +252,7 @@ export async function GET(req: NextRequest) {
             identifier: profile.identifier,
             sector: profile.sector,
             isCompany: profile.is_company,
+            email: email,
             profile_image: profile.profile_image
         }, { status: 200 })
     } else if ((await accountInfo).role === "company-manager" || (await accountInfo).role === "company-employee") {
@@ -262,6 +266,7 @@ export async function GET(req: NextRequest) {
             identifier: profile.identifier,
             sector: profile.sector,
             isCompany: profile.is_company,
+            email: email,
             profile_image: profile.profile_image
         }, { status: 200 })
     } else if ((await accountInfo).role === "admin") {
@@ -276,6 +281,7 @@ export async function GET(req: NextRequest) {
             sector: profile.sector,
             cv: profile.cv,
             isCompany: profile.is_company,
+            email: email,
             profile_image: profile.profile_image
         }, { status: 200 })
     } else {
@@ -308,7 +314,7 @@ export async function POST(req: NextRequest) {
 
     const sessionToken = formData.get("token") as string
     const profileId = await checkSessionToken(sessionToken)
-    const isCompany = stringToBool(formData.get("isCompany") as string)
+    const isCompany = stringToBool(formData.get("is_company") as string)
     const name = formData.get("name") as string
     const surname = formData.get("surname") as string
     const country = formData.get("country") as string
@@ -317,18 +323,18 @@ export async function POST(req: NextRequest) {
     const postal_code = formData.get("postal_code") as string
     const street = formData.get("street") as string
     const address = formData.get("address") as string
-    let birth_date = formData.get("birth_date") as string
+    let birth_date = formData.get("birth_date") as string ?? null
     const profile_image = formData.get("profile_image") as string ?? null
 
     const bio = formData.get("bio") as string ?? null
     const identifier = formData.get("identifier") as string
-    const sector = formData.get("sector") as string
+    const sector = formData.get("sector") as string ?? null
     const website = formData.get("website") as string ?? null
 
     // Check if the session token is valid
-    if (!profileId) {
+    /*if (!profileId) {
         return NextResponse.json({error: "Invalid session token", code: "error-invalid-session"}, { status: 401 })
-    }
+    }*/
     
     // Check if the user doesn't have a profile already
     const existingProfile = await accounts.findOne({_id: ObjectId.createFromHexString(profileId), profile_id: null})
@@ -394,7 +400,18 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({error: "Sector has to be in a valid json format"}, { status: 400 })
     }
 
-
+    console.log("Creating profile for user with ID: " + profileId +
+        "\nName: " + name +
+        "\nSurname: " + surname +
+        "\nBirth date: " + birth_date +
+        "\nProfile image: " + profile_image +
+        "\nAddress: " + JSON.stringify(address) +
+        "\nBio: " + bio +
+        "\nIdentifier: " + identifier +
+        "\nSector: " + sectors +
+        "\nWebsite: " + website +
+        "\nIs company: " + isCompany
+    )
 
     await connectDB()
     // Create the profile on the database
@@ -472,7 +489,7 @@ export async function PUT(req: NextRequest) {
 
     const birth_date = formData.get("birth_date") as string ?? null
     const profile_image = formData.get("profile_image") as string ?? null
-
+    const identifier = formData.get("identifier") as string ?? null
     const bio = formData.get("bio") as string ?? null
     const sector = formData.get("sector") as string ?? null
     const website = formData.get("website") as string ?? null
@@ -541,6 +558,9 @@ export async function PUT(req: NextRequest) {
     }
     if (website) {
         edit['website'] = website
+    }
+    if (identifier) {
+        edit['identifier'] = identifier
     }
 
     await connectDB()

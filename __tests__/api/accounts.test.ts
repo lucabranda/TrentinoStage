@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { POST } from '../../app/api/session/create/route'
+import { POST } from '../../app/api/session/route'
 
 import { connectDB } from '@/utils/db'
 import accounts from '@/utils/model/accounts'

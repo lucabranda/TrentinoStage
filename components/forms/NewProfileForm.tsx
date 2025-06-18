@@ -25,20 +25,23 @@ export default function NewProfileForm({token, msgs, styles, isCompany}: NewProf
             const region = values.region;
             const country = values.country;
             //const sector = "{\"sector\":\"" + values.sector + "\"}";
-            const sector = values.sector;
+            const sector = JSON.stringify(values?.sector);
             const bio = values.bio;
             const birth_date = values?.birth_date || undefined;
             const identifier = values?.identifier;
-            const profile_picture = values.profile_picture.file.thumbUrl;
+            const profile_picture = values.profile_picture?.file?.thumbUrl || undefined;
 
             const website = (isCompany) && values?.website;
             const surname = (!isCompany) && values?.surname;
 
-            const res = await fetch("/api/profiles/new", {
+            const res = await fetch(`/api/profiles`, {
                 method: "POST",
-                headers: {"Content-Type": "application/json"},
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
                 body: JSON.stringify({
-                    sessionToken: token,
+                    token: token,
                     is_company: isCompany,
                     name: name,
                     address: address,
@@ -50,7 +53,7 @@ export default function NewProfileForm({token, msgs, styles, isCompany}: NewProf
                     street: street,
                     bio: bio,
                     birth_date: birth_date,
-                    profile_image: profile_picture,
+                    profile_picture: profile_picture,
                     identifier: identifier,
                     ...(isCompany && {website: website}),
                     ...(!isCompany && {surname: surname})
@@ -70,8 +73,8 @@ export default function NewProfileForm({token, msgs, styles, isCompany}: NewProf
             console.error("Error creating profile:", error);
             // Optionally show an error message to the user
         }
-
-        //window.location.href = "/dashboard";
+    
+        window.location.href = "/dashboard";
     };
 
     const fields = isCompany ? [
@@ -200,12 +203,12 @@ export default function NewProfileForm({token, msgs, styles, isCompany}: NewProf
             label: <span className={styles.formLabel}>{msgs["user-card-birth-date-label"]}</span>,
             name: "birth_date",
             rules: [{required: false, message: msgs["error-birth-date-not-provided"]}]
-        },
+        }/*,
         {
             label: <span className={styles.formLabel}>{msgs["user-card-cv-label"]}</span>,
             name: "cv",
             rules: [{required: false, message: msgs["error-cv-not-provided"]}]
-        },
+        }*/,
         {
             label: <span className={styles.formLabel}>{msgs["user-card-sector-label"]}</span>,
             name: "sector",
@@ -255,7 +258,7 @@ export default function NewProfileForm({token, msgs, styles, isCompany}: NewProf
                             rules={field.rules}
                             className={styles.formItem}
                         >
-                            {field.name === "profile_picture" || field.name === "cv" ? (
+                            {field.name === "profile_picture" /*|| field.name === "cv"*/ ? (
                                 <Upload
                                     name={field.name}
                                     listType="picture"
