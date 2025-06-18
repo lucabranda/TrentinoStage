@@ -9,7 +9,7 @@ import { connectDB } from "@/utils/db";
  * /api/applications:
  *   post:
  *     summary: Apply for a position
- *     description: Endpoint to allow users to apply for a specific position.
+ *     description: Allows a user to apply for a specific position.
  *     tags:
  *       - Applications
  *     requestBody:
@@ -18,6 +18,9 @@ import { connectDB } from "@/utils/db";
  *         multipart/form-data:
  *           schema:
  *             type: object
+ *             required:
+ *               - token
+ *               - positionId
  *             properties:
  *               token:
  *                 type: string
@@ -31,6 +34,9 @@ import { connectDB } from "@/utils/db";
  *         application/json:
  *           schema:
  *             type: object
+ *             required:
+ *               - token
+ *               - positionId
  *             properties:
  *               token:
  *                 type: string
@@ -38,6 +44,9 @@ import { connectDB } from "@/utils/db";
  *               positionId:
  *                 type: string
  *                 description: The ID of the position to apply for.
+ *               message:
+ *                 type: string
+ *                 description: Optional message to include with the application.
  *     responses:
  *       200:
  *         description: Application created successfully.
@@ -49,8 +58,21 @@ import { connectDB } from "@/utils/db";
  *                 message:
  *                   type: string
  *                   example: Application created successfully
+ *       401:
+ *         description: Invalid or missing token.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: Invalid token
+ *                 code:
+ *                   type: string
+ *                   example: error-invalid-token
  *       403:
- *         description: Invalid token or account type. Companies cannot apply for positions.
+ *         description: Invalid account type or already applied.
  *         content:
  *           application/json:
  *             schema:
@@ -88,10 +110,9 @@ import { connectDB } from "@/utils/db";
  *                 code:
  *                   type: string
  *                   example: error-invalid-request
- * 
  *   get:
- *     summary: Get the positions to which the user is applied to
- *     description: Retrieve the list of positions the user has applied to.
+ *     summary: Get positions the user has applied to
+ *     description: Retrieves a list of positions the authenticated user has applied for.
  *     tags:
  *       - Applications
  *     parameters:
@@ -138,7 +159,23 @@ import { connectDB } from "@/utils/db";
  *                     description: The time the position was created.
  *                   isOpen:
  *                     type: boolean
- *                     description: Whether the position is still open or not.
+ *                     description: Whether the position is still open.
+ *                   chosenUser:
+ *                     type: string
+ *                     description: The ID of the chosen user, if any.
+ *                   applied_users:
+ *                     type: array
+ *                     description: List of users who applied to the position.
+ *                     items:
+ *                       type: object
+ *                       properties:
+ *                         user_id:
+ *                           type: string
+ *                         application_time:
+ *                           type: string
+ *                           format: date-time
+ *                         message:
+ *                           type: string
  *       401:
  *         description: Missing required fields or invalid session token.
  *         content:

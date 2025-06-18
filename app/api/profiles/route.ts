@@ -332,11 +332,13 @@ export async function POST(req: NextRequest) {
     const website = formData.get("website") as string ?? null
 
     // Check if the session token is valid
-    /*if (!profileId) {
+    if (profileId == null) {
         return NextResponse.json({error: "Invalid session token", code: "error-invalid-session"}, { status: 401 })
-    }*/
+    }
     
     // Check if the user doesn't have a profile already
+
+
     const existingProfile = await accounts.findOne({_id: ObjectId.createFromHexString(profileId), profile_id: null})
     if (!existingProfile) {
         return NextResponse.json({error: "User already has a profile", code: "error-profile-already-exists"}, { status: 401 })

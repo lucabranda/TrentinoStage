@@ -193,6 +193,8 @@ export async function POST(req: NextRequest) {
     let formData
     const contentType = req.headers.get("content-type") ?? ""
 
+    console.log("Content-Type:", contentType)
+
     if (contentType.includes("multipart/form-data")) {
         formData = await req.formData()
     } else if (contentType.includes("application/json")) {

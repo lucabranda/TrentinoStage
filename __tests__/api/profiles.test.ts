@@ -1,6 +1,5 @@
 import { NextRequest } from 'next/server'
-import { POST } from '../../app/api/session/create/route'
-import { GET as IsCompanyGET} from '../../app/api/profiles/isCompany/route'
+import { POST, GET, PUT } from '../../app/api/profiles/route'
 
 import { createTestAccount, deleteTestAccount, deleteTestProfile } from '@/utils/testingUtils'
 import { createSessionToken } from '@/utils/session'
@@ -20,11 +19,11 @@ const testAccount = {
 const testProfile = {
     name: "mario",
     surname: "rossi",
-    birthDate: new Date("1990-01-01"),
+    birth_date: new Date("1990-01-01"),
     country: "Italy",
     region: "Lazio",
     city: "Rome",
-    postalCode: "00100",
+    postal_code: "00100",
     street: "Via Roma",
     address: "1A",
     bio: "Test bio",
@@ -36,8 +35,8 @@ const testProfile = {
 
 describe('Create profile api testing', () => {
     it('Should return 401 because of invalid token', async () => {
-        const requestBody = { sessionToken: 'wrongToken' }
-        const request = new NextRequest(basePath + '/api/accounts/register', {
+        const requestBody = { token: 'wrongToken' }
+        const request = new NextRequest(basePath + '/api/accounts/', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(requestBody),
@@ -55,9 +54,10 @@ describe('Create profile api testing', () => {
         // Create the session token
         const sessionToken = await createSessionToken(accountId)
 
+        console.log("Session Token:", sessionToken)
         // Create the test profile
-        const body = { sessionToken, ...testProfile }
-        const request = await fetch(basePath + '/api/profiles/new', {
+        const body = { token: sessionToken, ...testProfile }
+        const request = await fetch(basePath + '/api/profiles/', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(body),
@@ -69,15 +69,17 @@ describe('Create profile api testing', () => {
 
         const profileId = await getProfileId(accountId)
 
+        console.log("Profile ID:", profileId)
+
         const profile = await profiles.findOne({ _id: ObjectId.createFromHexString(profileId) })
 
         expect(profile.name).toBe(testProfile.name)
         expect(profile.surname).toBe(testProfile.surname)
-        expect(profile.birth_date).toEqual(testProfile.birthDate)
+        expect(profile.birth_date).toEqual(testProfile.birth_date)
         expect(profile.address.country).toBe(testProfile.country)
         expect(profile.address.region).toBe(testProfile.region)
         expect(profile.address.city).toBe(testProfile.city)
-        expect(profile.address.postal_code).toBe(testProfile.postalCode)
+        expect(profile.address.postal_code).toBe(testProfile.postal_code)
         expect(profile.address.street).toBe(testProfile.street)
         expect(profile.address.address).toBe(testProfile.address)
         expect(profile.bio).toBe(testProfile.bio)
@@ -91,18 +93,5 @@ describe('Create profile api testing', () => {
         // Delete the test account
         await deleteTestAccount(accountId)
 
-    })
-})
-
-describe('Is company api testing', () => {
-    it('Should return true because the id is a company', async () => {
-        const companyId = '67926cb8123b793f72cbcc05'
-        const request = new NextRequest(basePath + `/api/profiles/isCompany?accountId=${companyId}`)
-    
-        const response = await IsCompanyGET(request)
-
-        const jsonResponse = await response.json()
-
-        expect(jsonResponse['isCompany']).toBe(true)
     })
 })

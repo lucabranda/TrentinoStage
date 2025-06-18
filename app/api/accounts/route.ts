@@ -198,7 +198,7 @@ export async function POST(req: NextRequest) {
         if (invite !== null) {
             const result = await accounts.create({email: email, password: hash, profile_id: invite.profile_id, is_verified: false, last_modified_password: date, role: invite.role})
             await result.save()
-            sessionToken = await createSessionToken(result.insertedId.toHexString())
+            sessionToken = await createSessionToken(result._id.toHexString())
         } else {
             return new NextResponse(JSON.stringify({error: "Invalid invitation token", code: "error-invalid-invtation"}), { status: 401 })
         }
@@ -212,6 +212,7 @@ export async function POST(req: NextRequest) {
 
         const result = await accounts.create({email: email, password: hash, profile_id: null, is_verified: false, last_modified_password: date, role: role}) // The profile_id will be set later
         await result.save()
+
     
         sessionToken = await createSessionToken(result._id.toHexString())
     }
