@@ -45,7 +45,7 @@ export default async function Home({params}: any) {
 
     if (!profileResponse.ok) {
         if (!profileId && !(role?.includes("company-employee")))
-            return (<NewProfileForm token={sessionToken} msgs={messages} styles={styles} isCompany={isACompany}/>);
+            return (<NewProfileForm token={sessionToken} msgs={messages} styles={styles} isCompany={true}/>);
     }
     const profileData = await profileResponse.json();
     console.log(profileData);
