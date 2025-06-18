@@ -100,6 +100,44 @@ import { isProfileCompany, isProfileOwner } from "@/utils/profiles"
  *         description: No files found for this profile
  *       500:
  *         description: Failed to delete file or database connection error
+ *
+ *   put:
+ *     summary: Replace the authenticated user's CV file
+ *     description: Replaces the existing CV file for the authenticated user with a new one. Only one file per user is allowed.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               token:
+ *                 type: string
+ *                 description: Session token for authentication
+ *               file:
+ *                 type: string
+ *                 format: binary
+ *                 description: The new CV file to upload
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               token:
+ *                 type: string
+ *               file:
+ *                 type: string
+ *                 description: Base64-encoded file content (not recommended)
+ *     responses:
+ *       200:
+ *         description: File uploaded successfully
+ *       400:
+ *         description: No file uploaded or invalid file type
+ *       401:
+ *         description: Missing required fields or invalid session token
+ *       405:
+ *         description: Unsupported content type
+ *       500:
+ *         description: Internal server error
  */
 export async function POST(req: NextRequest) {
     let formData
@@ -138,28 +176,8 @@ export async function POST(req: NextRequest) {
         }
         
 
-        const buffer = Buffer.from(await file.arrayBuffer())
         
-        const mongooseConnection = await connectDB()
-        const db = mongooseConnection.connection.db
-
-        if (!db) {
-            throw new Error("Database connection is not established")
-        }
-
-        
-        // Create a GridFS bucket
-        const bucket = new GridFSBucket(db, { bucketName: "uploads" })
-
-        // Check if the user already uploaded a file 
-        const files = (await bucket.find({ "metadata.profile_id": profileId }).toArray()).length
-        if (files >= 1) {
-            return NextResponse.json({ error: "User already uploaded a file" }, { status: 403 })
-        }
-
-
-        const uploadStream = bucket.openUploadStream(file.name, { contentType: file.type, metadata: { profile_id: profileId } })
-        uploadStream.end(buffer)
+        await uploadCV(profileId, file)
 
         return NextResponse.json({ message: "File uploaded successfully" })
     } catch (err) {
@@ -231,7 +249,7 @@ export async function DELETE(req: NextRequest) {
         return NextResponse.json({ error: "Invalid session token", code: "error-invalid-session" }, { status: 401 })
     }
 
-    const mongooseConnection = await connectDB()
+    /*const mongooseConnection = await connectDB()
     const db = mongooseConnection.connection.db
     if (!db) {
         return NextResponse.json({ error: "Database connection is not established", code: "error-db-connection" }, { status: 500 })
@@ -242,13 +260,12 @@ export async function DELETE(req: NextRequest) {
     const files = await bucket.find({ "metadata.profile_id": profileId }).toArray()
     if (files.length === 0) {
         return NextResponse.json({ error: "No files found for this profile", code: "error-no-files" }, { status: 404 })
-    }
+    }*/
 
     try {
 
         // Delete the file
-        const fileId = files[0]._id
-        await bucket.delete(fileId)
+        await deleteCV(profileId)
 
     } catch (err) {
         console.error("Error deleting file:", err);
@@ -256,5 +273,88 @@ export async function DELETE(req: NextRequest) {
     }
 
     return NextResponse.json({ message: "File deleted successfully" }, { status: 200 });
+
+}
+
+export async function PUT(req: NextRequest) {
+    let formData
+    const contentType = req.headers.get("content-type") ?? ""
+
+    if (contentType.includes("multipart/form-data")) {
+        formData = await req.formData()
+    } else if (contentType.includes("application/json")) {
+        const jsonData = await req.json()
+        formData = new Map(Object.entries(jsonData))
+    } else {
+        return new NextResponse(JSON.stringify({error: "Unsupported content type"}), { status: 405 })
+    }
+
+    const token = formData.get("token") as string
+    const file = formData.get('file') as File;
+
+    if (!token) {
+        return NextResponse.json({ error: "Missing required fields", code: "error-missing-fields" }, { status: 401 })
+    }
+    const accountId = await checkSessionToken(token)
+    const profileId = await getProfileId(accountId)
+    if (!profileId) {
+        return NextResponse.json({ error: "Invalid session token", code: "error-invalid-session" }, { status: 401 })
+    }
+    if (!file) {
+        return NextResponse.json({ error: "No file uploaded" }, { status: 400 })
+    }
+    if (!file || typeof file !== "object" || !("arrayBuffer" in file)) {
+        return NextResponse.json({ error: "Invalid file type" }, { status: 400 });
+    }
+    try {
+
+        await deleteCV(profileId)
+        await uploadCV(profileId, file)
+        return NextResponse.json({ message: "File uploaded successfully" })
+    } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : "An unknown error occurred"
+        console.error(errorMessage)
+        return NextResponse.json({ error: "Internal server error" }, { status: 500 })
+    }
+}
+
+
+async function deleteCV(profileId: string) {
+    const mongooseConnection = await connectDB()
+    const db = mongooseConnection.connection.db
+    if (!db) {
+        throw new Error("Database connection is not established")
+    }
+    const bucket = new GridFSBucket(db, { bucketName: "uploads" })
+
+    // Check if the user has uploaded a file
+    const files = await bucket.find({ "metadata.profile_id": profileId }).toArray()
+    if (files.length === 0) {
+        throw new Error("No files found for this profile")
+    }
+
+    // Delete the file
+    const fileId = files[0]._id
+    await bucket.delete(fileId)
+}
+
+async function uploadCV(profileId: string, file: File) {
+    const mongooseConnection = await connectDB()
+    const db = mongooseConnection.connection.db
+    if (!db) {
+        throw new Error("Database connection is not established")
+    }
+    const bucket = new GridFSBucket(db, { bucketName: "uploads" })
+
+    // Check if the user already uploaded a file
+    const files = await bucket.find({ "metadata.profile_id": profileId }).toArray()
+    if (files.length >= 1) {
+        throw new Error("User already uploaded a file")
+    }
+
+    const buffer = Buffer.from(await file.arrayBuffer())
+
+    const uploadStream = bucket.openUploadStream(file.name, { contentType: file.type, metadata: { profile_id: profileId } })
+    uploadStream.end(buffer)
 
 }

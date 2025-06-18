@@ -12,7 +12,7 @@ import { ObjectId } from "mongodb"
  * /api/reviews:
  *   get:
  *     summary: Retrieve reviews of a profile
- *     description: Fetches a paginated list of reviews for a specific profile. Access is restricted based on the type of profile and ownership.
+ *     description: Fetches a paginated list of reviews for a specific profile
  *     tags:
  *       - Reviews
  *     parameters:
@@ -50,7 +50,7 @@ import { ObjectId } from "mongodb"
  *               items:
  *                 type: object
  *       401:
- *         description: Missing or invalid session token.
+ *         description: Missing or invalid session token or required fields.
  *       403:
  *         description: Access denied to the requested profile's reviews.
  *       404:
@@ -58,7 +58,7 @@ import { ObjectId } from "mongodb"
  *
  *   post:
  *     summary: Create a new review
- *     description: Allows a user to create a review for another profile. Users can only review companies and vice versa.
+ *     description: Allows a user to create a review for another profile. Only users can review companies and only companies can review users. Each profile can review another profile only once.
  *     tags:
  *       - Reviews
  *     requestBody:
@@ -67,6 +67,12 @@ import { ObjectId } from "mongodb"
  *         application/json:
  *           schema:
  *             type: object
+ *             required:
+ *               - token
+ *               - reviewedProfile
+ *               - title
+ *               - review
+ *               - rating
  *             properties:
  *               token:
  *                 type: string
@@ -89,7 +95,7 @@ import { ObjectId } from "mongodb"
  *       403:
  *         description: Invalid session token or unauthorized review.
  *       405:
- *         description: Missing parameters or invalid review type.
+ *         description: Missing parameters, invalid review type, or profile has already reviewed this profile.
  *       404:
  *         description: Profile not found.
  *
@@ -104,6 +110,9 @@ import { ObjectId } from "mongodb"
  *         application/json:
  *           schema:
  *             type: object
+ *             required:
+ *               - token
+ *               - reviewId
  *             properties:
  *               token:
  *                 type: string
@@ -124,7 +133,7 @@ import { ObjectId } from "mongodb"
  *       200:
  *         description: Review updated successfully.
  *       401:
- *         description: Missing or invalid session token.
+ *         description: Missing or invalid session token or required fields.
  *       404:
  *         description: Review not found.
  *       405:

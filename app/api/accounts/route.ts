@@ -1,9 +1,20 @@
+import { NextRequest, NextResponse } from "next/server"
+import bycript from "bcrypt"
+import { createSessionToken } from "@/utils/session"
+
+import { connectDB, checkBsonFormat } from "@/utils/db"
+import accounts from "@/utils/model/accounts"
+import invite_tokens from "@/utils/model/invite_tokens"
+import { checkSessionToken } from "@/utils/session"
+import { getAccountInfo } from "@/utils/accounts"
+
+
 /**
  * @swagger
  * /api/accounts:
  *   get:
  *     summary: Retrieve account information based on session token
- *     description: Fetches the role and profile ID of an account using a valid session token.
+ *     description: Fetches the email, role, and profile ID of an account using a valid session token.
  *     tags: [Accounts]
  *     parameters:
  *       - in: query
@@ -20,6 +31,9 @@
  *             schema:
  *               type: object
  *               properties:
+ *                 email:
+ *                   type: string
+ *                   description: The email address of the account.
  *                 role:
  *                   type: string
  *                   description: The role of the account.
@@ -60,6 +74,9 @@
  *               role:
  *                 type: string
  *                 description: The role of the new account (required if no invitation token is provided).
+ *               token:
+ *                 type: string
+ *                 description: An optional invitation token for account creation.
  *         multipart/form-data:
  *           schema:
  *             type: object
@@ -73,13 +90,9 @@
  *               role:
  *                 type: string
  *                 description: The role of the new account (required if no invitation token is provided).
- *     parameters:
- *       - in: query
- *         name: token
- *         required: false
- *         schema:
- *           type: string
- *         description: An optional invitation token for account creation.
+ *               token:
+ *                 type: string
+ *                 description: An optional invitation token for account creation.
  *     responses:
  *       200:
  *         description: Successfully created a new account.
@@ -115,17 +128,6 @@
  *                   type: string
  *                   description: Error message.
  */
-import { NextRequest, NextResponse } from "next/server"
-import bycript from "bcrypt"
-import { createSessionToken } from "@/utils/session"
-
-import { connectDB, checkBsonFormat } from "@/utils/db"
-import accounts from "@/utils/model/accounts"
-import invite_tokens from "@/utils/model/invite_tokens"
-import { checkSessionToken } from "@/utils/session"
-import { getAccountInfo } from "@/utils/accounts"
-
-
 // Get the account information (role and profile_id) given the session token
 export async function GET(req: NextRequest) {
     const connection = connectDB()
